@@ -1,0 +1,11 @@
+# Never commit save data — these files contain personal save state
+*.bin
+system
+system_backup
+snapshots/
+scratch/
+
+# Python
+__pycache__/
+*.pyc
+.venv/

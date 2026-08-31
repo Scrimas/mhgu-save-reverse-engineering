@@ -1,0 +1,85 @@
+{
+  "_comment": "MHGU Switch save (system, 5159100 bytes). Offsets are absolute, little-endian, from a single-character save of the EU/western release 0100770008DD8000. See README.md open questions before assuming portability across character slots or regions.",
+  "_confidence": "CONFIRMED = two independent lines of evidence; DERIVED = single observation; UNRESOLVED = located but not decoded",
+  "container": {
+    "file_size": 5159100,
+    "header_nonce": { "offset": 20, "type": "u32", "confidence": "DERIVED",
+                      "note": "changes every write; NOT a checksum; leave untouched" },
+    "encrypted": false,
+    "body_checksum": false,
+    "commit_slots": ["0/system", "1/system"],
+    "note": "both commit slots must be written identically; emulator must be closed"
+  },
+  "deviants": {
+    "count": 18,
+    "permits":            { "offset": 1635544, "hex": "0x18F4D8", "type": "u8[18]", "confidence": "CONFIRMED", "max": 99 },
+    "levels_cleared_bit": { "byte": 1636745, "hex": "0x18F989", "bit": 3, "confidence": "CONFIRMED" },
+    "levels_unlocked_bit":{ "byte": 1637001, "hex": "0x18FA89", "bit": 3, "confidence": "CONFIRMED",
+                            "note": "cleared bitmap + 0x100 bytes" },
+    "bit_order": "LSB-first within byte",
+    "block_layout": "index < 12 -> (offset = i*16, width = 16); index >= 12 -> (offset = 192 + (i-12)*6, width = 6)",
+    "total_bits": 228,
+    "level_order": "bit j = level j in progression order; final bit of each block = EX",
+    "order": ["Redhelm Arzuros","Snowbaron Lagombi","Stonefist Hermitaur","Dreadqueen Rathian",
+              "Drilltusk Tetsucabra","Silverwind Nargacuga","Crystalbeard Uragaan","Deadeye Yian Garuga",
+              "Dreadking Rathalos","Thunderlord Zinogre","Grimclaw Tigrex","Hellblade Glavenus",
+              "Nightcloak Malfestio","Rustrazor Ceanataur","Soulseer Mizutsune","Boltreaver Astalos",
+              "Elderfrost Gammoth","Bloodbath Diablos"],
+    "gating_note": "G-rank deviant levels additionally require hunting the base monster at G-rank; that flag is NOT in these bitmaps and is UNRESOLVED"
+  },
+  "monsters": {
+    "hunt_tallies": { "offset": 1649472, "hex": "0x192B40", "type": "u16", "stride": 2,
+                      "count": 139, "confidence": "CONFIRMED" },
+    "size_records": { "offset": 1650018, "hex": "0x192D62", "type": "u16 pair (min%, max%)",
+                      "stride": 4, "confidence": "CONFIRMED",
+                      "note": "large monsters only; (0,0) = never hunted" },
+    "index_blocks": {
+      "0-71":    "large monsters (have size records)",
+      "72-104":  "small monsters (NO size records)",
+      "105-112": "always zero; UNRESOLVED",
+      "113-138": "additional large monsters incl. GU-exclusive deviants"
+    },
+    "deviant_rollup": false,
+    "deviant_rollup_note": "CONFIRMED: deviant hunts do not increment the base monster tally; family total = base + deviant",
+    "index_table": "data/monster-index.csv"
+  },
+  "weapon_usage": {
+    "type": "u16[15]",
+    "confidence": "CONFIRMED",
+    "alignment_warning": "bases are ODD addresses; arrays are not 2-byte aligned",
+    "venues": {
+      "village": { "offset": 2443027, "hex": "0x254713" },
+      "hub":     { "offset": 2443057, "hex": "0x254731" },
+      "arena":   { "offset": 2443087, "hex": "0x25474F" }
+    },
+    "all_tab": "computed at display time, not stored",
+    "semantics": "quests completed with that weapon, not hunts",
+    "storage_order": ["Great Sword","Sword and Shield","Hammer","Lance","Heavy Bowgun",
+                      "Light Bowgun","Long Sword","Switch Axe","Gunlance","Bow",
+                      "Dual Blades","Hunting Horn","Insect Glaive","Charge Blade","Prowler"],
+    "screen_order":  ["Great Sword","Long Sword","Sword and Shield","Dual Blades","Hammer",
+                      "Hunting Horn","Lance","Gunlance","Switch Axe","Charge Blade",
+                      "Insect Glaive","Light Bowgun","Heavy Bowgun","Bow","Prowler"],
+    "order_warning": "storage order differs from on-screen bar order"
+  },
+  "quests": {
+    "cleared_bitmap": { "offset": 1636608, "hex": "0x18F900", "length": 128, "bits": 1024,
+                        "confidence": "CONFIRMED",
+                        "note": "one bit per quest, set on first clear; deviant quests NOT tracked here; further blocks must exist beyond 0x18F980" },
+    "id_to_bit_mapping": "UNRESOLVED - linear mappings falsified; uses a compact internal slot index",
+    "history_log": { "offset": 2442967, "hex": "0x2546D7", "record_stride": 160,
+                     "fields": { "quest_id": { "offset": 0, "type": "u16" },
+                                 "name": { "offset": 2, "type": "UTF-16LE, null-terminated" } },
+                     "confidence": "DERIVED",
+                     "note": "remainder of each 0xA0 record UNRESOLVED" },
+    "counters": {
+      "quest_counter_a": { "offset": 1649386, "hex": "0x192AEA", "type": "u16", "confidence": "DERIVED" },
+      "quest_counter_b": { "offset": 2443118, "hex": "0x25476E", "type": "u16", "confidence": "DERIVED" }
+    },
+    "known_quest_ids": {
+      "0xA1C4": "Rustrazor Ceanataur G2",
+      "0xA228-0xA22C": "Soulseer Mizutsune G2..EX",
+      "0xA2F1-0xA2F4": "Elderfrost Gammoth G3..EX"
+    }
+  }
+}
