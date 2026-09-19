@@ -138,7 +138,7 @@
   "awards": {
     "earned": { "rel": "0xC8115", "slot1_abs": "0x254DB1", "size": 17, "bits": 132,
                 "bit_order": "LSB-first", "confidence": "CONFIRMED",
-                "note": "exact match of all six in-game award grids (74 bits set) + controlled write of bit 0 (Wycademy slot 1 appeared); '?' slots are computed, not stored; see docs/09-awards.md",
+                "note": "exact match of all six in-game award grids (74 bits set) + controlled write of bit 0 (Wycademy slot 1 appeared) + full write of bits 0-99,102-131 (every slot on all six grids lit);'?' slots are computed, not stored; see docs/09-awards.md",
                 "grids": { "0-29": "Wycademy", "30-54": "Bherna (slots 1-25)", "55-69": "Kokoto",
                            "70-84": "Pokke", "85-99": "Yukumo", "100-101": "UNRESOLVED, no visible effect; Bherna slot 26 is NOT here",
                            "102-131": "Soaratorium" } }

@@ -44,6 +44,15 @@ not plausible.
 in-game as *Bherna Chief's Ornamental Belt* ("completed all 1★ and 2★ Village
 Quests"), and no other award appeared or vanished. The bit was then cleared again.
 
+**Full-field write.** Setting bits 0–99 and 102–131 (bits 100–101 left as found)
+lit every slot on all six grids, with no empty or `?` slot left. This checks the
+layout for every slot, including those not earned in the analysed save:
+
+```
+before: 00e0ffe7697f90d1dffa67f5631e803f04   (74 bits)
+after:  ffffffffffffffffffffffffefffffff0f   (131 bits)
+```
+
 **`?` slots are computed, not stored.** Once bit 0 was set, Wycademy slots 2 and 3
 turned from empty to `?`. A `?` marks the next tier of an award series already
 started, so it follows from the earned bits and has no bit of its own. Wycademy
