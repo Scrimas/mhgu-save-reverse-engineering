@@ -4,6 +4,8 @@
 The rules in ../data/quest-unlock.csv are a transcription of the game script
 `script\\check_quest_unlocked` (see ../docs/05-quests.md). For every quest this
 prints whether the board would list it, and for locked quests what is missing.
+"rotated" = the rule holds but the quest is one of the 51 rotating quests and its
+bit at base+0x504B is clear.
 
 Usage:  quest_unlock.py [path/to/system] [quest_id ...]
 """
@@ -15,6 +17,7 @@ CLEARED   = 0x2C77          # quest bitmaps, index from quest-index.csv
 SEEN      = 0x2D77
 HUB_STAR  = 0x2C4DC         # u16, 1-13
 FLAGS     = 0x2C56D         # event flag bitmap
+ROTATION  = 0x504B          # u64, bit from rotating-quests.csv
 
 DATA = pathlib.Path(__file__).resolve().parent.parent / "data"
 
@@ -52,6 +55,8 @@ def main():
             return None if have >= int(n) else f"clear {int(n) - have} more of " + " ".join(qs)
         raise ValueError(pred)
 
+    rot = {int(r["quest_id"]): int(r["bit"]) for r in csv.DictReader(open(DATA / "rotating-quests.csv"))}
+
     print(f"HR {hr}, Hub star level {hub}")
     locked = 0
     for row in csv.DictReader(open(DATA / "quest-unlock.csv")):
@@ -64,12 +69,14 @@ def main():
         # alternatives are tried in order; the first one whose predicates all hold unlocks
         needs = [[m for m in map(missing, alt.split(" AND ")) if m] for alt in row["rule"].split(" OR ")]
         ok = any(not n for n in needs)
-        if ok and not want:
+        # rotating quests also need their bit; the game re-rolls it after each quest
+        out = ok and q in rot and not bit(ROTATION, rot[q])
+        if ok and not out and not want:
             continue
         locked += not ok
-        state = "unlocked" if ok else "LOCKED  "
+        state = "rotated " if out else "unlocked" if ok else "LOCKED  "
         seen = "seen" if bit(SEEN, index.get(q, 0)) else "    "
-        why = "" if ok else "  <- " + " | or ".join("; ".join(n) for n in needs)
+        why = "  <- rule holds, not in the current rotation" if out else "" if ok else "  <- " + " | or ".join("; ".join(n) for n in needs)
         print(f"{q:>8}  {state}  {seen}  {row['name']}{why}")
     if not want:
         print(f"{locked} quests locked")

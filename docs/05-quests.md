@@ -225,8 +225,17 @@ for Redhelm) or 10768.
    Yourself*, *Karma Chameleos* and *Empire of the Sun*. The last three are also in
    the rotating table below, and their bits (29–31) were set at the time.
 
-The `cleared`, `atleast`, `all`, `hr` and `hub_star` predicates rest on the code and
-on the consistency test. None of them has had a controlled write of its own.
+5. Controlled write of cleared bits: setting the cleared bit of *Misty Opportunity?*
+   (11404, `0x18F976` `0x4A → 0xCA`) made *Appeal from Authority* (11446) appear on the
+   G★4 list. Its rule is `all:… AND atleast:1:11404 AND hr:13`, and 11404 was the
+   only missing part.
+6. The same write set the cleared bit of *The White Brute* (619, `0x18F926`
+   `0x30 → 0x38`), the whole rule of *It's Electric* (618). 618 did **not** appear: it
+   is a rotating quest and its rotation bit was clear. Setting that bit (next
+   section) listed it. Rule and rotation are both required, as decoded.
+
+`hub_star` has had no controlled write of its own; it rests on the code and on the
+consistency test. `hr` was only part of the 11446 rule, where it already held.
 
 ### Script format
 
@@ -273,14 +282,24 @@ skip the script (`0x3b9870`: ID / 1 000 000 mod 10 = 1). Which archives get load
 
 ### Rotating quests — `base + 0x504B`
 
-**DERIVED.** A second filter applies to 51 quests held in a table in the executable
-(`0x162cde4`, 8 bytes each: quest ID, weight). Such a quest is listed only if its
-bit, the table index, is set in the u64 at `base + 0x504B` (file `0x191CE7`). The
-game re-rolls it in `0x54b1c4`. In the snapshots it changed after every completed
-quest and never otherwise. Entries 0–7 are the four village pairs 308/309, 319/320,
-324/325, 329/330, of which one each stays set. The rest are Hyper and other
-repeating hunts (10329–10333, 10641–10643, 10756–10761, 11316–11318, 11412–11417,
-11458–11460, …). A quest of this table needs its script rule **and** its bit.
+**CONFIRMED.** A second filter applies to 51 quests held in a table in the executable
+(`0x162cde4`, 8 bytes each: quest ID and a u32 parameter), listed in
+[`data/rotating-quests.csv`](../data/rotating-quests.csv). Such a quest is listed only
+if its bit, the table index, is set in the u64 at `base + 0x504B` (file `0x191CE7`).
+A quest of this table needs its script rule **and** its bit.
+
+The game re-rolls the field in `0x54b1c4`. In the snapshots it changed after every
+completed quest and never otherwise. Entries 0–7 are the four village pairs 308/309,
+319/320, 324/325, 329/330, of which one each stays set; 8/9 are 618/619. The rest are
+elder dragon and other repeating hunts (10329–10333, 10641–10643, 10756–10761,
+11316–11318, 11412–11417, 11458–11460, …). The low byte of the parameter is 100, 80,
+50, 40, 25 or 0, **DERIVED** to be the chance in percent; the other bytes are
+**UNRESOLVED**.
+
+Controlled write: with its rule satisfied, *It's Electric* (618, bit 8) stayed hidden
+while the bit was clear. Setting it (`0x191CE8` `0xBE → 0xBF`, both slots) listed the
+quest next to its partner 619. `tools/quest_unlock.py` reports such quests as
+`rotated`.
 
 ### Star levels — `base + 0x2C4DA`
 
@@ -389,7 +408,9 @@ To make a hidden quest appear, satisfy its rule from
 [`data/quest-unlock.csv`](../data/quest-unlock.csv): set the event flag, or the
 cleared bit of the prerequisite, or raise HR or the Hub star level.
 `tools/quest_unlock.py <save> <quest id>` prints what is missing. Flag rules are
-confirmed by two controlled writes (396 and 1059). The other predicates are not.
+confirmed by two controlled writes (396 and 1059), `cleared` / `all` / `atleast` by
+one (11404 → 11446, 619 → 618). A rotating quest also needs its bit at
+`base + 0x504B`, which lasts until the next completed quest.
 
 For a villager-request quest the flag is its **accepted** flag. Leave the completed
 flag alone: the NPC sets it, and hands over the reward, when the cleared quest is
@@ -454,8 +475,6 @@ the Guild Card statistics block rather than the quest system.
 - **UNRESOLVED — quest history record layout** beyond ID and name. The documented
   u16 ID cannot hold event IDs (≥ 1 000 000). Either the field is wider, or event
   quests log differently.
-- **Not yet tested — a controlled write for a `cleared` / `atleast` rule**, for
-  example the cleared bit of a deviant's base monster quest.
 - **UNRESOLVED — what raises the numeric star level.** The star-level *flags* are
   set by talk data once the level is reached, see
   [10](10-npc-talk.md#star-level-flags).

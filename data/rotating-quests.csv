@@ -1,0 +1,52 @@
+bit,quest_id,param_hex,name
+0,308,0x002C0164,Tumultuous Sprouts
+1,309,0x002C0264,Tumultuous Sprouts
+2,319,0x002F0164,Into the Wyvern's Den
+3,320,0x002F0264,Into the Wyvern's Den
+4,324,0x00330164,No Go on the Popo
+5,325,0x00330264,No Go on the Popo
+6,329,0x00310164,A Forest Fracas
+7,330,0x00310264,A Forest Fracas
+8,618,0x00090332,It's Electric
+9,619,0x00000432,The White Brute
+10,633,0x00000450,Advanced: Snowtal Recall
+11,634,0x00000450,Advanced: Invisible Thief
+12,635,0x00000450,Advanced: Teostra's Return
+13,10329,0x00000032,It's Electric
+14,10330,0x00000032,The White Brute
+15,10331,0x00000050,The Frozen Dictator
+16,10332,0x00000050,The Elder Dragon of Mist
+17,10333,0x00000050,Emperor of Flame
+18,10641,0x00000032,It's Electric
+19,10642,0x00000032,The White Brute
+20,10643,0x00000032,A Scenic Locale
+21,10756,0x00010528,The Frozen Dictator
+22,10757,0x00000528,Kushala Daora Strikes
+23,10758,0x00010528,The Elder Dragon of Mist
+24,10759,0x00000528,Beyond the Silence
+25,10760,0x00010528,Emperor of Flame
+26,10761,0x00000528,The Fires of Devastation
+27,915,0x00000032,Impossible Standards
+28,937,0x00000032,My Kirin for a Horse
+29,1009,0x00000050,Advanced: Steel Yourself
+30,1045,0x00000050,Advanced: Karma Chameleos
+31,1011,0x00000050,Advanced: Empire of the Sun
+32,11316,0x00000032,A Pinnacle Just for You
+33,11318,0x00000032,Reality or Fantasy?
+34,11317,0x00000032,The Phantom Beast!
+35,1005,0x00040700,Beware the Comet of Disaster
+36,1053,0x00000719,Beware the Comet of Disaster
+37,1022,0x00000719,The Baleful Comet
+38,1021,0x00000719,Turn That Frown Upside Down
+39,1020,0x00000719,An Almost-Certainly-Fine Comet
+40,11413,0x00010528,Steel Yourself
+41,11412,0x00000528,Blizzard Blower
+42,11414,0x00010528,Out of Thin Air
+43,11415,0x00000528,Into Thin Air
+44,11417,0x00010528,Sandblasting
+45,11416,0x00000528,Explosion Marks the Spot
+46,11401,0x00030719,Sky Render
+47,11459,0x00000719,Hunter Dojo: Valstrax-ryu
+48,11458,0x00000719,Supersonic
+49,11460,0x00000719,Scales of Justice
+50,730,0x00000600,Husk Hunter

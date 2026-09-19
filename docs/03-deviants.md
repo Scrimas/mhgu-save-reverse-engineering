@@ -177,8 +177,10 @@ level. **DERIVED.**
 
 ## Open questions
 
-- **Not yet tested — releasing the G-rank gate by a bitmap write** (rule known, see
-  above).
+- **Not yet tested on a deviant — releasing the G-rank gate by a bitmap write.** No
+  gate is locked in the analysed save. The predicate kinds the gate uses (`cleared`,
+  `atleast`) are confirmed by a controlled write on other quests, see
+  [05](05-quests.md#evidence).
 - **UNRESOLVED — deviant tally indices.** Only Rustrazor Ceanataur (121) and Soulseer
   Mizutsune (122) are placed in the monster tally array. The Gen deviants sit below
   index 105 adjacent to their base monsters — Redhelm at 49 next to Arzuros at 48,
