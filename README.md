@@ -34,8 +34,9 @@ they are portable.
 | [07 — Equipment](docs/07-equipment.md) | Character slots, equipment box, talismans, transmog, dye, My Sets |
 | [08 — Hunter Arts and Canteen](docs/08-progression.md) | Hunter Art unlocks, Canteen ingredients and dishes |
 | [09 — Awards](docs/09-awards.md) | Guild Card award bitfield |
+| [10 — NPC talk data](docs/10-npc-talk.md) | Talk tables: request offers, star-level flags, per-NPC bits |
 
-Machine-readable: [`data/monster-index.csv`](data/monster-index.csv), [`data/quest-index.csv`](data/quest-index.csv), [`data/request-index.csv`](data/request-index.csv), [`data/quest-unlock.csv`](data/quest-unlock.csv), [`data/hunter-arts.csv`](data/hunter-arts.csv), [`data/offsets.json`](data/offsets.json)
+Machine-readable: [`data/monster-index.csv`](data/monster-index.csv), [`data/quest-index.csv`](data/quest-index.csv), [`data/request-index.csv`](data/request-index.csv), [`data/quest-unlock.csv`](data/quest-unlock.csv), [`data/request-offer.csv`](data/request-offer.csv), [`data/hunter-arts.csv`](data/hunter-arts.csv), [`data/offsets.json`](data/offsets.json)
 
 ## Quick reference
 
@@ -47,6 +48,8 @@ Machine-readable: [`data/monster-index.csv`](data/monster-index.csv), [`data/que
 | Quests seen (NEW cleared) | `base + 0x2D77` | same indexing, `+0x100` bytes |
 | Villager request flags | `base + 0x2C56D` | 1536-bit event flag map; per-request accepted/completed bits in [`request-index.csv`](data/request-index.csv). Accepted = quest posted on the board |
 | Quest unlock rules | script, not a save field | the board runs `script\check_quest_unlocked` per quest; it reads event flags, cleared bits, HR and the Hub star level. Rules in [`quest-unlock.csv`](data/quest-unlock.csv), evaluator [`tools/quest_unlock.py`](tools/quest_unlock.py) |
+| Request offer conditions | talk data, not a save field | per-NPC tables `table/npc/script/npc_NNN_td.ntd`; conditions in [`request-offer.csv`](data/request-offer.csv), evaluator [`tools/request_offer.py`](tools/request_offer.py) |
+| Per-NPC talk hold bits | `base + 0x2C62D` | 3 × 24 bytes after the event flags, bit = NPC name index. Set = NPC skips request offers / kind 9 talk / announcements until the next quest (DERIVED), see [10](docs/10-npc-talk.md) |
 | Village / Hub star level | `base + 0x2C4DA` / `+0x2C4DC` | u16 each, 1–10 / 1–13 |
 | Deviant levels (cleared) | bit `0x18F989`.3 | quest indices 947–1174 (Special Permit), 228 bits |
 | Deviant levels (seen) | bit `0x18FA89`.3 | same layout, `+0x100` bytes |

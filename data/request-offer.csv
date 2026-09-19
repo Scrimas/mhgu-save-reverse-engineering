@@ -1,0 +1,186 @@
+index,quest_id,quest_name,npc_file,npc_bit,npc_name,talk_kind,talk_line,accept_flag,offer
+0,208,On the Rebound,20,14,Reliable Villager,8,0,300,village_star:2
+1,336,Moofah Must-haves,20,14,Reliable Villager,8,12,302,village_star:3 AND flag:301
+2,629,Advanced: The Goliaths,20,14,Reliable Villager,8,28,304,village_star:6 AND flag:303 AND cleared:10710
+3,341,Travelers in Trouble,2,1,Bherna Gal,8,119,306,village_star:3 AND flag:16
+4,406,A Unique Cuppa,2,1,Bherna Gal,8,129,308,village_star:4 AND flag:307 AND flag:25
+5,10651,Woe Malfestio,2,1,Bherna Gal,8,146,310,flag:309 AND cond64:0:0
+6,310,Fishy Favor,26,20,Cheeko Sands Chief,8,0,312,village_star:3
+7,420,Hunt-a-thon: Daimyo Hermitaur,26,20,Cheeko Sands Chief,8,16,314,village_star:4 AND flag:313
+8,407,Hunt-a-thon: Gendrome,41,22,Caravaneer,8,5,316,village_star:4
+9,632,Advanced: Nothing is Sacred,41,22,Caravaneer,8,19,318,flag:317 AND hr:7
+10,10739,Primal Forest Defense,41,22,Caravaneer,8,32,320,flag:319 AND cond64:0:0
+11,10421,So Notable: Great Maccao,46,27,Guildmarm,8,6,322,hub_star:4
+12,10506,So Notable: Kecha Wacha,46,27,Guildmarm,8,21,324,hub_star:5 AND flag:323
+13,10706,So Notable: Seregios,46,27,Guildmarm,8,31,326,hub_star:7 AND flag:325
+14,10604,Watch Your Steppe,42,23,Ace Commander,8,11,328,cond30:0:0 AND cond31:0:0
+15,10723,Putting the Gore in Magala,42,23,Ace Commander,8,22,330,flag:329 AND cond64:0:0 AND cond30:0:0 AND cond31:0:0
+16,10529,Twin Velocidrome,45,26,Ace Cadet,8,0,332,
+17,220,Slay the Velociprey!,101,36,Kokoto Chief,4,0,336,village_star:2 AND notflag:150
+18,219,Hunt Down the Velocidrome!,101,36,Kokoto Chief,4,16,338,notflag:152 AND flag:151
+19,318,Local Threat,101,36,Kokoto Chief,4,25,340,village_star:3 AND notflag:154 AND flag:153
+20,319,Into the Wyvern's Den,101,36,Kokoto Chief,4,35,342,notflag:156 AND flag:155
+21,504,The Thunderclaw Wyvern,101,36,Kokoto Chief,4,47,344,village_star:5 AND notflag:158 AND flag:157
+23,,,102,37,Kokoto Gal,8,65,348,village_star:5
+24,10726,A Fiery Temper,127,52,Minegarde Sweetheart,8,4,350,hub_star:7 AND flag:349 AND cond64:0:0
+25,306,Jurassic Treasure: The Frog,126,51,Treshi,8,8,360,village_star:3
+26,404,Jurassic Treasure: The Bug,126,51,Treshi,8,19,362,flag:361 AND cleared:425 AND npc_idle:126
+27,623,Advanced: Jurassic Treasure,126,51,Treshi,8,31,364,village_star:6 AND hr:7 AND flag:363 AND npc_idle:126
+28,625,Advanced: Invoking Rath,129,54,Red Hell Hunter,8,35,372,village_star:6 AND flag:128 AND cond64:0:0
+28,625,Advanced: Invoking Rath,130,55,Black Hell Hunter,8,35,372,village_star:6 AND flag:128 AND cond64:0:0
+29,624,Advanced: Sly Swooper,131,56,Dundorma Guardsman,8,8,374,village_star:6 AND hr:5
+30,634,Advanced: Invisible Thief,131,56,Dundorma Guardsman,8,17,376,hr:9 AND flag:375
+31,10426,Delicious White Livers,132,57,Cathar Elder,8,0,378,
+32,10115,Ingredient Hunter,47,28,Street Cook,8,0,380,village_star:2
+33,,,50,31,Lil Miss Forge,8,9,382,hub_star:4 AND cond31:0:0
+34,10650,The Coal Still Burns,50,31,Lil Miss Forge,8,16,384,flag:383 AND cond64:0:0 AND cond31:0:0
+35,10649,Triple Toady Terror,336,103,Harth Chief,8,7,386,village_star:3 AND flag:385 AND cond64:0:0
+36,514,Hunt-a-thon: Gypceros,51,32,Wycoon,8,7,388,village_star:5
+37,10305,Fossilized Memories,51,32,Wycoon,8,16,390,hub_star:3 AND flag:389
+38,10530,The New Tenant,51,32,Wycoon,8,25,392,hub_star:5 AND flag:391
+39,10220,Ahoy! Royal Ludroth!,52,33,Argosy Captain,8,9,394,hub_star:2
+40,607,The Perilous Pair,52,33,Argosy Captain,8,29,396,village_star:6 AND flag:395
+41,,,52,33,Argosy Captain,8,45,398,hub_star:5 AND flag:397
+42,10732,Into the Maelstrom,52,33,Argosy Captain,8,64,400,hub_star:7 AND cond64:0:0 AND flag:399
+43,225,Slay the Giaprey!,201,58,Pokke Chief,4,0,402,village_star:2 AND notflag:200
+44,224,The Mountain Roughrider,201,58,Pokke Chief,4,16,404,notflag:202 AND flag:201
+45,323,The Shadow in the Mountains,201,58,Pokke Chief,4,25,406,village_star:3 AND notflag:204 AND flag:203
+46,324,No Go on the Popo,201,58,Pokke Chief,4,33,408,notflag:206 AND flag:205
+47,508,The Unwavering Colossus,201,58,Pokke Chief,4,42,410,village_star:5 AND notflag:208 AND flag:207
+48,640,Advanced: The Golden Pair,201,58,Pokke Chief,8,60,412,village_star:6 AND notflag:210 AND cond121:0:0 AND cond69:0:1500
+49,,,202,59,Pokke Gal,8,66,414,village_star:5
+50,10623,Bl-Bl-Blangongas!,229,76,Jumbo Sweetheart,8,0,416,hub_star:6 AND flag:415
+51,314,Cancer of the Dunes,225,72,Trenya,8,5,418,village_star:3
+52,412,Hunt-a-thon: Velocidrome,225,72,Trenya,8,14,420,village_star:4 AND flag:419 AND npc_idle:225
+53,615,Drawing the Waterline,225,72,Trenya,8,24,422,village_star:6 AND flag:421 AND npc_idle:225
+54,10664,The Magma's Rage,226,73,Felcote,8,6,424,hub_star:6 AND cond64:0:0 AND hr:8 AND npc_idle:226
+55,10724,"Tigrex, Tigrex, Burning Bright",226,73,Felcote,8,15,426,hr:8 AND flag:425 AND cond64:0:0 AND npc_idle:226
+56,626,Advanced: Seismic Scares,226,73,Felcote,8,24,428,village_star:6 AND hr:8 AND flag:427 AND npc_idle:226
+57,10524,Nargacuga Throwdown,228,75,Pokke Sweetheart,8,0,430,
+58,10317,Fro Shizzle,230,77,Funky Felyne,8,6,432,hub_star:3
+59,10124,The Ingredient of Legend,48,29,Itinerant Cook,8,0,434,
+60,608,The Hero's Journey,231,78,Armory Granny,8,18,542,flag:786 AND npc_idle:231 AND cleared:605
+61,,,231,78,Armory Granny,8,40,436,hub_star:7 AND flag:543 AND npc_idle:231
+62,635,Advanced: Teostra's Return,231,78,Armory Granny,8,59,438,village_star:6 AND flag:437 AND hr:9 AND npc_idle:231
+63,10432,Clash of Rivals,53,34,Cha-Cha,8,10,440,hub_star:4 AND cond30:0:0
+64,10665,Minion Audition Imposition,53,34,Cha-Cha,8,29,442,flag:441 AND cond30:0:0 AND cond64:0:0
+65,10743,Show Me Your Shaka-Strength,53,34,Cha-Cha,8,47,444,hub_star:7 AND flag:443 AND cond30:0:0
+66,230,Bye Bye Jaggia,301,79,Yukumo Chief,4,0,446,village_star:2 AND notflag:250
+67,229,Arzuros the Azure Beast,301,79,Yukumo Chief,4,16,448,village_star:2 AND notflag:252 AND flag:251
+68,328,Royal Spit Take,301,79,Yukumo Chief,4,28,450,village_star:3 AND notflag:254 AND flag:253
+69,329,A Forest Fracas,301,79,Yukumo Chief,4,37,452,village_star:3 AND notflag:256 AND flag:255
+70,510,The Entrancing Water Dancer,301,79,Yukumo Chief,4,47,454,village_star:5 AND notflag:258 AND flag:257
+71,641,Advanced: Out of the Fry Pan,301,79,Yukumo Chief,8,62,456,village_star:6 AND notflag:260 AND cond121:0:0 AND cond70:0:1500
+72,507,Hunt-a-thon: Khezu,302,80,Yukumo Gal,8,67,458,village_star:5
+73,10711,The Yukumo Gal Special,325,92,Yukumo Sweetheart,8,6,460,hub_star:7 AND flag:459
+74,,,307,85,Palico Armory,8,4,462,village_star:3
+75,10213,Finishing the Job,307,85,Palico Armory,8,15,464,hub_star:2 AND flag:463
+76,10712,Repaying the Favor,307,85,Palico Armory,8,21,466,hub_star:7 AND flag:465
+77,10735,The Wolf and the Footbath,323,90,Bath Cattendant,8,19,468,hr:8 AND footbath AND cond64:0:0
+78,10737,Steam and Smoke,323,90,Bath Cattendant,8,37,470,flag:469 AND cond113:0:0 AND footbath AND npc_idle:323
+79,10742,Searching for Secret Baths,323,90,Bath Cattendant,8,54,472,flag:471 AND cond114:0:0 AND footbath AND npc_idle:323
+80,331,Royal Honey Hunt,327,94,Head Moga Farmer,8,6,474,village_star:3 AND npc_idle:327
+81,416,Royal Pains,327,94,Head Moga Farmer,8,20,476,village_star:4 AND flag:475 AND npc_idle:327
+82,509,Lagiacrus Fuss,327,94,Head Moga Farmer,8,32,478,flag:477 AND cleared:511 AND npc_idle:327
+83,,,328,95,Moga Chief's Son,8,0,480,village_star:2
+84,418,Island Menace,328,95,Moga Chief's Son,8,16,482,village_star:4 AND flag:481
+85,10313,Lagiacrushed,328,95,Moga Chief's Son,8,29,484,hub_star:3 AND flag:483
+86,10315,Isle About that Bass,328,95,Moga Chief's Son,8,41,486,hub_star:3 AND flag:485
+87,,,329,96,Fishmongress,8,0,488,village_star:2
+88,335,The Fungus Among Us,330,97,Moga Sweetheart,8,0,490,
+89,10532,Awful Guest,330,97,Moga Sweetheart,8,21,492,hub_star:5 AND flag:491
+90,10519,Liver and Let Die,332,99,Tanzia Sweetheart,8,9,494,hub_star:5
+91,622,Advanced: Fungus Fetchin',332,99,Tanzia Sweetheart,8,35,496,village_star:6 AND flag:495
+92,,,334,101,Captain Tool,8,0,498,village_star:2
+93,609,The Bellowing Zinogre,335,102,Uppity Instructor,8,8,500,village_star:6 AND cleared:603
+94,233,Sunsnug Sprout Courier,337,104,Headwhiskress,8,0,502,village_star:2
+95,338,Sunsnug Isle Rescue!,337,104,Headwhiskress,8,15,504,flag:503 AND cleared:303
+96,333,The Crabbiest Catch,420,105,Moga Chief,8,10,506,cleared:311 AND footbath
+97,,,40,21,Jumbo Chief,8,0,508,
+98,633,Advanced: Snowtal Recall,40,21,Jumbo Chief,8,14,510,village_star:6 AND hr:9 AND flag:509
+99,10214,Fresh is Best,422,107,Village Grocer,8,2,512,footbath
+100,,,423,108,The Combinator,8,12,514,footbath
+101,10653,Nibeling on Apples,424,109,Master Tool,8,7,516,footbath AND cond64:0:0
+102,10656,The Plesioth Adventure,425,110,Master Shipwright,8,12,518,footbath AND cond64:0:0
+103,417,Peddling Practice,426,111,Spittle-ful Girl,8,2,520,footbath
+104,512,Island Heat,427,112,Tubular Tabby,8,8,522,footbath AND cleared:516
+105,327,For Whom the Egg Yolks,428,113,Loc Lac Guide,8,12,524,village_star:3 AND footbath
+106,628,Advanced: Seltas Queen,128,53,Val Habar Master,8,0,526,
+107,630,Advanced: Barrage of Blue,227,74,Pokke Manager,8,6,530,hub_star:6 AND flag:527 AND flag:701
+108,631,Advanced: Seeing Red,227,74,Pokke Manager,8,19,532,hub_star:6 AND flag:531
+109,627,Advanced: Twinkle Toes,331,98,Tanzia Port Boss,8,7,534,flag:533 AND footbath
+110,10744,The Marshlands Nightmare,324,91,Yukumo Manager,8,6,528,hub_star:7 AND flag:535 AND cond64:0:0
+111,10741,The Descending Fog,421,106,Minegarde Hermit,8,11,536,flag:529 AND hr:8 AND footbath
+112,10755,Triumphant Rage,333,100,Loc Lac Chief,8,5,538,flag:537
+113,10740,The End of the Trials,128,53,Val Habar Master,8,13,540,flag:539
+114,10540,Desert Brawlers,326,93,Wyverian Artisan,8,5,544,hub_star:5 AND flag:543
+115,10631,Coal Hearted,305,83,Yukumo Smithy,8,3,546,hub_star:6 AND flag:545
+116,10709,The Hapless Bodyguard,5,4,Manvil Smithy,8,67,548,hub_star:7 AND flag:547 AND cond64:0:0
+118,10736,The Thieving Gypceros,5,4,Manvil Smithy,8,114,552,flag:877 AND cond30:0:0 AND npc_idle:4
+119,107,Another Pack Attack,613,125,Meowstress,4,3,554,flag:5 AND notflag:6
+120,,,701,154,Wyventurer,8,407,1270,village_star:10 AND cleared:1002
+121,924,Flappy Pest,702,155,Soaratorium Gal,8,237,1272,village_star:9 AND cleared:910 AND cleared:908 AND cleared:909 AND cleared:907 AND cleared:916
+122,11469,The Ol' Razzle Dazzle,714,165,Tanzia Arena Gal,8,37,1274,hub_star:12 AND flag:1415
+123,833,The Furtilizer That Time Furgot,722,173,Moga Farm Felyne,8,33,1276,village_star:8
+124,11110,Pleasantly Sozzled,720,171,Furtive Felyne,8,43,1278,hub_star:9 AND cleared:11109
+125,936,Sky Tribe: Rice to the Occasion,718,169,Redspear Hunter,8,48,1280,village_star:9
+126,11210,Sky Tribe: Savior of the Skyway,719,170,Blackspear Hunter,8,89,1282,hub_star:10 AND flag:1281 AND cond31:0:0
+127,913,Earn Your Gear,721,172,Tanzia Gong Girl,8,36,1284,village_star:9 AND cleared:905
+128,11213,Earn Your Strength,721,172,Tanzia Gong Girl,8,49,1286,hub_star:10 AND flag:1285
+129,813,The Perils of Commerce,613,125,Meowstress,8,162,1288,village_star:8
+130,11124,After That Bird!,613,125,Meowstress,8,178,1290,hub_star:9 AND flag:1289 AND cleared:11109
+131,11329,Sweets for My Sweets,805,182,Mewstress,8,126,1292,hub_star:11 OR flag:1289 OR group_done:11 OR cleared:11206 OR cleared:11235
+132,1051,Advanced: Jurassic Pair,1,0,Bherna Chief,8,315,1294,village_star:10 AND cond65:0:0 AND cleared:1039
+133,11239,Commission: Basarios,43,24,Ace Lancer,8,46,1296,hub_star:10
+134,11244,Commission: Hyper Kecha Wacha,43,24,Ace Lancer,8,63,1298,hub_star:10 OR flag:1297 OR group_done:10 OR cleared:11127 OR cleared:11107
+135,11207,Through Thick and Fin,125,50,Resting Hunter,8,72,1300,hub_star:10 AND cond140:0:0
+135,11207,Through Thick and Fin,125,50,Resting Hunter,8,91,1300,hub_star:10
+136,,,805,182,Mewstress,8,122,1302,village_star:7 AND hub_star:9 AND flag:1071 AND flag:1206
+137,11303,Uragaan Grief,621,127,d'Artanyan,8,73,1304,hub_star:11 AND cleared:11313 AND flag:240
+138,11352,PR Disaster,2,1,Bherna Gal,8,380,1306,hub_star:11 AND flag:311
+139,11349,Hunt-a-Thon: Gravios,41,22,Caravaneer,8,75,1308,hub_star:11 AND flag:321 AND cleared:11313
+140,11242,So Notable: Hyper Hermitaur,46,27,Guildmarm,8,76,1310,hub_star:10 AND flag:327 AND group_done:10 AND cleared:11113
+141,11216,Face-off in the Jungle,42,23,Ace Commander,8,73,1312,hub_star:10 AND flag:331 AND cond30:0:0 AND cond31:0:0
+142,11482,Primal Screams,42,23,Ace Commander,8,91,1314,hub_star:12 AND flag:1313 AND cond30:0:0 AND cond31:0:0 AND hr:35
+143,11211,Share the Load (and the Reward),45,26,Ace Cadet,8,50,1316,hub_star:10 AND flag:333
+144,1040,Advanced: Ranging Rathalos,101,36,Kokoto Chief,8,178,1318,village_star:10 AND flag:159 AND hr:12 AND cleared:1039
+145,933,Interruption: Eggstra Delivery,127,52,Minegarde Sweetheart,8,53,1320,village_star:9 AND flag:351 AND cleared:905
+146,,,102,37,Kokoto Gal,8,277,1322,hub_star:10 AND flag:1321 AND cleared:11205
+147,11238,Interruption: Conga Line,127,52,Minegarde Sweetheart,8,63,1324,hub_star:10 AND flag:1323
+148,11206,Treasure Pinnacle: Rice,126,51,Treshi,8,74,1326,hub_star:10 AND flag:365 AND cleared:11209 AND cleared:11209
+149,914,Fearful Symmetry,129,54,Red Hell Hunter,8,128,1328,village_star:9
+149,914,Fearful Symmetry,130,55,Black Hell Hunter,8,128,1328,village_star:9
+150,11214,Feeling Generally Crabby,129,54,Red Hell Hunter,8,143,1330,hub_star:10 AND flag:1329
+150,11214,Feeling Generally Crabby,130,55,Black Hell Hunter,8,143,1330,hub_star:10 AND flag:1329
+151,11129,The Bird Who Wood Be King,131,56,Dundorma Guardsman,8,58,1332,hub_star:9 AND flag:377
+152,11445,Seregios Exposé,716,167,Elder Hall Minister,8,36,1334,hub_star:12 OR flag:1333 OR cond65:0:0 OR cleared:11403 OR cleared:11463
+153,935,Snowball Skirmish,47,28,Street Cook,8,49,1336,village_star:9 AND flag:381
+154,11233,Please Plesioth Me!,47,28,Street Cook,8,65,1342,hub_star:10 AND flag:1337
+155,818,"It's Not Uragaan's, It's Mine!",50,31,Lil Miss Forge,8,57,1338,village_star:8 AND flag:385 AND cond31:0:0 AND cleared:809 AND cleared:814 AND cleared:811
+156,1031,Deviljho Dispossession,51,32,Wycoon,8,67,1340,village_star:10 AND cleared:1001
+157,1041,Advanced: Roaring in the Ridge,201,58,Pokke Chief,8,156,1344,village_star:10 AND cond65:0:0 AND cleared:1039
+158,1052,Advanced: Quarrel Quelling,202,59,Pokke Gal,8,281,1346,village_star:10 AND cond65:0:0 AND flag:417 AND cleared:1039
+159,11424,Polar Peril,226,73,Felcote,8,77,1348,hub_star:12 AND flag:429 AND hr:60
+160,11249,Afro Soul Is a Way of Life,230,77,Funky Felyne,8,44,1350,hub_star:10 AND flag:433 AND cleared:11205
+161,11113,Daimyo Hermitaur Flambé,48,29,Itinerant Cook,8,54,1352,hub_star:9 AND flag:435
+162,11366,Material Old Girl,231,78,Armory Granny,8,103,1354,hub_star:3 AND flag:439 AND group_done:11 AND cleared:11328 AND cleared:11338
+163,11471,Fiery Four-way Fracas,717,168,Legendary Artisan,8,37,1356,hub_star:12 AND flag:1355 AND flag:1415
+164,11241,Minion's Devotion,53,34,Cha-Cha,8,122,1358,hub_star:10 AND flag:445 AND cleared:11209
+165,11365,Arena Bakalaka-Battle! Woo!,53,34,Cha-Cha,8,139,1360,hub_star:11 AND flag:1359 AND cleared:11310
+166,1042,Advanced: Moonlight Zinogre,301,79,Yukumo Chief,8,153,1362,village_star:10 AND hr:12 AND cleared:1039
+167,11116,Sweetheart's Pick: Lofty Ludroth,325,92,Yukumo Sweetheart,8,63,1364,hub_star:9 AND flag:461 AND cleared:11109
+168,11215,A Coil to Arms,302,80,Yukumo Gal,8,287,1366,hub_star:10 AND flag:1365 AND cleared:11209
+169,11355,Howl at the Moon,307,85,Palico Armory,8,77,1368,hub_star:11 AND flag:715 AND cleared:11310
+170,11208,Chilled to the Marrow,323,90,Bath Cattendant,8,118,1370,hub_star:10 AND flag:473 AND footbath AND cleared:11205
+171,925,Pheromone Moans,327,94,Head Moga Farmer,8,89,1372,village_star:9 AND flag:479 AND cleared:905
+172,11478,Zinogre-enthusiasm,328,95,Moga Chief's Son,8,106,1374,hub_star:12 OR flag:487 OR cond65:0:0 OR cleared:11308 OR cleared:11355 OR cleared:11308 OR cleared:11355
+173,11104,Riverside Rumble,329,96,Fishmongress,8,39,1376,hub_star:9 AND flag:489 AND cleared:11130
+174,11353,I Hope It's Not Barioth Flavored,330,97,Moga Sweetheart,8,75,1378,hub_star:11 AND flag:493 AND cleared:11310
+175,,,332,99,Tanzia Sweetheart,8,81,1380,hub_star:11 AND flag:497
+176,11449,Even Brachydios Need A Holiday,420,105,Moga Chief,8,62,1382,hub_star:12 OR flag:507 OR footbath OR cond65:0:0 OR cleared:11407 OR cleared:11466
+177,736,Season's Eatings,422,107,Village Grocer,8,42,1384,village_star:7 AND footbath AND flag:513 AND cleared:716
+178,11224,The Legend of King Apple,424,109,Master Tool,8,47,1386,hub_star:10 AND flag:517 AND footbath
+179,11470,Quest of Friendship,128,53,Val Habar Master,8,51,1388,hub_star:12 AND flag:541 AND flag:1415
+180,11480,Arena Allegiances,333,100,Loc Lac Chief,8,50,1390,hub_star:12 AND flag:1389 AND cond65:0:0 AND flag:940
+181,11479,Arctic Ridge Allegiances,227,74,Pokke Manager,8,68,1392,hub_star:12 AND flag:1391 AND cond65:0:0 AND flag:940
+182,11436,Seeking the Sea King,326,93,Wyverian Artisan,8,50,1394,hub_star:12 OR flag:545 OR cond65:0:0 OR cleared:11344 OR cleared:11307

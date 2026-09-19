@@ -257,6 +257,8 @@ other control flow.
 | `0x52 [WORK2] 0`, `0x50 [WORK2] [WORK1]` | `WORK2 = 0`, `WORK2 += WORK1`: counts cleared quests |
 | `0xA1 a b`, `0xA7 a b` | require a = b, a ≥ b. On failure the script returns 0 |
 | `0x16 [HR] N` | if HR < N, skip to the next `0x26` (an alternative body) |
+| `0x31 N`, `0x32 N` | set / clear event flag N. Not in this script; used by `script\debug_flag_control` |
+| `0x33 Q` | mark quest Q cleared. Same |
 | `0x03` | return 1 |
 | `0x02` | end of section, return −1: not in the script, treated as locked |
 
@@ -290,7 +292,11 @@ repeating hunts (10329–10333, 10641–10643, 10756–10761, 11316–11318, 114
 They are fields `+0x3e0` / `+0x3e2` of the object serialized by `0x507e20`, the
 block just before the event flags (149 bytes from `base + 0x2C4D8`; it also holds
 four 32-byte pet names). The Hub value is **CONFIRMED** by the consistency test
-above, the Village value is **DERIVED** from the code that compares it to 1–10.
+above. The Village value is **CONFIRMED** the same way by the talk data: the
+request offer blocks test it (`village_star` in
+[`request-offer.csv`](../data/request-offer.csv)) and all accepted requests agree. The
+talk data also sets the star-level flags from these two numbers, see
+[10](10-npc-talk.md#star-level-flags).
 
 ## Villager requests — `table/activityData.atd`
 
@@ -320,7 +326,7 @@ Bherna and in Kokoto, and it was absent from both.
 | Field | Offset | File offset | Size | Status |
 |---|---|---|---|---|
 | Event flag bitmap | `base + 0x2C56D` | `0x1B9209` | 192 bytes, 1536 bits, LSB-first | CONFIRMED |
-| Three more maps | `base + 0x2C62D` | `0x1B92C9` | 3 × 24 bytes | UNRESOLVED |
+| Per-NPC bits A / B / C | `base + 0x2C62D` | `0x1B92C9` | 3 × 24 bytes, one bit per NPC: on hold for request offers / kind 9 talk / story announcements. See [10](10-npc-talk.md#per-npc-bits--base--0x2c62d) | DERIVED |
 | Two u32 | `base + 0x2C675` | `0x1B9311` | 8 bytes, change on every save (RNG-like) | UNRESOLVED |
 
 The block is one object of the game (flags at `+0x500`, serializer `0x240ce4`). Each
@@ -339,7 +345,9 @@ so take them from [`data/request-index.csv`](../data/request-index.csv).
    exception, accepted but never hovered), completed ⇒ cleared. This offset is the
    only byte-aligned one in the character block with zero violations.
 2. Reporting *Ahoy! Royal Ludroth!* (10220) to the Argosy Captain set exactly bit
-   395, its completed flag, plus three unrelated flags (41, 796, 1569).
+   395, its completed flag, plus 41, 796 and "1569". The talk data explains two of
+   them: 796 is set by the next line of the same conversation, and 1569 is past the
+   end of this map, it is bit 33 (the Captain) of per-NPC map A.
 3. Controlled write: setting bit 396 alone (`0x1B923A` `0x0C → 0x1C`, both slots)
    made *The Perilous Pair* (607) appear on the Kokoto ★6 board. Hovering it then
    set its seen bit as usual.
@@ -362,12 +370,14 @@ Other flags those steps changed, meaning **UNRESOLVED**. The quest block seriali
 of the same two maps and bit 14 of the 8-byte words at `base + 0x2F9F` / `+0x2FA7`.
 Such fields come in pairs, a state word and a copy that drives a one-time notice.
 
-**UNRESOLVED — what makes an NPC offer a request.** No code sets the accepted flag
-from the request record: none of the 43 callers of the flag setter `0x244f14` reads
-it. The setter is reached from the NPC talk script interpreter (`0x3d2e1c`, flag
-index taken from script data), and conditions go through the jump-table evaluator
-at `0x2451f8`. The offer condition therefore lives in the talk scripts, not in
-`activityData.atd`. `record + 0x31` (u16, mostly 0, 500 on some) is unexplained.
+**What makes an NPC offer a request** is in the NPC's talk data, see
+[10 — NPC talk data](10-npc-talk.md) and [`data/request-offer.csv`](../data/request-offer.csv).
+The Captain offers 607 when the Village star level is ≥ 6 and flag 395 is set, which
+is 10220 **reported** to him. The report also puts him on hold (per-NPC map A) until
+the next quest, so in that session he had nothing to offer. No code sets the accepted
+flag from the request record: the talk action does (`0x247a00`), and conditions go
+through the evaluator `0x2451c8`. `record + 0x31` (u16, mostly 0, 500 on some) is
+unexplained.
 
 ### Editing
 
@@ -446,12 +456,10 @@ the Guild Card statistics block rather than the quest system.
   quests log differently.
 - **Not yet tested — a controlled write for a `cleared` / `atleast` rule**, for
   example the cleared bit of a deviant's base monster quest.
-- **UNRESOLVED — who sets the star-level flags** and what else changes with them.
-- **UNRESOLVED — the NPC offer condition** for villager requests (talk scripts).
-- **UNRESOLVED — the event flags that no unlock rule or request uses**, and the three
-  24-byte maps after the bitmap. `script\related_flag_control` in the same archive
-  and `script\debug_flag_control` in `arc/debug/dbgResident.arc` use the same script
-  format and have not been read.
+- **UNRESOLVED — what raises the numeric star level.** The star-level *flags* are
+  set by talk data once the level is reached, see
+  [10](10-npc-talk.md#star-level-flags).
+- **UNRESOLVED — the event flags that no unlock rule, request or talk line uses.**
 - **UNRESOLVED — `questData+0x11` values 1–4** versus 5–8.
 
 ## A caution on bulk edits
