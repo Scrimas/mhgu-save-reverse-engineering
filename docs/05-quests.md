@@ -38,9 +38,11 @@ The resource layout:
 0x04  u32   entry count (1509)
 0x08  entry[count], 7 bytes each, packed:
         +0  u32  quest ID (entry 0 = 0, the placeholder)
-        +4  u8   group (0 = regular, 1-40 = unlock chains, 127 event Hub,
-                 128 event Arena, 129 Prowler); DERIVED from the distribution only
-        +5  u8   almost always 0
+        +4  u8   group: 0 = regular, 1-10 = key quests of Village ★1-★10,
+                 11-17 = key quests of Hub ★1-★7, 19-22 = G★1-G★4, 25-46 = urgents,
+                 47-86 = twin quests in pairs (47/48, 49/50, ...), 127 event Hub,
+                 128 event Arena, 129 Prowler
+        +5  u8   alternative set inside a key group (quests sharing a value count once)
         +6  u8   0/1, meaning UNRESOLVED
 ```
 
@@ -49,6 +51,12 @@ pointer and a quest ID. It linearly searches the loaded list from index 1 for th
 and tests `bitmap[index]`. An ID that is not found falls back to index 0. The setters
 for the seen bitmap (`0x523E44`) and the third bitmap (`0x526B98`) address it as
 `cleared + 0x100` and `cleared + 0x200`, using the same index.
+
+The group byte is read by the key-quest counters `0x3b1964` / `0x3b1a18` (Village,
+groups 1–10) and `0x3b1d70` (Hub, groups 11–23), which count total and cleared
+quests of one group. For groups 47–86 the cleared setter (`0x523f30` via `0x526a38`)
+also sets the partner quest of the pair (group ± 1), e.g. 308 ↔ 309. The urgent
+range is **DERIVED** from its members only.
 
 The list is identical in the base game and the v1.4 update.
 
@@ -149,6 +157,134 @@ village field of the request table below.
 Almost every quest with a value of 1–8 is a villager request. It appears only after
 the request has been accepted, and only on that village's board.
 
+## Board visibility — `script\check_quest_unlocked`
+
+**CONFIRMED.** Whether a board lists a quest is not stored per quest. Each time a
+list is built the game runs a script with the quest ID and shows the quest only if
+the script returns 1. The script reads state that *is* in the save: the
+[event flags](#request-flags--base--0x2c56d), the cleared bitmap, HR and the Hub
+star level. The full rule table is
+[`data/quest-unlock.csv`](../data/quest-unlock.csv), and
+[`tools/quest_unlock.py`](../tools/quest_unlock.py) evaluates it against a save and
+prints what each locked quest is missing.
+
+The script is the resource `script\check_quest_unlocked` (type `rCommonScript`) in
+`loc/arc/village/common.arc`. It is byte-identical in the base game and v1.4.
+
+### Rule syntax in the CSV
+
+All predicates of a rule must hold (`AND`).
+
+| Predicate | Meaning | Save field |
+|---|---|---|
+| `flag:N` | event flag N is set | bit N of `base + 0x2C56D` |
+| `cleared:Q` | quest Q is cleared | cleared bitmap |
+| `atleast:K:Q1\|Q2…` | at least K of the listed quests are cleared | cleared bitmap |
+| `all:Q1\|Q2…` | all listed quests are cleared (the key quests of one Hub level, `quest_group` group 11–22) | cleared bitmap |
+| `hr:N` | HR ≥ N | u16 `base + 0x28` |
+| `hub_star:N` | Hub star level ≥ N | u16 `base + 0x2C4DC` |
+| `always` | no condition | |
+| *(empty)* | event quest (ID ≥ 1 000 000): not in the script, listed whenever it is installed | |
+
+How the 1302 rules split: 762 quests need one event flag, 293 one cleared quest, 122
+an `atleast`, 118 nothing, 96 an HR, 37 a full key-quest set, 25 a Hub star level.
+
+The flags that open a whole star level:
+
+| Board | Flags, in star order |
+|---|---|
+| Village ★1–★6 | 4, 12, 16, 25, 29, 34 |
+| Village ★7–★10 | 1008 (+1069, 1070), 1025 (+1029), 1035 (+1050), 1053 |
+| Hub ★1–★7 | 101, 105, 109, 113, 117, 121, 125 |
+| G★1–G★4 | 1401, 1405, 1409, 1413 (+1415) |
+
+For 148 of the villager-request quests the rule is exactly `flag:<accepted flag>` of
+the request table, which was found independently. 19 chief requests use another flag.
+
+**The G-rank deviant gate** of [03](03-deviants.md) is an ordinary rule: G1 needs
+Lv10 cleared **and** one G-rank quest against the base monster, for example
+`41111` (Grimclaw G1) = `cleared:41110 AND atleast:1:11405|11462`. EX is
+`cleared:<G5> AND hr:100`. Lv1 needs one Hub quest against the base monster (10124
+for Redhelm) or 10768.
+
+### Evidence
+
+1. Evaluated on the analysed save, the rules unlock 1116 quests and lock 186. All
+   990 quests with the seen bit set are among the unlocked ones, with **zero
+   violations**, and no locked quest is seen or cleared. One wrong field would show
+   up here: a wrong offset for the Hub star level produced 25 violations at once.
+2. The rule for 607 is `flag:396`, the bit whose controlled write made the quest
+   appear ([above](#request-flags--base--0x2c56d)). On the snapshot taken before
+   that write the tool reports 607 locked for that reason.
+3. The deviant rules match the behaviour recorded in [03](03-deviants.md): G-rank
+   Arzuros released Redhelm's G-rank levels.
+
+No controlled write has been done yet for a rule other than a request flag.
+
+### Script format
+
+```
+0x00  f32   1.0
+0x04  u32   instruction count (5535)
+0x08  instruction[count]:
+        u32  line number
+        u8   opcode
+        cstr operand A
+        cstr operand B
+```
+
+The interpreter (`0x3d17f8`, opcode table at `0x3d5874`) runs top to bottom with
+`[WORK0]` = quest ID. A failed test skips forward to a marker opcode, there is no
+other control flow.
+
+| Opcode | Meaning |
+|---|---|
+| `0x20 [WORK0] N` | if quest ID ≥ N, skip to the next `0x24` (one section per ID range) |
+| `0x0E [WORK0] Q` | label: if quest ID = Q, jump to the next `0x26`, the rule body |
+| `0x13 [HR] N` | between labels: if HR < N, skip to `0x23`. The labels after it need HR ≥ N |
+| `0x27` | no label matched: skip to `0x23` |
+| `0x41 N` | `[WORK1]` = event flag N (`[0x1884c58] + 0x500`) |
+| `0x76 Q` | `[WORK1]` = quest Q cleared (`0x523da4`) |
+| `0x7E` | `[WORK1]` = Hub star level (`[0x18979f0] + 0x3e2`) |
+| `0x9E N` | `[WORK1]` = all quests of `quest_group` group N + 10 cleared (`0x3b1d70`) |
+| `0x52 [WORK2] 0`, `0x50 [WORK2] [WORK1]` | `WORK2 = 0`, `WORK2 += WORK1`: counts cleared quests |
+| `0xA1 a b`, `0xA7 a b` | require a = b, a ≥ b. On failure the script returns 0 |
+| `0x16 [HR] N` | if HR < N, skip to the next `0x26` (an alternative body) |
+| `0x03` | return 1 |
+| `0x02` | end of section, return −1: not in the script, treated as locked |
+
+`[HR]` is the u16 at `+0x554` of the player object. `[FESTA_HR]` appears in 14
+alternative bodies for a convention build and is dropped from the CSV. One label has
+an empty quest ID, a typo in the shipped script.
+
+The board's list filler is `0x54b994`. For each quest of the star level it asks
+`0x3b2174` → `0x3d7e90`, which runs the script and caches the answer. Event quests
+skip the script (`0x3b9870`: ID / 1 000 000 mod 10 = 1). Which archives get loaded
+(`0x3b8090`) depends only on the ID and the place, not on the save.
+
+### Rotating quests — `base + 0x504B`
+
+**DERIVED.** A second filter applies to 51 quests held in a table in the executable
+(`0x162cde4`, 8 bytes each: quest ID, weight). Such a quest is listed only if its
+bit, the table index, is set in the u64 at `base + 0x504B` (file `0x191CE7`). The
+game re-rolls it in `0x54b1c4`. In the snapshots it changed after every completed
+quest and never otherwise. Entries 0–7 are the four village pairs 308/309, 319/320,
+324/325, 329/330, of which one each stays set. The rest are Hyper and other
+repeating hunts (10329–10333, 10641–10643, 10756–10761, 11316–11318, 11412–11417,
+11458–11460, …). A quest of this table needs its script rule **and** its bit.
+
+### Star levels — `base + 0x2C4DA`
+
+| Field | Offset | File offset | Type | Analysed save |
+|---|---|---|---|---|
+| Village star level | `base + 0x2C4DA` | `0x1B9176` | u16, 1–10 | 10 |
+| Hub star level | `base + 0x2C4DC` | `0x1B9178` | u16, 1–13 | 13 |
+
+They are fields `+0x3e0` / `+0x3e2` of the object serialized by `0x507e20`, the
+block just before the event flags (149 bytes from `base + 0x2C4D8`; it also holds
+four 32-byte pet names). The Hub value is **CONFIRMED** by the consistency test
+above, the Village value is **DERIVED** from the code that compares it to 1–10.
+
 ## Villager requests — `table/activityData.atd`
 
 A standalone table in the romfs. Header: u32 `0x40A00000`, u32 count 184. It is followed by
@@ -213,9 +349,11 @@ request (10220), did not make him offer 607. The stage gate was already met (fiv
 other stage-10 requests cleared), and per-NPC order is not the gate (607's stage is
 lower than 10220's). The posted-in village is not the reason either.
 
-Other flags those steps changed, meaning **UNRESOLVED**: Fated Four set `+0x2C60`
-bit 2 and `+0x315B` / `+0x316F` bit 2; the Captain report set `+0x3161` / `+0x3175`
-bit 3 and `+0x2FA0` / `+0x2FA8` bit 6.
+Other flags those steps changed, meaning **UNRESOLVED**. The quest block serializer
+(`0x51d12c`) places them: Fated Four set bit 10 of the u32 at `base + 0x2C5F` and bit
+34 of the 20-byte maps at `base + 0x3157` / `+0x316B`; the Captain report set bit 83
+of the same two maps and bit 14 of the 8-byte words at `base + 0x2F9F` / `+0x2FA7`.
+Such fields come in pairs, a state word and a copy that drives a one-time notice.
 
 **UNRESOLVED — what makes an NPC offer a request.** No code sets the accepted flag
 from the request record: none of the 43 callers of the flag setter `0x244f14` reads
@@ -227,11 +365,22 @@ at `0x2451f8`. The offer condition therefore lives in the talk scripts, not in
 ### Editing
 
 To mark a quest cleared, set its cleared bit, and its seen bit if you don't want a
-leftover NEW marker. Use OR, as always. This does not make a hidden quest appear.
+leftover NEW marker. Use OR, as always. This does not make a hidden quest appear by
+itself, but it can satisfy the `cleared` / `atleast` / `all` rule of another quest.
 
-To make a villager-request quest appear, set its **accepted** flag in the request
-flag bitmap. Leave the completed flag alone: the NPC sets it, and hands over the
-reward, when the cleared quest is reported.
+To make a hidden quest appear, satisfy its rule from
+[`data/quest-unlock.csv`](../data/quest-unlock.csv): set the event flag, or the
+cleared bit of the prerequisite, or raise HR or the Hub star level.
+`tools/quest_unlock.py <save> <quest id>` prints what is missing. Only the request
+flag case has been confirmed by a controlled write so far.
+
+For a villager-request quest the flag is its **accepted** flag. Leave the completed
+flag alone: the NPC sets it, and hands over the reward, when the cleared quest is
+reported.
+
+Setting a star-level flag lists the quests, it does not replay what the game does
+when that level is reached in play (urgent notices, HR, cutscenes), so expect the
+other progress fields to stay as they were.
 
 ## Quest history log — `0x2546D7`
 
@@ -279,27 +428,31 @@ the Guild Card statistics block rather than the quest system.
 ## Open questions
 
 - **UNRESOLVED — the third bitmap** (`base + 0x2E77`).
-- **UNRESOLVED — flag bytes +4/+6** of `quest_group` entries. Byte +4 looks like
-  unlock-chain grouping (values 1–40 on Village and Hub key quests), but this is
-  inferred from the distribution only.
-- **UNRESOLVED — the 19 bytes at `0x18F900`** that precede the bitmap.
+- **UNRESOLVED — flag byte +6** of `quest_group` entries.
+- **UNRESOLVED — the 20 bytes before the bitmap** (`base + 0x2C63`, 12 + 8 bytes,
+  fields `+0xd78` / `+0xd84` of the quest object). The 3 × 24 bytes before them
+  (`base + 0x2C13`) are the Hunter Arts bitmap of [08](08-progression.md) and two
+  copies that drive notices. The same serializer walk also lands on the Canteen
+  ingredients of 08 (`base + 0x2F8F`), which cross-checks the field map.
 - **UNRESOLVED — quest history record layout** beyond ID and name. The documented
   u16 ID cannot hold event IDs (≥ 1 000 000). Either the field is wider, or event
   quests log differently.
-- **UNRESOLVED — board visibility of every-board quests.** Villager requests are
-  solved (accepted flag, see [Request flags](#request-flags--base--0x2c56d)). For
-  quests posted on every board, the unlock rule has not been studied. Needed to
-  grant access to locked quests, including the G-rank deviant gate of
-  [03](03-deviants.md).
+- **Not yet tested — a controlled write for a non-request rule**, for example flag
+  1059 (five Village ★10 *Advanced* quests) or the cleared bit of a deviant's base
+  monster quest.
+- **UNRESOLVED — who sets the star-level flags** and what else changes with them.
 - **UNRESOLVED — the NPC offer condition** for villager requests (talk scripts).
-- **UNRESOLVED — the other 1168 event flags** and the three 24-byte maps after them.
+- **UNRESOLVED — the event flags that no unlock rule or request uses**, and the three
+  24-byte maps after the bitmap. `script\related_flag_control` in the same archive
+  and `script\debug_flag_control` in `arc/debug/dbgResident.arc` use the same script
+  format and have not been read.
 - **UNRESOLVED — `questData+0x11` values 1–4** versus 5–8.
 
 ## A caution on bulk edits
 
 Setting every bit is still a bad idea. Index 0, the duplicate slots 315–316, the
 `DUMMY` event entries, and the space past index 1508 are not real quests. Key
-quests and urgents may also drive state stored elsewhere, such as HR, village
-progress and story flags, which a bitmap edit does not touch. Set the bits for real
-quests from the CSV, and expect rank progression to still need the key quests
-cleared in play.
+quests and urgents also drive state stored elsewhere: HR, the star levels at
+`base + 0x2C4DA` and the star-level event flags, which a bitmap edit does not touch.
+Set the bits for real quests from the CSV. Rank progression then still needs either
+the key quests cleared in play or those fields edited as well.

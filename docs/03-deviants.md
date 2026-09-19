@@ -133,18 +133,52 @@ offered. Hunting the corresponding base monster once at G-rank immediately relea
 them; this was verified by hunting G-rank Arzuros, after which Redhelm's EX quest
 appeared without any further save edit.
 
-Where this flag is recorded was never established. The quest mapping in
-[05 — Quests](05-quests.md) now allows a direct test: clear (in the bitmap) a G-rank
-quest that targets the base monster, and see whether that releases the gate. Not yet
-done.
+**Where it is recorded: nowhere of its own.** The board asks the unlock script of
+[05 — Quests § Board visibility](05-quests.md#board-visibility--scriptcheck_quest_unlocked)
+for every level, and the script reads the ordinary cleared bitmap:
 
-Practically: an editor can grant deviant levels, but cannot currently grant G-rank
-deviant *access* without the player hunting each base monster once at G-rank.
+| Level | Rule |
+|---|---|
+| Lv1 (12 Gen deviants) | one Hub quest against the base monster cleared, or 10768 |
+| Lv2–Lv10, G2–G5 | the previous level cleared |
+| G1 (12 Gen deviants) | Lv10 cleared **and** one G-rank quest against the base monster |
+| G1 (GU deviants) | one G-rank quest against the base monster; Bloodbath: event flag 1226 |
+| EX | G5 cleared and HR ≥ 100 |
+
+The G-rank quests that release G1:
+
+| Deviant | Any one of |
+|---|---|
+| Redhelm | 11125, 11104 |
+| Snowbaron | 11108 |
+| Stonefist | 11113, 11111 |
+| Dreadqueen | 11248, 11210, 11226, 11352, 11306 |
+| Drilltusk | 11128, 11110 |
+| Silverwind | 11216, 11234 |
+| Crystalbeard | 11303 |
+| Deadeye | 11302, 11347 |
+| Dreadking | 11352, 11306, 11357, 11359 |
+| Thunderlord | 11308, 11355 |
+| Grimclaw | 11405, 11462 |
+| Hellblade | 11467 |
+| Nightcloak | 11206, 11235, 11348 |
+| Rustrazor | 11214, 11250 |
+| Soulseer | 11310, 11356 |
+| Boltreaver | 11311, 11358 |
+| Elderfrost | 11312, 11354 |
+| Bloodbath | event flag 1226 |
+
+So an editor releases the gate by setting the **cleared bit of one listed quest**
+(index from [`data/quest-index.csv`](../data/quest-index.csv)). This follows from the
+decoded script and matches the Arzuros observation above, but the write itself has
+**not been tested** yet. That EX appeared only after the hunt, although its own rule
+does not mention the base monster, suggests the permit list stops at the first locked
+level. **DERIVED.**
 
 ## Open questions
 
-- **UNRESOLVED — the G-rank base-monster gate.** The highest-value unknown here.
-  Either a cleared G-rank quest bit (now addressable) or a per-monster G-rank flag.
+- **Not yet tested — releasing the G-rank gate by a bitmap write** (rule known, see
+  above).
 - **UNRESOLVED — deviant tally indices.** Only Rustrazor Ceanataur (121) and Soulseer
   Mizutsune (122) are placed in the monster tally array. The Gen deviants sit below
   index 105 adjacent to their base monsters — Redhelm at 49 next to Arzuros at 48,
