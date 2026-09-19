@@ -343,12 +343,17 @@ and while it is 9 only 1005 counts in group 33, so the final bosses in those gro
 do not hold the level back.
 
 The function runs right after the cleared bit is set in the quest result code
-(`0x388e54`), when the village scene is set up (`0x6aa5d0`) and from talk condition 64
-(`0x3f12fc`). So for an editor: setting the cleared bit of an urgent raises the level
-by itself the next time the village loads, and lowering the number alone does not
-last while the urgents stay cleared (**DERIVED**, not write-tested). The star-level
-*flags* still need the two conversations of [10](10-npc-talk.md#star-level-flags), or
-a direct edit.
+(`0x388e54`), from talk condition 64 while its latch is clear (`0x3f12fc`), and from a
+setup sequence at `0x6aa5d0` that an ordinary load does not go through.
+
+Controlled write: the Hub level was lowered from 13 to 12 (`0x1B9178`
+`0x0D → 0x0C`, both slots) with every urgent still cleared. After loading the
+character, walking through four villages and saving, the file still held 12. So the
+number is a plain stored field that loading does not recompute; by the code it is
+corrected the next time any quest is cleared (not observed yet). For an editor:
+write the level together with the urgents' cleared bits. The star-level *flags* still
+need the two conversations of [10](10-npc-talk.md#star-level-flags), or a direct
+edit.
 
 | Level | Group | Urgents (the quest list shows an urgent under the level it unlocks) |
 |---|---|---|
@@ -409,7 +414,7 @@ Bherna and in Kokoto, and it was absent from both.
 | Field | Offset | File offset | Size | Status |
 |---|---|---|---|---|
 | Event flag bitmap | `base + 0x2C56D` | `0x1B9209` | 192 bytes, 1536 bits, LSB-first | CONFIRMED |
-| Per-NPC bits A / B / C | `base + 0x2C62D` | `0x1B92C9` | 3 × 24 bytes, one bit per NPC: on hold for request offers / kind 9 talk / story announcements. See [10](10-npc-talk.md#per-npc-bits--base--0x2c62d) | DERIVED |
+| Per-NPC bits A / B / C | `base + 0x2C62D` | `0x1B92C9` | 3 × 24 bytes, one bit per NPC: on hold for request offers / kind 9 talk / story announcements. See [10](10-npc-talk.md#per-npc-bits--base--0x2c62d) | map B CONFIRMED by write, A and C from code |
 | Two u32 | `base + 0x2C675` | `0x1B9311` | 8 bytes, change on every save. The first (`+0x608` of the object) is a random number: talk conditions 106–108 compare it modulo 10000 with a threshold, which makes a line appear with a fixed chance | from code |
 
 The block is one object of the game (flags at `+0x500`, serializer `0x240ce4`). Each
@@ -540,8 +545,8 @@ the Guild Card statistics block rather than the quest system.
 - **UNRESOLVED — quest history record layout** beyond ID and name. The documented
   u16 ID cannot hold event IDs (≥ 1 000 000). Either the field is wider, or event
   quests log differently.
-- **Not yet tested — a write to the star levels.** Code says the game recomputes them
-  from the urgents' cleared bits and only ever raises them.
+- **Not observed — the star level recompute after a quest clear.** A lowered Hub
+  level survived a load and a save; the code raises it again in the quest result path.
 - **Not checked — whether a board filters on `questData+0x11` values 1–4.**
 
 ## A caution on bulk edits
@@ -550,7 +555,7 @@ Setting every bit is still a bad idea. Index 0, the duplicate slots 315–316, t
 `DUMMY` event entries, and the space past index 1508 are not real quests. Key
 quests and urgents also drive state stored elsewhere: HR and the star-level event
 flags, which a bitmap edit does not touch. The numeric star levels at
-`base + 0x2C4DA` follow the urgents' cleared bits by themselves, see
-[star levels](#star-levels--base--0x2c4da).
+`base + 0x2C4DA` are recomputed from the urgents' cleared bits only when a quest is
+cleared, not on load, see [star levels](#star-levels--base--0x2c4da).
 Set the bits for real quests from the CSV. Rank progression then still needs either
 the key quests cleared in play or those fields edited as well.

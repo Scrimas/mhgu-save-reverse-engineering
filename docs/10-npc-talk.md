@@ -88,7 +88,7 @@ anything else adds nothing. That is how an s16 reaches 41811 or 111304.
 | 67–70 | contribution points of Bherna / Kokoto / Pokke / Yukumo ≥ *b* (`0x523b50`: low rank + G rank, at most 20000) | from code |
 | 85, 93–97 | bits 29, 11, 12, 8, 9, 10 of the progress word | meaning UNRESOLVED |
 | 86 / 87 | a state word is 1 / is not 1. The footbath visitors (NPC 420–428) use 87 for a one-line "have a seat, then we'll talk" and 86 for the real conversation, so this is "seated in the Yukumo footbath" | DERIVED |
-| 89, 90, 121, 161–163 | bits 13, 14, 22, 78, 98, 99 of the 128-bit map at `base + 0x3187`. 121 gates the four chiefs' last requests | meaning UNRESOLVED |
+| 89, 90, 121, 161–163 | bits 45, 46, 48, 78, 98, 99 of the 128-bit map at `base + 0x3187`. 121 gates the four chiefs' last requests | 121 CONFIRMED by write, meaning UNRESOLVED |
 | 91 / 92 | NPC *b* has one / none of its three per-NPC bits set | from code |
 | 98–101, 157, 158 | result of `0x1c8ca8` > 4, 1, 2, 5, 7, 8 (a level; NPC 621 only) | not read further |
 | 106 / 107 / 108 | random word modulo 10000 ≤ / ≥ / < *b*: a line with a fixed chance | from code |
@@ -207,6 +207,15 @@ snapshot taken right after a quest (`req-1`, `req-2`). This explains the observa
 "reported 10220, got the costume, Captain offered nothing": bit 33 was set by that
 report and is still set in the save.
 
+**Controlled write — CONFIRMED.** Bit 48 of the [map at `base + 0x3187`](#other-save-state-the-talk-data-reads)
+(condition 121) was set, which made the last request of all four chiefs ready, and
+bit 36 of map B (Kokoto Chief; his offer is a kind 9 block) was set in the same write
+(`0x18FE29` `0x00 → 0x01`, `0x1B92E5` `0x00 → 0x10`, both slots). In the game the
+Bherna Chief announced his new ★6 quests (flag 685), the Pokke and Yukumo chiefs
+offered 640 and 641 (flags 210 / 412 and 260 / 456), and the Kokoto Chief had no
+speech bubble and offered nothing: flags 160 / 346 stayed clear. No quest was played,
+and bit 36 was still set in the save afterwards.
+
 For an editor the maps only matter as a nuisance: a set bit delays an offer until the
 next quest. Setting the accepted flag directly bypasses the conversation entirely.
 
@@ -248,7 +257,7 @@ Found through the conditions and actions above. The character block copies
 | Contribution points, low rank | `base + 0x281B` | u32 × 4: Bherna, Kokoto, Pokke, Yukumo. The adder `0x523a80` caps each at 20000 | DERIVED (code + plausible values) |
 | Contribution points, G rank | `base + 0x282B` | u32 × 4, same order. 280 / 240 / 125 / 110 in the analysed save | DERIVED |
 | Progress word | `base + 0x2F77` | u32. Bit 20 = HR limit released, bit 31 = quest 10646 was listed (latch of condition 64), bits 8–12 and 29 read by conditions 93–97 and 85. `0x8A7FFFFF` in the analysed save | bits 20 and 31 from code |
-| 128-bit map | `base + 0x3187` | 16 bytes (`+0xc70`), copies for notices at `+0xc80` / `+0xc90`. `0x3f1950` sets the bit whose index is the ID that `0x3ba060` returns for each of a quest's eight target slots. Bit 22 (condition 121) is clear in the analysed save, and none of the four requests it gates was ever offered there | meaning UNRESOLVED |
+| 128-bit map | `base + 0x3187` | 16 bytes (`+0xc70`), copies for notices at `+0xc80` / `+0xc90`. `0x3f1950` sets the bit whose index is the ID that `0x3ba060` returns for each of a quest's eight target slots. Bit 48 (condition 121; byte `base + 0x318D` bit 0) was clear in the analysed save and none of the four requests it gates had been offered; setting it made the chiefs offer them | bit 48 CONFIRMED by write, meaning UNRESOLVED |
 | Hunter's Notes, large monsters | `base + 0x5027` | 123 bits, a second copy for the NEW mark at `+0x5037` | from code |
 | Hunter's Notes, second list | `base + 0x5047` | 30 bits, just before the [rotating quests](05-quests.md#rotating-quests--base--0x504b) | from code |
 | Random word | `base + 0x2C675` | u32, see conditions 106–108 | from code |
@@ -275,9 +284,9 @@ sets them: 237, 239 (shop stock upgrades), 677, 1502 (a weapon at its last level
 ## Open questions
 
 - **UNRESOLVED — the meaning of the 128-bit map at `base + 0x3187`**, in particular
-  bit 22, which gates the chiefs' last requests (flags 685, 160, 210, 260).
+  bit 48, which gates the chiefs' last requests (flags 685, 160, 210, 260).
 - **UNRESOLVED — the file offset of the activity state bytes.**
 - **UNRESOLVED — request 117** (kind 2): no talk line sets its flag 550.
 - Conditions marked "not read further" above. None of them gates a request.
-- **Not yet tested — a write to the per-NPC maps.** Their role rests on the code and
-  on one snapshot pair.
+- **Not observed — the wipe of the per-NPC maps** by the next quest (`0x38b904`). That
+  a set bit holds the NPC back is confirmed by write.

@@ -17,7 +17,7 @@ HUB_STAR  = 0x2C4DC         # u16
 FLAGS     = 0x2C56D         # event flag bitmap
 NPC_HOLD  = 0x2C62D         # per-NPC bits, map A: no request offers until the next quest
 PROGRESS  = 0x2F77          # u32: bit 20 = HR limit released, bit 31 = quest 10646 was listed
-FEATURES  = 0x3187          # 128-bit map, meaning unresolved; bit 22 gates the chiefs' last requests
+FEATURES  = 0x3187          # 128-bit map, meaning unresolved; bit 48 gates the chiefs' last requests
 POINTS    = 0x281B          # u32[4] village points Bherna/Kokoto/Pokke/Yukumo, G-rank set 16 bytes later
 VILLAGES  = ["Bherna", "Kokoto", "Pokke", "Yukumo"]
 
@@ -92,7 +92,8 @@ def main():
             ms = [missing(c, row) for c in group.split("|")]      # a|b: either holds
             if all(ms):
                 miss.append(" or ".join(ms))
-        hold = row["npc_bit"] and bit(NPC_HOLD, int(row["npc_bit"]))
+        hold_map = {"8": 0, "9": 24}.get(row["talk_kind"])     # map A holds kind 8 blocks, map B kind 9
+        hold = row["npc_bit"] and hold_map is not None and bit(NPC_HOLD + hold_map, int(row["npc_bit"]))
         need = "; ".join(miss) if miss else "ready"
         print(f"{row['index']:>4}  {row['quest_id']:>6}  {row['quest_name'] or '(delivery)':<34} "
               f"{row['npc_name']:<20} flag {row['accept_flag']:>4}  <- {need}{'  [NPC on hold]' if hold else ''}")
