@@ -131,9 +131,15 @@ counts as having met the monster.
 
 13 bits are set in the analysed save: 10318, 11422, 11457, 11468, 40401, 41411,
 41511, 41611, 41614, 41616, 1010150, 1011001, 1011030. That fits: all are hard
-quests (Old Fatalis, Boltreaver EX …), and 11422 is failed but never cleared. Which
-of the failure kinds state 5 is (three faints, time up, abandon) was not separated.
+quests (Old Fatalis, Boltreaver EX …), and 11422 is failed but never cleared.
 It is not board visibility: none of these quests is hidden.
+
+End state 5 is a real failure, not an abandoned quest. The byte is written in two
+places while the quest runs (state 2): the fail routine `0x3a5870` writes 5 for every
+failure reason it is called with (its reason argument 0 / 1 / 2 only picks the
+jingle), and the return-from-quest routine `0x3a93ac` writes 6. The predicate
+`0x3a5ed0` groups them accordingly: case 3 "failed or abandoned" accepts 5 and 6,
+case 4, the one used here, only 5. Success is 3 or 4.
 
 ### Controlled writes
 
@@ -233,6 +239,15 @@ Byte `0x11` of each quest's `questData` resource names the board that lists it
 The 5–8 mapping comes from the quest names (Jurassic Frontier quests at 5, Popo and
 Giaprey at 6, *The Yukumo Gal Special* at 7, Moofah quests at 8). It agrees with the
 village field of the request table below.
+
+Two predicates of the quest manager read the byte. `0x3a3470` is true for 5–8 and
+12 (no quest uses 12): "this is a villager request quest". `0x3a3424` uses the same
+mask in the quest result code (`0x388d60`): for such a quest the cleared bit is
+written only if the quest is listed on this save (`0x54af8c`, which runs the unlock
+script). A request quest played through another hunter's posting therefore does not
+count. Values 1–4 are in neither mask; only the
+[quest set](#quest-sets--base--0x3187) counter reads them, and it treats 1–4 like
+5–8.
 
 Almost every quest with a value of 1–8 is a villager request. It appears only after
 the request has been accepted, and only on that village's board.
@@ -555,17 +570,25 @@ Setting a star-level flag lists the quests, it does not replay what the game doe
 when that level is reached in play (urgent notices, HR, cutscenes), so expect the
 other progress fields to stay as they were.
 
-## Quest history log — `0x2546D7`
+## Quest history log — `0x254771`
 
-A record array of recently completed quests.
+The Guild Card's list of the 10 most recently completed quests, newest first.
 
 | Field | Offset in record | Type |
 |---|---|---|
-| Quest ID | `+0x00` | u16 |
-| Quest name | `+0x02` | UTF-16LE, null-terminated |
+| Date | `+0x00` | u8 day, u8 month, u16 year (`13 09 ea 07` = 19 September 2026), the console date of the clear |
+| unknown | `+0x04` | u16, 7 in all ten records |
+| Quest ID | `+0x06` | u16 |
+| Quest name | `+0x08` | UTF-16LE, 16 characters, cut with `…` |
+| unknown | `+0x28` | three bytes that repeat between records of the same period (`18 23 24`, `03 18 23`), then u32 counters |
+| Hunter and Palico names | from `+0x44` | UTF-16LE |
+| unknown | `+0x9C` | u8 (13 or 10 in the analysed save), u8 15, `ff ff` |
 
-Record stride is `0xA0` bytes. The trailing portion of each record was not
-identified — plausibly timestamp, venue, party and reward data.
+Record stride is `0xA0` bytes; ten records end exactly where the
+[award field](09-awards.md) begins (`0x254DB1`). **DERIVED** from the values: the
+dates match the days the quests were played. Earlier revisions of this document put
+the record start at the ID (`0x2546D7` + 6 + n × `0xA0`), which splits each record in
+two.
 
 This log is the most useful entry point for anyone attacking the quest system: it
 pairs numeric IDs with human-readable names in plaintext, so a partial quest ID table
@@ -600,16 +623,14 @@ the Guild Card statistics block rather than the quest system.
 
 ## Open questions
 
-- **Not separated — which failure** sets the [third bitmap](#third-bitmap--failed-quests)
-  (end state 5).
 - **UNRESOLVED — the 20 bytes before the bitmap** (`base + 0x2C63`, 12 + 8 bytes,
   fields `+0xd78` / `+0xd84` of the quest object). The 3 × 24 bytes before them
   (`base + 0x2C13`) are the Hunter Arts bitmap of [08](08-progression.md) and two
   copies that drive notices. The same serializer walk also lands on the Canteen
   ingredients of 08 (`base + 0x2F8F`), which cross-checks the field map.
-- **UNRESOLVED — quest history record layout** beyond ID and name. The documented
-  u16 ID cannot hold event IDs (≥ 1 000 000). Either the field is wider, or event
-  quests log differently.
+- **UNRESOLVED — quest history record**: the fields marked unknown, and how an event
+  quest is logged. The u16 ID cannot hold event IDs (≥ 1 000 000), and no record of
+  the analysed save is an event quest.
 - **Not checked — whether a board filters on `questData+0x11` values 1–4.** The
   [quest set](#quest-sets--base--0x3187) counter reads them and treats 1–4 like 5–8
   (same village), which supports the home-village reading.
@@ -624,3 +645,21 @@ flags, which a bitmap edit does not touch. The numeric star levels at
 cleared, not on load, see [star levels](#star-levels--base--0x2c4da).
 Set the bits for real quests from the CSV. Rank progression then still needs either
 the key quests cleared in play or those fields edited as well.
+
+### What "all quests completed" takes
+
+The completion mark itself is fully mapped: the cleared bit of every real row of
+[`quest-index.csv`](../data/quest-index.csv). Single bits were written and confirmed
+(607, 619, 11404); **a bulk write was never tested.** State that a real clear also
+moves, and that a bitmap edit leaves behind:
+
+| State | Where | Effect if left as is |
+|---|---|---|
+| Star levels | `base + 0x2C4DA` / `+0x2C4DC` | fixed by the game after the next real clear; can be written directly (CONFIRMED) |
+| Star-level event flags | [event flags](#request-flags--base--0x2c56d) | set by the chiefs' and quest counter Gals' talk lines once the numeric level is there |
+| HR and the HR limit | HR `base + 0x28`, HR points `base + 0x280B`, bit 20 of `base + 0x2F77` | Hub rules with `hr:N` stay locked |
+| Request flags | `accept_flag` / `done_flag` of [`request-index.csv`](../data/request-index.csv) | a cleared request without its done flag leaves the NPC waiting for a report whose reward was never queued |
+| Quest set bits | [`base + 0x3187`](#quest-sets--base--0x3187) | the chiefs' last requests, the last Village ★10 quests and the completion awards stay closed: the game writes a set bit only when it sees the last clear |
+| Rotating quests | `base + 0x504B` | none for completion; only decides what is listed |
+| Rewards, Hunter's Notes, the two counters, the history log, Guild Card awards | various | keep their old values; nothing depends on them for listing quests |
+

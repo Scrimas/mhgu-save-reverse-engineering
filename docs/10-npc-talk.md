@@ -73,12 +73,12 @@ anything else adds nothing. That is how an s16 reaches 41811 or 111304.
 | 13 / 14 | Village / Hub key quest set *b* all cleared (`0x526d28` / `0x526d48`) | from code |
 | 16–21 | 1, 2, 11–14 again, OR-ed with the condition before | from code |
 | 3–7, 9, 135, 136 | a u16 of the talk request equals 1, 2, 3, 4, 0, 5, 6, 7. Only on ordinary talk lines | not read further |
-| 22–25 | result of `0x3bd35c` is 0 / 2 / 3 / 1 (Wycademy Gal only) | not read further |
-| 26 / 27 | byte `+0x4d8` of the player object clear / set | not read further |
+| 22–25 | type of the quest just accepted (`0x3bd35c`): 0 hunt / 2 capture / 3 gathering / 1 (line text is a placeholder). Send-off lines of the quest counter Gals | from dialogue |
+| 26 / 27 | byte `+0x4d8` of the player object clear / set. Always two copies of the same report line, so a property of the hunter such as gender | from dialogue, not read further |
 | 28 | HR ≥ *b* (u16 `+0x554` of the player object) | from code |
 | 29 | an item check, *b* is the slot (`0x2484c0`; NPC 991 only) | not read further |
 | 36–39 | a state word (`+0x2cc`) is 0 / 1 / 2 / 3 (Courier only) | not read further |
-| 41 / 42 | Palico and trader state (`0x524db8`, `0x3b1b90`) | not read further |
+| 41 / 42 | 41: delivery request *b* (1–13, the kind 1 requests) has been delivered (`0x524db8`), on report lines. 42: result of `0x3b1b90` equals *b* (Hub Gal tutorial lines) | 41 from dialogue, 42 not read further |
 | 44 / 45 | a Hunter's Notes entry can be unlocked: large monsters (`0x554da4`, 123 entries) / the second list (`0x55515c`, 30 entries) | from code + text |
 | 46–53, 141, 142 | a Hunter Art lesson of this teacher is due (`0x3f0ff0` … `0x3f1294` with 1 = ask) | from code + text |
 | 54 | a Wycademy points threshold is due (`0x197598`) | not read further |
@@ -86,18 +86,18 @@ anything else adds nothing. That is how an s16 reaches 41811 or 111304.
 | 64 | quest 10646 is listed. Runs the [unlock script](05-quests.md#board-visibility--scriptcheck_quest_unlocked) for 10646 (`0x3f12c4`) and latches the result in bit 31 of the progress word | from code |
 | 65 | the HR limit is released: bit 20 of the progress word. Set by talk action 1 type 5, the Pub Manager after 11432 | from code + text |
 | 67–70 | contribution points of Bherna / Kokoto / Pokke / Yukumo ≥ *b* (`0x523b50`: low rank + G rank, at most 20000) | from code |
-| 85, 93–97 | bits 29, 11, 12, 8, 9, 10 of the progress word | meaning UNRESOLVED |
+| 85, 93–97 | bits 29, 11, 12, 8, 9, 10 of the progress word. 93 / 94: the trader Neko has a second / third cart; 95–97: a new trading location opened. 85 occurs in no talk file | from dialogue |
 | 86 / 87 | a state word is 1 / is not 1. The footbath visitors (NPC 420–428) use 87 for a one-line "have a seat, then we'll talk" and 86 for the real conversation, so this is "seated in the Yukumo footbath" | DERIVED |
 | 89, 90, 121, 161, 162, 163 | bits 45, 46, 48, 98, 78, 99 of the [quest set map](05-quests.md#quest-sets--base--0x3187) at `base + 0x3187`: every quest of that set is cleared. 45 / 46 = the 10 low-rank Arena quests cleared / all at rank A, 98 / 78 = the same for all 17 Arena quests, 48 = the ordinary Village ★1–★6 quests (gates the four chiefs' last requests), 99 = the ordinary Village ★7–★10 quests | 121 CONFIRMED by write, the others from code and dialogue |
 | 91 / 92 | NPC *b* has one / none of its three per-NPC bits set | from code |
-| 98–101, 157, 158 | result of `0x1c8ca8` > 4, 1, 2, 5, 7, 8 (a level; NPC 621 only) | not read further |
+| 98–101, 157, 158 | result of `0x1c8ca8` > 4, 1, 2, 5, 7, 8: the Meownster Hunters' progress (new destinations, the balloon; NPC 621 only) | from dialogue |
 | 106 / 107 / 108 | random word modulo 10000 ≤ / ≥ / < *b*: a line with a fixed chance | from code |
-| 109 / 110 | bit *b* of a bitmap at `+0x54` of another object set / clear | not read further |
+| 109 / 110 | bit *b* of a bitmap at `+0x54` of another object set / clear. Bit 1 set = a delivery reward is waiting at the client (housekeeper lines) | from dialogue |
 | 113 / 114 | of requests 99–105 (the footbath visitors), at least four / all seven are completed | from code |
 | 116 / 127 | a quest is / is not selected (`0x3b9868`) | from code |
 | 118 / 119 / 120 | the selected quest is / is (OR type) / is not the given quest | from code |
 | 122 | quest 10644 is listed, like 64 but not latched in the save | from code |
-| 123–126 | result of `0x1a57bc` + 1 compared with *b* (=, ≥, ≤, <) | not read further |
+| 123–126 | result of `0x1a57bc` + 1 compared with *b* (=, ≥, ≤, <): a shop level, used by "the shop just got an upgrade" lines | from dialogue |
 | 143–146 | multiplayer session state (`0x227a98`) | not read further |
 | 8, 10, 15, 30–35, 63, 71–74, 76–84, 137, 138, 147 | always true | from code |
 
@@ -139,8 +139,11 @@ sets the request's **accepted** flag with action 1; the report block (kind 5 / 6
 sets the **completed** flag. The offer conditions of 182 of the 184 requests are in
 [`data/request-offer.csv`](../data/request-offer.csv) (generator:
 `scratch/py/mkoffer.py`, joins talk data to `request-index.csv` by the accepted flag).
-Of the other two, record 183 is the end marker and record 117 is a kind 2 record
-whose flag no talk line sets. Request 22 (639) is offered from a block of kind 9, not
+Of the other two, record 183 is the end marker and record 117 is unused: a kind 2
+record (a request without a quest, like 33 *Hot Heart* and 136) of the Kokoto Chief
+that would pay 5 Kokoto Tickets. No talk line of any NPC sets or reads its flags 550
+and 551, no script or init script names them, its log title is `dummy`, and both
+flags are clear in the save. **DERIVED**: nothing in the data can offer it. Request 22 (639) is offered from a block of kind 9, not
 8: the four chiefs hand out their last request in ordinary talk.
 
 `tools/request_offer.py <save>` lists the requests not accepted yet with what their
@@ -259,7 +262,7 @@ Found through the conditions and actions above. The character block copies
 |---|---|---|---|
 | Contribution points, low rank | `base + 0x281B` | u32 × 4: Bherna, Kokoto, Pokke, Yukumo. The adder `0x523a80` caps each at 20000 | DERIVED (code + plausible values) |
 | Contribution points, G rank | `base + 0x282B` | u32 × 4, same order. 280 / 240 / 125 / 110 in the analysed save | DERIVED |
-| Progress word | `base + 0x2F77` | u32. Bit 20 = HR limit released, bit 31 = quest 10646 was listed (latch of condition 64), bits 8–12 and 29 read by conditions 93–97 and 85. `0x8A7FFFFF` in the analysed save | bits 20 and 31 from code |
+| Progress word | `base + 0x2F77` | u32. Bit 20 = HR limit released, bit 31 = quest 10646 was listed (latch of condition 64), bits 8–10 = trading locations opened, bits 11 / 12 = the trader's second / third cart (conditions 95–97, 93, 94), bit 29 read by the unused condition 85. `0x8A7FFFFF` in the analysed save | bits 20 and 31 from code |
 | Quest set map | `base + 0x3187` | 16 bytes (`+0xc70`), bit N = every quest of set N is cleared, see [05 — Quests](05-quests.md#quest-sets--base--0x3187). Bit 48 (condition 121; byte `base + 0x318D` bit 0) was clear in the analysed save and none of the four requests it gates had been offered; setting it made the chiefs offer them | bit 48 CONFIRMED by write |
 | Hunter's Notes, large monsters | `base + 0x5027` | 123 bits, a second copy for the NEW mark at `+0x5037` | from code |
 | Hunter's Notes, second list | `base + 0x5047` | 30 bits, just before the [rotating quests](05-quests.md#rotating-quests--base--0x504b) | from code |
@@ -286,5 +289,4 @@ sets them: 237, 239 (shop stock upgrades), 677, 1502 (a weapon at its last level
 
 ## Open questions
 
-- **UNRESOLVED — request 117** (kind 2): no talk line sets its flag 550.
 - Conditions marked "not read further" above. None of them gates a request.

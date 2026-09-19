@@ -66,7 +66,7 @@ Machine-readable: [`data/monster-index.csv`](data/monster-index.csv), [`data/que
 | Weapon usage — Village | `0x254713` | 15 × u16 |
 | Weapon usage — Hub | `0x254731` | 15 × u16 |
 | Weapon usage — Arena | `0x25474F` | 15 × u16 |
-| Quest history log | `0x2546D7` | stride `0xA0` records |
+| Quest history log | `0x254771` | 10 × `0xA0` records: date, u16 quest ID at `+6`, name at `+8` |
 | Character slot pointers | `0x34` | 3 × u32, relative to `0x24` |
 | Equipment box | `base + 0x62EE` | 2000 × 36 bytes; transmog at `+0x04` |
 | My Sets (dye lives here) | `base + 0x208C8` | stride `0x88`; pigment 5 × RGBA at `+0x6A` |
