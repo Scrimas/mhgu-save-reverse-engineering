@@ -154,6 +154,69 @@ It is not board visibility: none of these quests is hidden.
 **Board visibility is not stored in these bitmaps.** For 607 the reason is that it
 is a villager request. See [Villager requests](#villager-requests--tableactivitydataatd).
 
+## Quest sets — `base + 0x3187`
+
+**DERIVED from code, checked against the save; bit 48 CONFIRMED by write.** A 16-byte
+bitmap (`+0xc70` of the save object, file `0x18FE23` in slot 1): bit N is set when
+**every quest of set N has been cleared**. There are 100 sets (bits 0–99). The column
+`sets` of [`data/quest-index.csv`](../data/quest-index.csv) lists the sets of each
+quest.
+
+| Sets | Members |
+|---|---|
+| 0–5 / 54–57 | Village ★1–★6 / ★7–★10, hunter quests |
+| 6–12 / 62–65 | Hub ★1–★7 / G★1–G★4, hunter quests |
+| 13–18 / 58–61 | Village ★1–★6 / ★7–★10, hunter and Prowler quests |
+| 19–25 / 66–69 | Hub ★1–★7 / G★1–G★4, hunter and Prowler quests |
+| 38, 39, 40 / 70, 71 | Prowler quests: Village ★2–★6, Hub ★1–★3, Hub ★4–★7 / Village ★7–★10, Hub G |
+| 26–37 | the 15 levels (I–X, G1–G5) of one of the 12 older deviants, Redhelm … Hellblade |
+| 72–77 | the 5 G levels of Nightcloak, Rustrazor, Soulseer, Boltreaver, Elderfrost, Bloodbath |
+| 80–97 | the EX quest of each of the 18 deviants, one quest per set |
+| 41, 42, 43, 44 | low-rank Village quests whose [board byte](#where-a-quest-is-posted--questdata--0x11) is 4 or 8 (Bherna), 1 or 5 (Kokoto), 2 or 6 (Pokke), 3 or 7 (Yukumo): 11 / 19 / 18 / 26 quests, mostly villager requests |
+| 48 | Village ★1–★6 without the *Advanced* quests and without the second quest of a twin pair: 153 quests |
+| 99 | Village ★7–★10 without the *Advanced* quests: 142 quests |
+| 45, 46, 47, 53 | the 10 low-rank Arena quests (7 hunter, 3 Prowler): all cleared / all with rank A or better / all with rank S / 53 not separated |
+| 98, 78, 79 | all 17 Arena quests: all cleared / all rank A or better / all rank S |
+| 49–52 | no member found |
+
+**How it is filled.** `0x3b85d8` walks the whole quest list, skips event quests and
+repeated IDs, and keeps one counter of *uncleared* quests per set. The set of a quest
+follows from its ID digits, the expansion byte of `quest_group`, a static table
+(`0x162cdc5`) and, for sets 41–44, byte `0x11` of its `questData`. A set whose only
+uncleared quest is the quest being played is written into eight slots
+(`+0x1f3` of the quest manager). After the clear, `0x3f1950` sets the bits of those
+slots here and in two companion maps (`+0xc80`, `+0xc90`). Only the second is saved,
+at `base + 0x3197`. For the rank
+sets it also reads the rank of the Arena record (`+0x1244 >> 29`: 0 = S, 1 = A, 2 = B).
+
+So the bit is written **only at the moment the game sees the last clear**. A set that
+is completed by editing cleared bits keeps its bit clear until the bit is written too.
+
+The membership was extracted by running `0x3b85d8` itself under an emulator
+(`scratch/py/qsets.py`, unicorn) with every quest uncleared, and recording which
+counter each quest raised.
+
+**Readers.**
+
+- Talk conditions 89, 90, 121, 161, 162 and 163 test bits 45, 46, 48, 98, 78 and 99,
+  see [10 — NPC talk data](10-npc-talk.md#conditions). Bit 48 gates the four chiefs'
+  last requests (*Advanced: Wrath of Rath* and its siblings): they want every ordinary
+  low-rank Village quest cleared. Bit 99 gates the quest counter line that releases the
+  last Village ★10 quests (flag 1073).
+- The award check `0x3ec020` reads the map: bits 13 and 14 together grant award 0,
+  *completed all 1★ and 2★ Village Quests*, bits 15 and 16 award 1, and so on. It
+  writes the game-side award map at `base + 0x3157`, see
+  [09 — Awards](09-awards.md).
+
+**Evidence.** In the analysed save every set bit belongs to a set whose members are
+all cleared (0, 13, 74–77, 80–97), and every set with an uncleared member has its bit
+clear: 81 of the 96 sets with members agree in both directions. Bit 48 was set by hand for the
+[controlled write](10-npc-talk.md#per-npc-bits--base--0x2c62d) with 75 of its 153
+quests still open, and the chiefs offered their requests. The other 14 sets (26–37,
+72, 73) are complete but their bit is clear. **UNRESOLVED**: those deviant quests may
+have been marked cleared by something other than a normal clear in this save's
+history; the code gives no second condition.
+
 ## Where a quest is posted — `questData + 0x11`
 
 Byte `0x11` of each quest's `questData` resource names the board that lists it
@@ -453,11 +516,12 @@ request (10220), did not make him offer 607. The stage gate was already met (fiv
 other stage-10 requests cleared), and per-NPC order is not the gate (607's stage is
 lower than 10220's). The posted-in village is not the reason either.
 
-Other flags those steps changed, meaning **UNRESOLVED**. The quest block serializer
-(`0x51d12c`) places them: Fated Four set bit 10 of the u32 at `base + 0x2C5F` and bit
-34 of the 20-byte maps at `base + 0x3157` / `+0x316B`; the Captain report set bit 83
-of the same two maps and bit 14 of the 8-byte words at `base + 0x2F9F` / `+0x2FA7`.
-Such fields come in pairs, a state word and a copy that drives a one-time notice.
+Other flags those steps changed. The quest block serializer (`0x51d12c`) places them:
+Fated Four set bit 10 of the u32 at `base + 0x2C5F` and award 34 in the game-side
+[award map](09-awards.md#game-side-map--base--0x3157) at `base + 0x3157` and its
+notice copy at `+0x316B`; the Captain report set award 83 in the same two maps and
+bit 14 of the 8-byte words at `base + 0x2F9F` / `+0x2FA7` (**UNRESOLVED**). Such fields
+come in pairs, a state word and a copy that drives a one-time notice.
 
 **What makes an NPC offer a request** is in the NPC's talk data, see
 [10 — NPC talk data](10-npc-talk.md) and [`data/request-offer.csv`](../data/request-offer.csv).
@@ -546,7 +610,9 @@ the Guild Card statistics block rather than the quest system.
 - **UNRESOLVED — quest history record layout** beyond ID and name. The documented
   u16 ID cannot hold event IDs (≥ 1 000 000). Either the field is wider, or event
   quests log differently.
-- **Not checked — whether a board filters on `questData+0x11` values 1–4.**
+- **Not checked — whether a board filters on `questData+0x11` values 1–4.** The
+  [quest set](#quest-sets--base--0x3187) counter reads them and treats 1–4 like 5–8
+  (same village), which supports the home-village reading.
 
 ## A caution on bulk edits
 

@@ -21,7 +21,7 @@ index,quest_id,quest_name,npc_file,npc_bit,npc_name,talk_kind,talk_line,accept_f
 19,318,Local Threat,101,36,Kokoto Chief,4,25,340,village_star:3 AND notflag:154 AND flag:153
 20,319,Into the Wyvern's Den,101,36,Kokoto Chief,4,35,342,notflag:156 AND flag:155
 21,504,The Thunderclaw Wyvern,101,36,Kokoto Chief,4,47,344,village_star:5 AND notflag:158 AND flag:157
-22,639,Advanced: Wrath of Rath,101,36,Kokoto Chief,9,70,346,village_star:6 AND feature:48 AND notflag:160 AND points:Kokoto:1500
+22,639,Advanced: Wrath of Rath,101,36,Kokoto Chief,9,70,346,village_star:6 AND questset:48 AND notflag:160 AND points:Kokoto:1500
 23,,,102,37,Kokoto Gal,8,65,348,village_star:5
 24,10726,A Fiery Temper,127,52,Minegarde Sweetheart,8,4,350,hub_star:7 AND flag:349 AND listed:10646
 25,306,Jurassic Treasure: The Frog,126,51,Treshi,8,8,360,village_star:3
@@ -48,7 +48,7 @@ index,quest_id,quest_name,npc_file,npc_bit,npc_name,talk_kind,talk_line,accept_f
 45,323,The Shadow in the Mountains,201,58,Pokke Chief,4,25,406,village_star:3 AND notflag:204 AND flag:203
 46,324,No Go on the Popo,201,58,Pokke Chief,4,33,408,notflag:206 AND flag:205
 47,508,The Unwavering Colossus,201,58,Pokke Chief,4,42,410,village_star:5 AND notflag:208 AND flag:207
-48,640,Advanced: The Golden Pair,201,58,Pokke Chief,8,60,412,village_star:6 AND notflag:210 AND feature:48 AND points:Pokke:1500
+48,640,Advanced: The Golden Pair,201,58,Pokke Chief,8,60,412,village_star:6 AND notflag:210 AND questset:48 AND points:Pokke:1500
 49,,,202,59,Pokke Gal,8,66,414,village_star:5
 50,10623,Bl-Bl-Blangongas!,229,76,Jumbo Sweetheart,8,0,416,hub_star:6 AND flag:415
 51,314,Cancer of the Dunes,225,72,Trenya,8,5,418,village_star:3
@@ -71,7 +71,7 @@ index,quest_id,quest_name,npc_file,npc_bit,npc_name,talk_kind,talk_line,accept_f
 68,328,Royal Spit Take,301,79,Yukumo Chief,4,28,450,village_star:3 AND notflag:254 AND flag:253
 69,329,A Forest Fracas,301,79,Yukumo Chief,4,37,452,village_star:3 AND notflag:256 AND flag:255
 70,510,The Entrancing Water Dancer,301,79,Yukumo Chief,4,47,454,village_star:5 AND notflag:258 AND flag:257
-71,641,Advanced: Out of the Fry Pan,301,79,Yukumo Chief,8,62,456,village_star:6 AND notflag:260 AND feature:48 AND points:Yukumo:1500
+71,641,Advanced: Out of the Fry Pan,301,79,Yukumo Chief,8,62,456,village_star:6 AND notflag:260 AND questset:48 AND points:Yukumo:1500
 72,507,Hunt-a-thon: Khezu,302,80,Yukumo Gal,8,67,458,village_star:5
 73,10711,The Yukumo Gal Special,325,92,Yukumo Sweetheart,8,6,460,hub_star:7 AND flag:459
 74,,,307,85,Palico Armory,8,4,462,village_star:3

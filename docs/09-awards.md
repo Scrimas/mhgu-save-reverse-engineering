@@ -58,6 +58,27 @@ turned from empty to `?`. A `?` marks the next tier of an award series already
 started, so it follows from the earned bits and has no bit of its own. Wycademy
 slot 29 showed `?` before the write and stores 0.
 
+## Game-side map — `base + 0x3157`
+
+**DERIVED (code + values).** The Guild Card field above is not the only award map. The
+game keeps its own at `base + 0x3157` (`+0xc28` of the save object, 20 bytes, same bit
+order). The award check (`0x3ec020` onwards) sets a bit there and in two companion
+maps (`+0xc3c`, `+0xc50`) when its condition holds. Of those only `+0xc50` is saved,
+at `base + 0x316B`; it drives the "new award" notice. Its first tests read the
+[quest set map](05-quests.md#quest-sets--base--0x3187): sets 13 and 14 complete give
+award 0, *completed all 1★ and 2★ Village Quests*, sets 15 and 16 award 1.
+
+In the analysed save this map holds the field's value from before the full-field
+write, plus the two awards earned since (34 and 83), and those two are exactly the
+bits set in the notice copy at `base + 0x316B`:
+
+```
+base+0x3157: 00e0ffe76d7f90d1dffa6ff5631e803f04 000000
+base+0x316B: 0000000004000000000008000000000000 000000
+```
+
+Whether the Guild Card copy is rebuilt from this map, and when, was not tested.
+
 ## Open questions
 
 - **UNRESOLVED — Bherna's 26th slot**, *A Pat on the Back* ("your first step into

@@ -17,7 +17,7 @@ HUB_STAR  = 0x2C4DC         # u16
 FLAGS     = 0x2C56D         # event flag bitmap
 NPC_HOLD  = 0x2C62D         # per-NPC bits, map A: no request offers until the next quest
 PROGRESS  = 0x2F77          # u32: bit 20 = HR limit released, bit 31 = quest 10646 was listed
-FEATURES  = 0x3187          # 128-bit map, meaning unresolved; bit 48 gates the chiefs' last requests
+QUESTSETS = 0x3187          # bit N = every quest of set N (quest-index.csv, column sets) is cleared
 POINTS    = 0x281B          # u32[4] village points Bherna/Kokoto/Pokke/Yukumo, G-rank set 16 bytes later
 VILLAGES  = ["Bherna", "Kokoto", "Pokke", "Yukumo"]
 
@@ -26,8 +26,11 @@ DATA = pathlib.Path(__file__).resolve().parent.parent / "data"
 def main():
     path = sys.argv[1] if len(sys.argv) > 1 else "system"
     buf = pathlib.Path(path).read_bytes()
-    index, groups = {}, {}
+    index, groups, sets = {}, {}, {}
     for row in csv.DictReader(open(DATA / "quest-index.csv")):
+        if int(row["quest_id"]) not in index:
+            for n in row["sets"].split():
+                sets.setdefault(int(n), []).append(int(row["index"]))
         index.setdefault(int(row["quest_id"]), int(row["index"]))
         if int(row["group"]):                     # key quest sets; quests sharing an alt value count once
             groups.setdefault(int(row["group"]), {}).setdefault(int(row["alt"]) or -int(row["index"]), []).append(int(row["index"]))
@@ -63,7 +66,10 @@ def main():
             g = int(arg) + (10 if kind == "group_done" else 0)
             ok = all(any(bit(CLEARED, i) for i in alt) for alt in groups.get(g, {}).values())
             return None if ok else f"all key quests of quest_group group {g}"
-        if kind == "feature":      return None if bit(FEATURES, int(arg)) else f"bit {arg} of the map at base+0x3187 (meaning unknown)"
+        if kind == "questset":
+            if bit(QUESTSETS, int(arg)): return None
+            left = sum(1 for i in sets.get(int(arg), []) if not bit(CLEARED, i))
+            return f"quest set {arg}: {left} quests left" if left else f"quest set {arg}: all cleared, but bit {arg} at base+0x3187 is clear (the game sets it only when it sees the last clear)"
         if kind == "requests_done":
             rng, need = arg.split(":"); lo, hi = map(int, rng.split("-"))
             have = sum(bit(FLAGS, done[i]) for i in range(lo, hi + 1) if i in done)

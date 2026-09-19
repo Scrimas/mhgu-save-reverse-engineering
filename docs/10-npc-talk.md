@@ -88,7 +88,7 @@ anything else adds nothing. That is how an s16 reaches 41811 or 111304.
 | 67–70 | contribution points of Bherna / Kokoto / Pokke / Yukumo ≥ *b* (`0x523b50`: low rank + G rank, at most 20000) | from code |
 | 85, 93–97 | bits 29, 11, 12, 8, 9, 10 of the progress word | meaning UNRESOLVED |
 | 86 / 87 | a state word is 1 / is not 1. The footbath visitors (NPC 420–428) use 87 for a one-line "have a seat, then we'll talk" and 86 for the real conversation, so this is "seated in the Yukumo footbath" | DERIVED |
-| 89, 90, 121, 161–163 | bits 45, 46, 48, 78, 98, 99 of the 128-bit map at `base + 0x3187`. 121 gates the four chiefs' last requests | 121 CONFIRMED by write, meaning UNRESOLVED |
+| 89, 90, 121, 161, 162, 163 | bits 45, 46, 48, 98, 78, 99 of the [quest set map](05-quests.md#quest-sets--base--0x3187) at `base + 0x3187`: every quest of that set is cleared. 45 / 46 = the 10 low-rank Arena quests cleared / all at rank A, 98 / 78 = the same for all 17 Arena quests, 48 = the ordinary Village ★1–★6 quests (gates the four chiefs' last requests), 99 = the ordinary Village ★7–★10 quests | 121 CONFIRMED by write, the others from code and dialogue |
 | 91 / 92 | NPC *b* has one / none of its three per-NPC bits set | from code |
 | 98–101, 157, 158 | result of `0x1c8ca8` > 4, 1, 2, 5, 7, 8 (a level; NPC 621 only) | not read further |
 | 106 / 107 / 108 | random word modulo 10000 ≤ / ≥ / < *b*: a line with a fixed chance | from code |
@@ -153,7 +153,7 @@ NPC still waits for. Read-only.
 | `npc_bit`, `npc_name` | The NPC's bit in the per-NPC maps, which is also its index in `NpcName_<lang>.gmd` and the NPC byte `+0x06` of the request record |
 | `talk_kind`, `talk_line` | Block kind (4 / 8, once 9) and its first line |
 | `accept_flag` | Flag the block sets |
-| `offer` | Conditions besides "accepted flag not set yet", joined by ` AND `; `x\|y` means either. `village_star:N`, `hub_star:N` (≥), `village_eq` / `hub_eq`, `flag:N`, `notflag:N`, `cleared:Q`, `village_keys:N`, `group_done:N`, `hr:N`, `npc_idle:NPC`, `footbath`, `listed:Q` (64, 122), `hr_unlocked` (65), `points:Village:N` (67–70), `feature:N` (bit of the map at `base + 0x3187`), `pending:N` (activity state byte), `requests_done:FROM-TO:N` (113, 114), `condT:a:b` for the rest. Only what the selector really tests is listed: reading stops at the first empty slot |
+| `offer` | Conditions besides "accepted flag not set yet", joined by ` AND `; `x\|y` means either. `village_star:N`, `hub_star:N` (≥), `village_eq` / `hub_eq`, `flag:N`, `notflag:N`, `cleared:Q`, `village_keys:N`, `group_done:N`, `hr:N`, `npc_idle:NPC`, `footbath`, `listed:Q` (64, 122), `hr_unlocked` (65), `points:Village:N` (67–70), `questset:N` (bit N of the [quest set map](05-quests.md#quest-sets--base--0x3187) at `base + 0x3187`), `pending:N` (activity state byte), `requests_done:FROM-TO:N` (113, 114), `condT:a:b` for the rest. Only what the selector really tests is listed: reading stops at the first empty slot |
 
 The Argosy Captain (NPC 52), whose *The Perilous Pair* (607) started this:
 
@@ -208,8 +208,8 @@ snapshot taken right after a quest (`req-1`, `req-2`). This explains the observa
 "reported 10220, got the costume, Captain offered nothing": bit 33 was set by that
 report and is still set in the save.
 
-**Controlled write — CONFIRMED.** Bit 48 of the [map at `base + 0x3187`](#other-save-state-the-talk-data-reads)
-(condition 121) was set, which made the last request of all four chiefs ready, and
+**Controlled write — CONFIRMED.** Bit 48 of the [quest set map at `base + 0x3187`](05-quests.md#quest-sets--base--0x3187)
+(condition 121, "all ordinary Village ★1–★6 quests cleared") was set, which made the last request of all four chiefs ready, and
 bit 36 of map B (Kokoto Chief; his offer is a kind 9 block) was set in the same write
 (`0x18FE29` `0x00 → 0x01`, `0x1B92E5` `0x00 → 0x10`, both slots). In the game the
 Bherna Chief announced his new ★6 quests (flag 685), the Pokke and Yukumo chiefs
@@ -260,11 +260,11 @@ Found through the conditions and actions above. The character block copies
 | Contribution points, low rank | `base + 0x281B` | u32 × 4: Bherna, Kokoto, Pokke, Yukumo. The adder `0x523a80` caps each at 20000 | DERIVED (code + plausible values) |
 | Contribution points, G rank | `base + 0x282B` | u32 × 4, same order. 280 / 240 / 125 / 110 in the analysed save | DERIVED |
 | Progress word | `base + 0x2F77` | u32. Bit 20 = HR limit released, bit 31 = quest 10646 was listed (latch of condition 64), bits 8–12 and 29 read by conditions 93–97 and 85. `0x8A7FFFFF` in the analysed save | bits 20 and 31 from code |
-| 128-bit map | `base + 0x3187` | 16 bytes (`+0xc70`), copies for notices at `+0xc80` / `+0xc90`. `0x3f1950` sets the bit whose index is the ID that `0x3ba060` returns for each of a quest's eight target slots. Bit 48 (condition 121; byte `base + 0x318D` bit 0) was clear in the analysed save and none of the four requests it gates had been offered; setting it made the chiefs offer them. A hint for the meaning: before the write the set bits were 0, 13, 74–77 and 80–97, and rows 74–97 of [`monster-index.csv`](../data/monster-index.csv) are the small monsters (13 is Gendrome, 48 Arzuros), so the index may be a monster ID. Against that: clearing 1038 *Bag a Brachydios* (row 53) set no bit | bit 48 CONFIRMED by write, meaning UNRESOLVED |
+| Quest set map | `base + 0x3187` | 16 bytes (`+0xc70`), bit N = every quest of set N is cleared, see [05 — Quests](05-quests.md#quest-sets--base--0x3187). Bit 48 (condition 121; byte `base + 0x318D` bit 0) was clear in the analysed save and none of the four requests it gates had been offered; setting it made the chiefs offer them | bit 48 CONFIRMED by write |
 | Hunter's Notes, large monsters | `base + 0x5027` | 123 bits, a second copy for the NEW mark at `+0x5037` | from code |
 | Hunter's Notes, second list | `base + 0x5047` | 30 bits, just before the [rotating quests](05-quests.md#rotating-quests--base--0x504b) | from code |
 | Random word | `base + 0x2C675` | u32, see conditions 106–108 | from code |
-| Activity state | not mapped | 23 bytes at `+0x6f` of the activity manager, written by its serializer `0x198120` between a 1-byte and a 6-byte field. Each byte counts rewards that are waiting for a conversation (at most 99). Bytes 7–10 and 13–16 are village tickets: `0x197208` adds to them when the contribution points pass a threshold | file offset UNRESOLVED |
+| Activity state | `base + 0x2381E` | 23 bytes at `+0x6f` of the activity manager, written by its serializer `0x198120` between a 1-byte and a 6-byte field. Each byte counts rewards that are waiting for a conversation (at most 99). Bytes 7–10 and 13–16 are village tickets: `0x197208` adds to them when the contribution points pass a threshold. The manager's tail starts at `base + 0x2380F` with 10 tier bytes (`+0x8c`; `2a 2a 2a 2a` = tier 42 in all four villages in the analysed save). All 23 state bytes are 0 there, which agrees with no chief offering a ticket | DERIVED: offset from the sizes of the blocks up to the [star levels](05-quests.md#star-levels--base--0x2c4da); the Palico names sit exactly where the same count puts them |
 
 ## Init scripts — `npc_NNN_is.nis`
 
@@ -286,8 +286,5 @@ sets them: 237, 239 (shop stock upgrades), 677, 1502 (a weapon at its last level
 
 ## Open questions
 
-- **UNRESOLVED — the meaning of the 128-bit map at `base + 0x3187`**, in particular
-  bit 48, which gates the chiefs' last requests (flags 685, 160, 210, 260).
-- **UNRESOLVED — the file offset of the activity state bytes.**
 - **UNRESOLVED — request 117** (kind 2): no talk line sets its flag 550.
 - Conditions marked "not read further" above. None of them gates a request.
