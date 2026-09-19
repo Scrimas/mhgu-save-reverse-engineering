@@ -111,6 +111,26 @@ Two caveats, both encountered:
 Always snapshot immediately before a marker write. The markers destroy real data, and
 the snapshot is what restores it afterwards.
 
+## Reading the game itself
+
+Some layouts have no arithmetic relation to anything visible in the save. The quest
+bitmap is the clearest case: its index is a position in a game data table, so diffing
+alone would need one controlled clear per quest. When a structure resists diffing,
+read the game's own code and data instead:
+
+1. Dump your own copy of the game and its update, and apply the update's patch
+   layer. Do not trust a tool's patched output without checking that files the
+   update did not change match the base game byte for byte.
+2. Find the code that reads the structure. Save-field names and resource type names
+   survive in the executable as strings (`rQuestGroup`, `cQuestLink`, …), which
+   narrows the search.
+3. MT Framework archives (`.arc`) identify each entry by a type hash,
+   `~crc32(name) & 0x7FFFFFFF`. This locates the resource behind a type name, and a
+   brute scan of every archive for two known IDs finds it too.
+4. Validate the recovered table against the save exactly as you would a diffed
+   structure. For quests: the controlled-diff anchor, every history-log quest, and
+   the independently derived deviant block all had to land on set bits.
+
 ## Failed approaches
 
 Recorded because each cost real time and each is an easy trap to re-enter.

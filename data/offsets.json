@@ -71,10 +71,12 @@
     "order_warning": "storage order differs from on-screen bar order"
   },
   "quests": {
-    "cleared_bitmap": { "offset": 1636608, "hex": "0x18F900", "length": 128, "bits": 1024,
-                        "confidence": "CONFIRMED",
-                        "note": "one bit per quest, set on first clear; deviant quests NOT tracked here; further blocks must exist beyond 0x18F980" },
-    "id_to_bit_mapping": "UNRESOLVED - linear mappings falsified; uses a compact internal slot index",
+    "bitmaps": { "rel": "0x2C77", "slot1_abs": "0x18F913", "bits": 1509, "bytes": 189, "bit_order": "LSB-first",
+                 "confidence": "CONFIRMED",
+                 "cleared": "rel 0x2C77", "unlocked": "rel 0x2D77 (+0x100)", "third": "rel 0x2E77 (+0x200), meaning UNRESOLVED",
+                 "note": "index = position of the quest ID in game resource quest\\quest_group (rQuestGroup, loc/arc/village/common.arc); index 0 is a placeholder; 0x18F900-0x18F912 is NOT part of the bitmap; deviant level bitmaps are indices 947-1174" },
+    "id_to_bit_mapping": "data/quest-index.csv",
+    "id_scheme": "decimal E P T SS NN: E=1 event, P=1 prowler, T 0 village/1 hub/2 arena/3 training/4 special permit, SS star (11-14 = G1-G4) or deviant 1-18, NN sequence or permit level (11-15 = G1-G5, 16 = EX)",
     "history_log": { "offset": 2442967, "hex": "0x2546D7", "record_stride": 160,
                      "fields": { "quest_id": { "offset": 0, "type": "u16" },
                                  "name": { "offset": 2, "type": "UTF-16LE, null-terminated" } },
@@ -85,7 +87,7 @@
       "quest_counter_b": { "offset": 2443118, "hex": "0x25476E", "type": "u16", "confidence": "DERIVED" }
     },
     "known_quest_ids": {
-      "0xA1C4": "Rustrazor Ceanataur G2",
+      "0xA1C4": "Rustrazor Ceanataur G2 (41412)",
       "0xA228-0xA22C": "Soulseer Mizutsune G2..EX",
       "0xA2F1-0xA2F4": "Elderfrost Gammoth G3..EX"
     }

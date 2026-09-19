@@ -49,6 +49,13 @@ each byte: global bit `g` lives at byte `g >> 3`, mask `1 << (g & 7)`.
 Note the base is **not** byte-aligned — it starts three bits into `0x18F989`. Any
 implementation must address bits globally rather than walking bytes.
 
+**CONFIRMED — these are not separate bitmaps.** They are indices 947–1174 of the
+quest bitmaps in [05 — Quests](05-quests.md), one bit per Special Permit quest
+(quest ID `40000 + 100 × (deviant + 1) + level`). The mixed-width layout is simply
+the quest list containing 16 permit quests for each Generations deviant and 6 for
+each GU deviant. The odd start bit is list index 947, counted from the quest bitmap
+base at `0x18F913`.
+
 ### Block layout
 
 Blocks are **mixed-width**, packed with no padding:
@@ -126,9 +133,10 @@ offered. Hunting the corresponding base monster once at G-rank immediately relea
 them; this was verified by hunting G-rank Arzuros, after which Redhelm's EX quest
 appeared without any further save edit.
 
-Where this flag is recorded was never established. The cleared-quest bitmap
-(see [05 — Quests](05-quests.md)) is the obvious candidate, but a mapping from
-G-rank quests to bits was never derived, so the gate could not be set directly.
+Where this flag is recorded was never established. The quest mapping in
+[05 — Quests](05-quests.md) now allows a direct test: clear (in the bitmap) a G-rank
+quest that targets the base monster, and see whether that releases the gate. Not yet
+done.
 
 Practically: an editor can grant deviant levels, but cannot currently grant G-rank
 deviant *access* without the player hunting each base monster once at G-rank.
@@ -136,7 +144,7 @@ deviant *access* without the player hunting each base monster once at G-rank.
 ## Open questions
 
 - **UNRESOLVED — the G-rank base-monster gate.** The highest-value unknown here.
-  Likely a bit in the cleared-quest bitmap or a per-monster G-rank flag.
+  Either a cleared G-rank quest bit (now addressable) or a per-monster G-rank flag.
 - **UNRESOLVED — deviant tally indices.** Only Rustrazor Ceanataur (121) and Soulseer
   Mizutsune (122) are placed in the monster tally array. The Gen deviants sit below
   index 105 adjacent to their base monsters — Redhelm at 49 next to Arzuros at 48,

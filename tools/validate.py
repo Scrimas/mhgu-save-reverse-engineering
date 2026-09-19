@@ -17,7 +17,8 @@ TALLIES   = 0x192B40
 CAPTURES  = 0x192C52
 SIZES     = 0x192D62
 WEAPONS   = {"village": 0x254713, "hub": 0x254731, "arena": 0x25474F}
-QUESTBITS = (0x18F900, 128)
+QUESTS    = 0x2C77          # relative to character base; cleared, +0x100 unlocked
+QUEST_N   = 1509            # list entries incl. index 0
 
 DEVIANTS = ["Redhelm Arzuros","Snowbaron Lagombi","Stonefist Hermitaur","Dreadqueen Rathian",
             "Drilltusk Tetsucabra","Silverwind Nargacuga","Crystalbeard Uragaan","Deadeye Yian Garuga",
@@ -119,9 +120,24 @@ def main(path):
         print(f"  {name:12s} {sum(aw >> (lo+k) & 1 for k in range(n)):2d}/{n}")
     print(f"  total {bin(aw & ((1 << 132) - 1)).count('1')}/132   (stray bits >= 132: {bin(aw >> 132).count('1')})")
 
-    lo, n = QUESTBITS
-    print(f"\n--- quests ---")
-    print(f"  cleared bitmap 0x{lo:X}: {sum(bin(b).count('1') for b in buf[lo:lo+n])} / {n*8} bits set")
+    print("\n--- quests (docs/05) ---")
+    qb = base + QUESTS
+    csvq = pathlib.Path(__file__).parent.parent / "data" / "quest-index.csv"
+    stray = sum(bit(buf, (qb + 0x100*k)*8 + i) for k in range(3) for i in list(range(1)) + list(range(QUEST_N, 189*8)))
+    if csvq.exists():
+        cats = {}
+        for r in csv.DictReader(csvq.open()):
+            if r["notes"]:
+                continue
+            i = int(r["index"])
+            key = r["category"] + (" (Prowler)" if r["prowler"] == "yes" else "")
+            c = cats.setdefault(key, [0, 0, 0])
+            c[0] += bit(buf, qb*8 + i)
+            c[1] += bit(buf, (qb + 0x100)*8 + i)
+            c[2] += 1
+        for key, (cl, ul, n) in cats.items():
+            print(f"  {key:28s} cleared {cl:4d}  unlocked {ul:4d}  of {n:4d}")
+    print(f"  stray bits (index 0 or past the list, all three bitmaps): {stray}")
 
 if __name__ == "__main__":
     default = pathlib.Path.home()/".config/Ryujinx/bis/user/save/0000000000000001/0/system"

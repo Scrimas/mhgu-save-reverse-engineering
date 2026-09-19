@@ -29,13 +29,13 @@ they are portable.
 | [02 — Monster records](docs/02-monster-records.md) | Hunt tallies, size records, the monster index table |
 | [03 — Deviants](docs/03-deviants.md) | Permit counts, level bitmaps, unlock gating |
 | [04 — Weapon usage](docs/04-weapon-usage.md) | Guild Card weapon usage counters |
-| [05 — Quests](docs/05-quests.md) | Cleared-quest bitmap, quest history log, counters |
+| [05 — Quests](docs/05-quests.md) | Quest bitmaps and the full quest index, history log, counters |
 | [06 — Methodology](docs/06-methodology.md) | How this was derived, and how to extend it |
 | [07 — Equipment](docs/07-equipment.md) | Character slots, equipment box, talismans, transmog, dye, My Sets |
 | [08 — Hunter Arts and Canteen](docs/08-progression.md) | Hunter Art unlocks, Canteen ingredients and dishes |
 | [09 — Awards](docs/09-awards.md) | Guild Card award bitfield |
 
-Machine-readable: [`data/monster-index.csv`](data/monster-index.csv), [`data/hunter-arts.csv`](data/hunter-arts.csv), [`data/offsets.json`](data/offsets.json)
+Machine-readable: [`data/monster-index.csv`](data/monster-index.csv), [`data/quest-index.csv`](data/quest-index.csv), [`data/hunter-arts.csv`](data/hunter-arts.csv), [`data/offsets.json`](data/offsets.json)
 
 ## Quick reference
 
@@ -43,8 +43,9 @@ Machine-readable: [`data/monster-index.csv`](data/monster-index.csv), [`data/hun
 |---|---|---|
 | Header nonce | `0x000014` | u32, changes every write, **not** a checksum |
 | Deviant permit counts | `0x18F4D8` | 18 × u8 |
-| Quest-cleared bitmap | `0x18F900` | 128 bytes = 1024 bits |
-| Deviant levels (cleared) | bit `0x18F989`.3 | mixed-width bitfield, 228 bits |
+| Quests cleared | `base + 0x2C77` | 1509 bits, index = position in `quest_group`, see [`quest-index.csv`](data/quest-index.csv) |
+| Quests unlocked | `base + 0x2D77` | same indexing, `+0x100` bytes |
+| Deviant levels (cleared) | bit `0x18F989`.3 | quest indices 947–1174 (Special Permit), 228 bits |
 | Deviant levels (unlocked) | bit `0x18FA89`.3 | same layout, `+0x100` bytes |
 | Quest counter | `0x192AEA` | u16 |
 | Monster hunt tallies | `0x192B40` | u16, index 1–137 (`0x192B40 + 2i`) |
