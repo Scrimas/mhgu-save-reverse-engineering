@@ -221,7 +221,9 @@ clear: 81 of the 96 sets with members agree in both directions. Bit 48 was set b
 quests still open, and the chiefs offered their requests. The other 14 sets (26–37,
 72, 73) are complete but their bit is clear. **UNRESOLVED**: those deviant quests may
 have been marked cleared by something other than a normal clear in this save's
-history; the code gives no second condition.
+history; the code gives no second condition. Emulating `0x3b85d8` with 40115 as the
+last open quest of set 26 does put 26 into the slots, so a normal last clear would
+have set the bit.
 
 ## Where a quest is posted — `questData + 0x11`
 
