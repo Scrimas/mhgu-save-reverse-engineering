@@ -79,7 +79,7 @@
                        "confidence": "CONFIRMED",
                        "note": "event flag bitmap; villager request i uses accept_flag / done_flag from data/request-index.csv (activityData.atd record +0x33 / +0x35). Setting accept_flag posts the request quest on the village board (controlled write: bit 396 -> quest 607). Followed by 3 x 24 bytes and 2 x u32, UNRESOLVED" },
     "unlock_rules": { "file": "data/quest-unlock.csv", "tool": "tools/quest_unlock.py", "confidence": "CONFIRMED",
-                      "note": "board visibility = game script script\\check_quest_unlocked (rCommonScript, loc/arc/village/common.arc), run per quest ID; reads event flags (rel 0x2C56D), cleared bitmap, HR (rel 0x28) and hub_star. Zero violations against 990 seen quests; controlled write only for a request flag (396 -> 607)" },
+                      "note": "board visibility = game script script\\check_quest_unlocked (rCommonScript, loc/arc/village/common.arc), run per quest ID; reads event flags (rel 0x2C56D), cleared bitmap, HR (rel 0x28) and hub_star. Zero violations against 990 seen quests; controlled writes: flag 396 -> quest 607, flag 1059 -> five Village 10-star Advanced quests. cleared/atleast/hr/hub_star predicates not write-tested" },
     "star_levels": { "village": { "rel": "0x2C4DA", "slot1_abs": "0x1B9176", "type": "u16", "range": "1-10", "confidence": "DERIVED" },
                      "hub": { "rel": "0x2C4DC", "slot1_abs": "0x1B9178", "type": "u16", "range": "1-13", "confidence": "CONFIRMED" } },
     "rotating_quests": { "rel": "0x504B", "slot1_abs": "0x191CE7", "type": "u64 bitmap, 51 bits", "confidence": "DERIVED",

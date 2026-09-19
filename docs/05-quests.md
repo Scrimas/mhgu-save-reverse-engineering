@@ -219,7 +219,14 @@ for Redhelm) or 10768.
 3. The deviant rules match the behaviour recorded in [03](03-deviants.md): G-rank
    Arzuros released Redhelm's G-rank levels.
 
-No controlled write has been done yet for a rule other than a request flag.
+4. Controlled write of a flag that no request uses: setting event flag 1059 alone
+   (`0x1B928D` `0x00 → 0x08`, both slots) made the five Village ★10 quests whose rule
+   is `flag:1059` appear: *Advanced: Wrong One Silver*, *Heart of Gold*, *Steel
+   Yourself*, *Karma Chameleos* and *Empire of the Sun*. The last three are also in
+   the rotating table below, and their bits (29–31) were set at the time.
+
+The `cleared`, `atleast`, `all`, `hr` and `hub_star` predicates rest on the code and
+on the consistency test. None of them has had a controlled write of its own.
 
 ### Script format
 
@@ -371,8 +378,8 @@ itself, but it can satisfy the `cleared` / `atleast` / `all` rule of another que
 To make a hidden quest appear, satisfy its rule from
 [`data/quest-unlock.csv`](../data/quest-unlock.csv): set the event flag, or the
 cleared bit of the prerequisite, or raise HR or the Hub star level.
-`tools/quest_unlock.py <save> <quest id>` prints what is missing. Only the request
-flag case has been confirmed by a controlled write so far.
+`tools/quest_unlock.py <save> <quest id>` prints what is missing. Flag rules are
+confirmed by two controlled writes (396 and 1059). The other predicates are not.
 
 For a villager-request quest the flag is its **accepted** flag. Leave the completed
 flag alone: the NPC sets it, and hands over the reward, when the cleared quest is
@@ -437,9 +444,8 @@ the Guild Card statistics block rather than the quest system.
 - **UNRESOLVED — quest history record layout** beyond ID and name. The documented
   u16 ID cannot hold event IDs (≥ 1 000 000). Either the field is wider, or event
   quests log differently.
-- **Not yet tested — a controlled write for a non-request rule**, for example flag
-  1059 (five Village ★10 *Advanced* quests) or the cleared bit of a deviant's base
-  monster quest.
+- **Not yet tested — a controlled write for a `cleared` / `atleast` rule**, for
+  example the cleared bit of a deviant's base monster quest.
 - **UNRESOLVED — who sets the star-level flags** and what else changes with them.
 - **UNRESOLVED — the NPC offer condition** for villager requests (talk scripts).
 - **UNRESOLVED — the event flags that no unlock rule or request uses**, and the three
