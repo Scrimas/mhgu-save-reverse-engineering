@@ -2,7 +2,7 @@
 
 Every quest in the game (Village, Hub, G-rank, Arena, Training, Special Permit,
 Prowler and the built-in event quests) is tracked by **one list index**, shared by
-three parallel bitmaps. The full index table is
+three parallel bitmaps (cleared, seen, and one unresolved). The full index table is
 [`data/quest-index.csv`](../data/quest-index.csv).
 
 ## Quest bitmaps — `base + 0x2C77`
@@ -10,7 +10,7 @@ three parallel bitmaps. The full index table is
 | Bitmap | Offset (relative) | Slot 1 absolute | Meaning |
 |---|---|---|---|
 | Cleared | `base + 0x2C77` | `0x18F913` | quest cleared at least once |
-| Unlocked | `base + 0x2D77` | `0x18FA13` | quest available on the board |
+| Seen | `base + 0x2D77` | `0x18FA13` | quest has been highlighted on the board (clears **NEW**) |
 | Third | `base + 0x2E77` | `0x18FB13` | **UNRESOLVED**, see below |
 
 Each bitmap is 1509 bits (189 bytes, list indices 0–1508), LSB-first as elsewhere:
@@ -47,7 +47,7 @@ The resource layout:
 The executable's clear check (`0x523DA4` in the v1.4 NSO, ARM32) takes a bitmap
 pointer and a quest ID. It linearly searches the loaded list from index 1 for the ID,
 and tests `bitmap[index]`. An ID that is not found falls back to index 0. The setters
-for the unlocked bitmap (`0x523E44`) and the third bitmap (`0x526B98`) address it as
+for the seen bitmap (`0x523E44`) and the third bitmap (`0x526B98`) address it as
 `cleared + 0x100` and `cleared + 0x200`, using the same index.
 
 The list is identical in the base game and the v1.4 update.
@@ -60,7 +60,7 @@ Evidence that the index is correct, all from the analysed save:
 - The 228 Special Permit quests occupy indices 947–1174. This is exactly the deviant
   level bitmap of [03 — Deviants](03-deviants.md), found independently: global bit
   `0x18F913*8 + 947` is `0x18F989` bit 3.
-- Every cleared quest is also unlocked, and no bit is set outside the list, in any of
+- Every cleared quest is also seen, and no bit is set outside the list, in any of
   the three bitmaps.
 
 ### Quest ID scheme
@@ -108,13 +108,32 @@ flagged in the CSV and should be left alone.
 
 13 bits are set in the analysed save: 10318, 11422, 11457, 11468, 40401, 41411,
 41511, 41611, 41614, 41616, 1010150, 1011001, 1011030. This is a mix of regular,
-permit and event quests, all of them unlocked, and some not cleared. It is plausibly
-a "new" or "seen" marker, but that has not been tested. **UNRESOLVED**
+permit and event quests, all of them seen, and some not cleared. **UNRESOLVED**
+
+### Controlled writes
+
+**CONFIRMED — cleared.** Setting the cleared bit of an uncleared Village ★2 quest
+(202, *Harvest Tour: Dunes*) made it display as cleared in-game.
+
+**CONFIRMED — the second bitmap is "seen", not "unlocked".** Evidence:
+
+- Setting it for a hidden Village ★6 quest (607, *The Perilous Pair*), together with
+  the cleared bit, did **not** make the quest appear.
+- A visible quest (612, *Break the Brachydios*) had the bit clear and showed
+  **NEW**.
+- With the bit restored to 0, Hub ★2 *Poisonous Pest* (10227) showed **NEW**. Moving
+  the cursor onto it and saving flipped exactly one bit across all three bitmaps:
+  its seen bit, index 392, 0 → 1. Opening a list without highlighting anything
+  changes nothing.
+
+**Board visibility is not stored in these bitmaps.** It comes from somewhere else:
+key-quest progress, villager requests (607 carries the same `questData` flags as the
+Hunt-a-thon and *Fungus Fetch* requests), or other state. **UNRESOLVED**
 
 ### Editing
 
-To mark a quest cleared, set its bit in **both** the cleared and unlocked bitmaps.
-Use OR, as always. This has not yet been confirmed by a controlled write.
+To mark a quest cleared, set its cleared bit, and its seen bit if you don't want a
+leftover NEW marker. Use OR, as always. This does not make a hidden quest appear.
 
 ## Quest history log — `0x2546D7`
 
@@ -169,8 +188,9 @@ the Guild Card statistics block rather than the quest system.
 - **UNRESOLVED — quest history record layout** beyond ID and name. The documented
   u16 ID cannot hold event IDs (≥ 1 000 000). Either the field is wider, or event
   quests log differently.
-- **UNTESTED — a controlled write.** The mapping is confirmed by read-back only.
-  Setting a known uncleared quest and checking it in-game is still outstanding.
+- **UNRESOLVED — board visibility.** Which state decides whether a quest is
+  offered at all. Needed to grant access to locked quests, including the G-rank
+  deviant gate of [03](03-deviants.md).
 
 ## A caution on bulk edits
 

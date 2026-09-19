@@ -12,12 +12,12 @@ import sys, csv, pathlib
 
 PERMITS   = 0x18F4D8
 CLEARED   = 0x18F989 * 8 + 3
-UNLOCKED  = CLEARED + 0x100 * 8
+SEEN      = CLEARED + 0x100 * 8
 TALLIES   = 0x192B40
 CAPTURES  = 0x192C52
 SIZES     = 0x192D62
 WEAPONS   = {"village": 0x254713, "hub": 0x254731, "arena": 0x25474F}
-QUESTS    = 0x2C77          # relative to character base; cleared, +0x100 unlocked
+QUESTS    = 0x2C77          # relative to character base; cleared, +0x100 seen
 QUEST_N   = 1509            # list entries incl. index 0
 
 DEVIANTS = ["Redhelm Arzuros","Snowbaron Lagombi","Stonefist Hermitaur","Dreadqueen Rathian",
@@ -136,7 +136,7 @@ def main(path):
             c[1] += bit(buf, (qb + 0x100)*8 + i)
             c[2] += 1
         for key, (cl, ul, n) in cats.items():
-            print(f"  {key:28s} cleared {cl:4d}  unlocked {ul:4d}  of {n:4d}")
+            print(f"  {key:28s} cleared {cl:4d}  seen {ul:4d}  of {n:4d}")
     print(f"  stray bits (index 0 or past the list, all three bitmaps): {stray}")
 
 if __name__ == "__main__":

@@ -44,9 +44,9 @@ Machine-readable: [`data/monster-index.csv`](data/monster-index.csv), [`data/que
 | Header nonce | `0x000014` | u32, changes every write, **not** a checksum |
 | Deviant permit counts | `0x18F4D8` | 18 × u8 |
 | Quests cleared | `base + 0x2C77` | 1509 bits, index = position in `quest_group`, see [`quest-index.csv`](data/quest-index.csv) |
-| Quests unlocked | `base + 0x2D77` | same indexing, `+0x100` bytes |
+| Quests seen (NEW cleared) | `base + 0x2D77` | same indexing, `+0x100` bytes |
 | Deviant levels (cleared) | bit `0x18F989`.3 | quest indices 947–1174 (Special Permit), 228 bits |
-| Deviant levels (unlocked) | bit `0x18FA89`.3 | same layout, `+0x100` bytes |
+| Deviant levels (seen) | bit `0x18FA89`.3 | same layout, `+0x100` bytes |
 | Quest counter | `0x192AEA` | u16 |
 | Monster hunt tallies | `0x192B40` | u16, index 1–137 (`0x192B40 + 2i`) |
 | Monster capture counts | `0x192C52` | u16, index 1–137 (`0x192C52 + 2i`) |

@@ -1,8 +1,8 @@
 # 03 — Deviants
 
 Deviants (*Nyanta* variants — Redhelm, Dreadqueen, Hellblade, …) have three separate
-pieces of save state: a **permit count**, a **cleared-level bitmap**, and an
-**unlocked-level bitmap**.
+pieces of save state: a **permit count**, a **cleared-level bitmap**, and a
+**seen-level bitmap**.
 
 ## Deviant index order
 
@@ -41,7 +41,7 @@ Two bitmaps of identical layout:
 | Bitmap | Base bit address | Meaning |
 |---|---|---|
 | Cleared | byte `0x18F989`, bit 3 | levels the player has completed |
-| Unlocked | byte `0x18FA89`, bit 3 | levels available to select |
+| Seen | byte `0x18FA89`, bit 3 | level highlighted on the board, clears **NEW**. Earlier revisions read this as "unlocked"; see [05](05-quests.md#controlled-writes) |
 
 The second is exactly `0x100` bytes after the first. Bits are **LSB-first** within
 each byte: global bit `g` lives at byte `g >> 3`, mask `1 << (g & 7)`.
@@ -93,7 +93,7 @@ NAMES = ["Redhelm Arzuros","Snowbaron Lagombi","Stonefist Hermitaur",
 
 PERMITS  = 0x18F4D8
 CLEARED  = 0x18F989 * 8 + 3          # global bit address
-UNLOCKED = CLEARED + 0x100 * 8
+SEEN     = CLEARED + 0x100 * 8
 
 def block(i):
     return (i * 16, 16) if i < 12 else (192 + (i - 12) * 6, 6)
@@ -111,7 +111,7 @@ def read_levels(buf, i):
 
 def clear_all_but_ex(buf):
     """Set every level except EX, for every deviant, in both bitmaps."""
-    for base in (CLEARED, UNLOCKED):
+    for base in (CLEARED, SEEN):
         for i in range(18):
             off, width = block(i)
             for j in range(width - 1):        # width-1 skips the EX bit
