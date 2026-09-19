@@ -1,0 +1,137 @@
+# 07 — Equipment, transmog and dye
+
+The equipment box, the equipped-gear cache, the saved equipment sets ("My Sets"), and
+where transmog and armor pigment actually live. Everything here was confirmed by
+writing bytes, loading the save in-game, and checking the result on screen.
+
+Offsets in this document are **relative to the character base** (next section), not
+absolute. The absolute values quoted are for the first character slot.
+
+## Character slots
+
+**DERIVED.** The file starts with a 36-byte (`0x24`) Switch header. The MHXX-layout
+body follows it, and its own header carries a slot-use table and slot pointers:
+
+| Absolute | Size | Field |
+|---|---|---|
+| `0x28` | 3 × u8 | slot in use (1 / 0) for characters 1–3 |
+| `0x2B` | u8 | last loaded slot |
+| `0x34` | 3 × u32 | offset of character 1–3, **relative to `0x24`** |
+
+```python
+base = 0x24 + int.from_bytes(buf[0x34 + 4*slot : 0x38 + 4*slot], "little")
+```
+
+In the analysed save, slot 1 is `0x18CC78 + 0x24 = 0x18CC9C`. The unused slots still
+have pointers (`0x2AC53C`, `0x3CBE00`), giving a stride of `0x11F8C4` bytes.
+`base + 0x00` is the character name. This matches the MHXX `system` layout once the
+`0x24` header is accounted for.
+
+Every absolute offset in docs 02–05 falls inside slot 1's block. That makes it very
+likely those structures are per-character too (for example, deviant permits are at
+`base + 0x283C`). This has **not** been checked against a save with two characters.
+
+## Equipment box
+
+**CONFIRMED.** `base + 0x62EE` (absolute `0x192F8A`): 2000 entries × 36 bytes, in the
+same order as the in-game box. An empty entry is all zero.
+
+| Offset | Size | Field |
+|---|---|---|
+| `+0x00` | u16 | type (bits 0–4), level − 1 (bits 5–9), bits 10–15 see below |
+| `+0x02` | u16 | equipment ID (armor: armor ID; weapon: index into the weapon-tree table) |
+| `+0x04` | u16 | **transmog appearance ID** (armor only; 0 = own look) |
+| `+0x06` | 3 × u16 | decoration item IDs, one per slot, 0 = empty |
+| `+0x0C` | 24 | armor/weapon: zero in every entry observed; talisman: see below |
+
+Type codes seen: 1 head, 2 chest, 3 arms, 4 waist, 5 legs, 6 talisman, 7–21 weapon
+classes (18 = Dual Blades). The level field stores the in-game level minus one.
+Writing max level produced the right raw and element values on the status screen.
+
+**UNRESOLVED — bits 10–15 of `+0x00`.** The MHXX notes call this the "transmog
+level". It was zero on every box entry, including transmogged ones. The equipped
+cache copy of one transmogged helm had bit 15 set when its box source did not.
+Leaving it at zero is safe: transmog works without it.
+
+### Talisman fields
+
+**CONFIRMED.**
+
+| Offset | Size | Field |
+|---|---|---|
+| `+0x0C` | u8 ×2 | skill-tree ID 1, 2 |
+| `+0x0E` | i8 ×2 | skill points 1, 2 |
+| `+0x10` | u8 | slot count |
+| `+0x12` | u8 | tier code: 97 Mystery, 98 Shining, 99 Timeworn, 100 Enduring |
+| `+0x13` | u8 | 1 on every talisman observed |
+
+## Transmog
+
+**CONFIRMED.** Transmog is per box entry: bytes `+0x04..+0x05` hold the armor ID whose
+model is displayed. Writing an ID there changes the look of that piece in every set
+that uses it. Skills, slots and defense are unchanged. The in-game "Col" column shows
+the transmog marker for these pieces. The target must be the same body part and a
+class the hunter can wear. No ownership check was triggered on load.
+
+## Armor pigment (dye)
+
+**Not stored per armor piece.** In every box entry of a save containing dyed,
+transmogged gear, bytes `+0x0C..+0x23` were zero. Pigment belongs to the *outfit*:
+one colour per body part, kept in two places.
+
+### Current outfit
+
+**DERIVED.**
+
+| Offset | Size | Field |
+|---|---|---|
+| `base + 0x24C` | 5 × RGBA | pigment per body part |
+| `base + 0x270` | u8 | bits 0–4: 1 = use the armor's default colour for that part, 0 = custom |
+
+Changing sets rewrites these, so they are just a copy of the equipped set's values.
+Default colours are written out explicitly (e.g. `fa f5 e6 ff`), not stored as zero.
+
+### My Sets (saved equipment sets)
+
+**CONFIRMED** for the box indices, name and pigment. Set 1 is at `base + 0x208C8`
+(absolute `0x1AD564`), stride `0x88`. The menu shows 5 pages × 8 sets, so there are
+most likely 40 records. That count is **DERIVED** from the UI.
+
+| Offset | Size | Field |
+|---|---|---|
+| `+0x00` | 6 | UNRESOLVED (varies per set) |
+| `+0x06` | 24 | set name, single-byte text, NUL-padded (`---` when unused) |
+| `+0x30` | 7 × u16 | box index for weapon, head, chest, arms, waist, legs, talisman; `0xFFFF` = empty |
+| `+0x3E` | 7 × 3 × u16 | copy of each piece's decorations (**DERIVED**) |
+| `+0x6A` | 5 × RGBA | pigment per body part |
+| `+0x7E` | 5 | zero |
+| `+0x83` | 5 × u8 | per-part default flag: 1 = default colour, 0 = custom RGBA |
+
+The five RGBA values are probably ordered chest, arms, waist, legs, head, as in the
+MHXX Guild Card. That order is **DERIVED** only: every test used the same colour on
+all five parts.
+
+To dye a set, write the RGBA five times at `+0x6A` and clear the five flags at `+0x83`.
+Confirmed in-game: a colour written this way appears on the hunter when the set is
+loaded.
+
+Alpha was `0xFF` in every colour the game wrote. A forum report says it controls the
+specular "shine". That is untested here.
+
+## Equipped-gear cache
+
+**DERIVED.** `base + 0x110`: 7 × 44-byte records (weapon, head, chest, arms, waist,
+legs, talisman). Each record starts with a copy of the 36-byte box entry. A u32 that
+was constant across all seven slots (`14 a5 e3 01` in the analysed save) sits 4 bytes
+before each copy; its meaning is UNRESOLVED. The game appears to rebuild this cache
+from the box. If an editor changes a worn piece in the box, it should patch the
+matching cache record the same way.
+
+## Editing checklist
+
+1. Resolve the character base through the pointer at `0x34`. Don't hard-code it.
+2. Only write to empty box slots, or to entries you have just read and matched.
+3. Transmog: write `+0x04`. Dye: write the My Set pigment (and the current-outfit
+   pigment if that set is worn).
+4. Write both commit slots identically, with the emulator closed (see
+   [01 — Container](01-container.md)).

@@ -31,6 +31,7 @@ they are portable.
 | [04 — Weapon usage](docs/04-weapon-usage.md) | Guild Card weapon usage counters |
 | [05 — Quests](docs/05-quests.md) | Cleared-quest bitmap, quest history log, counters |
 | [06 — Methodology](docs/06-methodology.md) | How this was derived, and how to extend it |
+| [07 — Equipment](docs/07-equipment.md) | Character slots, equipment box, talismans, transmog, dye, My Sets |
 
 Machine-readable: [`data/monster-index.csv`](data/monster-index.csv)
 
@@ -50,6 +51,9 @@ Machine-readable: [`data/monster-index.csv`](data/monster-index.csv)
 | Weapon usage — Hub | `0x254731` | 15 × u16 |
 | Weapon usage — Arena | `0x25474F` | 15 × u16 |
 | Quest history log | `0x2546D7` | stride `0xA0` records |
+| Character slot pointers | `0x34` | 3 × u32, relative to `0x24` |
+| Equipment box | `base + 0x62EE` | 2000 × 36 bytes; transmog at `+0x04` |
+| My Sets (dye lives here) | `base + 0x208C8` | stride `0x88`; pigment 5 × RGBA at `+0x6A` |
 
 ## Confidence levels
 
@@ -67,9 +71,11 @@ from observed bytes, and it is incomplete.
 ## Open questions
 
 - **Multiple character slots.** MHGU supports several characters per save. Only one
-  was ever present in the analysed file, so it is unknown whether these structures
-  repeat at a per-character stride. **An editor must not assume these offsets are
-  absolute for arbitrary saves.** This is the single most important gap.
+  was ever present in the analysed file. The header's slot-pointer table (`0x34`,
+  see [07](docs/07-equipment.md#character-slots)) puts character 1 at `0x18CC9C`,
+  and every offset above falls inside that character's block. So they are most
+  likely `base + const`, but this has not been tested with a second character.
+  **An editor should resolve the base through the pointer, not hard-code it.**
 - **Region portability.** Only the EU/western build was examined. Japanese builds
   may differ.
 - **Monster indices 105–112** are consistently zero and were never identified as

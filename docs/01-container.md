@@ -84,6 +84,9 @@ applies to it.
   character, and at what stride, is unknown. Every offset in these documents should
   be treated as "offset for the first character of a single-character save" until
   someone verifies otherwise against a multi-character file.
+  Lead: the body header has a slot-use table and per-character pointers — see
+  [07 — Equipment § Character slots](07-equipment.md#character-slots).
 - **UNRESOLVED — the bulk of the file.** The identified structures account for a few
-  kilobytes. The remaining ~5 MB includes equipment boxes, item boxes, Palico data,
-  and much else that was never touched.
+  kilobytes. The remaining ~5 MB includes item boxes, Palico data, and much else
+  that was never touched. The equipment box and saved sets are now covered in
+  [07](07-equipment.md).

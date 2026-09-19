@@ -81,5 +81,36 @@
       "0xA228-0xA22C": "Soulseer Mizutsune G2..EX",
       "0xA2F1-0xA2F4": "Elderfrost Gammoth G3..EX"
     }
+  },
+  "characters": {
+    "slot_used":     { "offset": 40, "hex": "0x28", "type": "u8[3]", "confidence": "DERIVED" },
+    "slot_pointers": { "offset": 52, "hex": "0x34", "type": "u32[3]", "relative_to": "0x24", "confidence": "DERIVED",
+                       "note": "base = 0x24 + ptr; slot 1 base 0x18CC9C in analysed save; stride 0x11F8C4" },
+    "note": "every absolute offset above falls inside slot 1; per-character relocation likely but untested"
+  },
+  "equipment": {
+    "_offsets": "relative to character base; slot1_abs given for the analysed save",
+    "box": { "rel": "0x62EE", "slot1_abs": "0x192F8A", "count": 2000, "stride": 36, "confidence": "CONFIRMED",
+             "fields": {
+               "type_level":  { "offset": 0, "type": "u16", "layout": "type bits 0-4, level-1 bits 5-9, bits 10-15 UNRESOLVED" },
+               "eq_id":       { "offset": 2, "type": "u16" },
+               "transmog_id": { "offset": 4, "type": "u16", "confidence": "CONFIRMED", "note": "armor ID displayed; 0 = own model" },
+               "decorations": { "offset": 6, "type": "u16[3]" },
+               "talisman":    { "skill_ids": "0x0C u8[2]", "points": "0x0E i8[2]", "slots": "0x10 u8",
+                                "tier": "0x12 u8 (97 Mystery, 98 Shining, 99 Timeworn, 100 Enduring)", "flag": "0x13 u8 = 1" } },
+             "types": { "1": "head", "2": "chest", "3": "arms", "4": "waist", "5": "legs", "6": "talisman", "18": "dual blades" },
+             "pigment": "NOT stored per piece" },
+    "equipped_cache":  { "rel": "0x110", "count": 7, "stride": 44, "confidence": "DERIVED",
+                         "note": "copy of the box entry; constant u32 4 bytes before each copy UNRESOLVED" },
+    "current_pigment": { "rel": "0x24C", "type": "RGBA[5]", "confidence": "DERIVED",
+                         "default_flags": { "rel": "0x270", "type": "u8", "note": "bits 0-4: 1 = default colour, 0 = custom" } },
+    "my_sets": { "rel": "0x208C8", "slot1_abs": "0x1AD564", "stride": 136, "count": 40,
+                 "count_confidence": "DERIVED (menu shows 5 pages x 8)", "confidence": "CONFIRMED",
+                 "fields": {
+                   "name":          "0x06 char[24], NUL-padded",
+                   "box_index":     "0x30 u16[7] weapon..talisman, 0xFFFF = empty",
+                   "decorations":   "0x3E u16[7][3] (DERIVED)",
+                   "pigment":       "0x6A RGBA[5], order chest,arms,waist,legs,head (DERIVED)",
+                   "default_flags": "0x83 u8[5], 1 = default colour, 0 = custom" } }
   }
 }

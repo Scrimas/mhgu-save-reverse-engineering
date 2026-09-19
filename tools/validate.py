@@ -79,6 +79,22 @@ def main(path):
         shown += 1
     print(f"  ({shown} of {len(idx)} named indices have hunts)")
 
+    print("\n--- character slots / equipment (docs/07) ---")
+    base = 0x24 + int.from_bytes(buf[0x34:0x38], "little")
+    print(f"  slots in use {list(buf[0x28:0x2B])}  character 1 base 0x{base:X}  name {buf[base:base+32].split(b'\0')[0].decode('utf-8', 'replace')!r}")
+    box = base + 0x62EE
+    used = sum(1 for i in range(2000) if any(buf[box+36*i:box+36*i+4]))
+    tm = sum(1 for i in range(2000) if 1 <= buf[box+36*i] & 0x1F <= 5 and u16(buf, box+36*i+4))
+    print(f"  equipment box: {used}/2000 used, {tm} transmogged armor pieces")
+    for n in range(40):
+        r = base + 0x208C8 + 0x88*n
+        name = buf[r+6:r+30].split(b"\0")[0].decode("latin1")
+        if name in ("", "---"):
+            continue
+        idx = [u16(buf, r+0x30+2*k) for k in range(7)]
+        dyes = " ".join(buf[r+0x6A+4*k:r+0x6E+4*k].hex() + ("" if buf[r+0x83+k] else "*") for k in range(5))
+        print(f"  set {n+1:2d} {name:16s} box {idx}  pigment {dyes}   (* = custom)")
+
     lo, n = QUESTBITS
     print(f"\n--- quests ---")
     print(f"  cleared bitmap 0x{lo:X}: {sum(bin(b).count('1') for b in buf[lo:lo+n])} / {n*8} bits set")
