@@ -164,42 +164,74 @@ A standalone table in the romfs. Header: u32 `0x40A00000`, u32 count 184. It is 
 | `+0x16` | u32 | Quest ID, for kind 0 |
 | `+0x1A` | u32 | Prerequisite quest. Set on one record only: 625 needs 10730. |
 | `+0x25` | u16 + u8 | Reward ID and count. Item IDs for tickets (Kokoto Ticket ×2 …); the Argosy Captain's 10220 reward, `0x6D9`, arrived in-game as a Poogie costume. |
-| `+0x33` | u16 ×2 | Text IDs (title, description), consecutive |
+| `+0x33` | u16 | **Accepted** flag index into the [request flag bitmap](#request-flags--base--0x2c56d) |
+| `+0x35` | u16 | **Completed** flag index (always accepted + 1) |
 
 Record 40 is *The Perilous Pair*: Argosy Captain (NPC `0x21`), Kokoto, stage 10.
 
 **CONFIRMED — the posted-in village is not why 607 is hidden.** It was checked on the ★6 board in
 Bherna and in Kokoto, and it was absent from both.
 
-### What did not unlock 607
+### Request flags — `base + 0x2C56D`
 
-Controlled play-throughs, with a snapshot and diff after each step:
+| Field | Offset | File offset | Size | Status |
+|---|---|---|---|---|
+| Event flag bitmap | `base + 0x2C56D` | `0x1B9209` | 192 bytes, 1536 bits, LSB-first | CONFIRMED |
+| Three more maps | `base + 0x2C62D` | `0x1B92C9` | 3 × 24 bytes | UNRESOLVED |
+| Two u32 | `base + 0x2C675` | `0x1B9311` | 8 bytes, change on every save (RNG-like) | UNRESOLVED |
 
-1. **Clearing *The Fated Four* (621)** changed the cleared bit and a few flags:
-   `+0x2C60` bit 2, and `+0x315B` / `+0x316F` bit 2. No NPC offered a request.
-2. **Clearing *Ahoy! Royal Ludroth!* (10220)**, the Captain's other accepted request,
-   changed only its cleared bit (index 385).
-3. **Reporting to the Captain.** He gave the reward (Poogie costume). Flags set:
-   `+0x3161` / `+0x3175` bit 3 and `+0x2FA0` / `+0x2FA8` bit 6. He did **not** offer 607.
+The block is one object of the game (flags at `+0x500`, serializer `0x240ce4`). Each
+request record names two bits in the first map:
 
-`+0x3158` and `+0x316C` hold two parallel 160-bit maps: every event set the same bit
-in both. They are not indexed by request record (Fated Four has none). They
-look like dialogue or event flags. **UNRESOLVED**
+- **accepted** (`record + 0x33`): the NPC's request is active. For kind 0 this is
+  what **posts the quest on the village board**.
+- **completed** (`record + 0x35`): reported back to the NPC, reward given.
 
-The save already cleared five other stage-10 requests (*Advanced: Sly Swooper* …),
-so the stage gate was met before step 1. The per-NPC chain order is also not the
-gate: 607's stage is lower than 10220's. **UNRESOLVED — what makes an NPC offer a
-request, and where "accepted" is stored.**
+The indices are not regular (`300 + 2·record` holds only for the first 17 records),
+so take them from [`data/request-index.csv`](../data/request-index.csv).
 
-For request quests, the seen bit tracks acceptance closely. Each NPC shows a run of
-cleared requests, at most a couple accepted-but-uncleared ones (seen, not cleared),
-then untouched ones (neither bit). No array or bitmap in the save matches this
-state in record order.
+**CONFIRMED**, three independent lines:
+
+1. All 184 records agree with the quest bitmaps: accepted ⇔ quest seen (one
+   exception, accepted but never hovered), completed ⇒ cleared. This offset is the
+   only byte-aligned one in the character block with zero violations.
+2. Reporting *Ahoy! Royal Ludroth!* (10220) to the Argosy Captain set exactly bit
+   395, its completed flag, plus three unrelated flags (41, 796, 1569).
+3. Controlled write: setting bit 396 alone (`0x1B923A` `0x0C → 0x1C`, both slots)
+   made *The Perilous Pair* (607) appear on the Kokoto ★6 board. Hovering it then
+   set its seen bit as usual.
+
+In the executable, the quest-list builder `0x79da8c` tests the accepted flag
+(`record + 0x3a` in memory) and the request memo UI (`cUIOHNActivityMemo`) reads
+both. The loader is `rActivityData` `0x3c9ce0` (float version 5.0, 64-byte records
+in memory, parser `0x13c00`).
+
+### What did not unlock 607 through play
+
+Clearing *The Fated Four* (621), then clearing and reporting the Captain's other
+request (10220), did not make him offer 607. The stage gate was already met (five
+other stage-10 requests cleared), and per-NPC order is not the gate (607's stage is
+lower than 10220's). The posted-in village is not the reason either.
+
+Other flags those steps changed, meaning **UNRESOLVED**: Fated Four set `+0x2C60`
+bit 2 and `+0x315B` / `+0x316F` bit 2; the Captain report set `+0x3161` / `+0x3175`
+bit 3 and `+0x2FA0` / `+0x2FA8` bit 6.
+
+**UNRESOLVED — what makes an NPC offer a request.** No code sets the accepted flag
+from the request record: none of the 43 callers of the flag setter `0x244f14` reads
+it. The setter is reached from the NPC talk script interpreter (`0x3d2e1c`, flag
+index taken from script data), and conditions go through the jump-table evaluator
+at `0x2451f8`. The offer condition therefore lives in the talk scripts, not in
+`activityData.atd`. `record + 0x31` (u16, mostly 0, 500 on some) is unexplained.
 
 ### Editing
 
 To mark a quest cleared, set its cleared bit, and its seen bit if you don't want a
 leftover NEW marker. Use OR, as always. This does not make a hidden quest appear.
+
+To make a villager-request quest appear, set its **accepted** flag in the request
+flag bitmap. Leave the completed flag alone: the NPC sets it, and hands over the
+reward, when the cleared quest is reported.
 
 ## Quest history log — `0x2546D7`
 
@@ -254,12 +286,13 @@ the Guild Card statistics block rather than the quest system.
 - **UNRESOLVED — quest history record layout** beyond ID and name. The documented
   u16 ID cannot hold event IDs (≥ 1 000 000). Either the field is wider, or event
   quests log differently.
-- **UNRESOLVED — board visibility.** For villager requests, it depends on the
-  request being accepted. Neither the offer condition nor the accepted state has
-  been located (see [Villager requests](#villager-requests--tableactivitydataatd)).
-  For quests posted on every board, the unlock rule has not been studied. Needed to
+- **UNRESOLVED — board visibility of every-board quests.** Villager requests are
+  solved (accepted flag, see [Request flags](#request-flags--base--0x2c56d)). For
+  quests posted on every board, the unlock rule has not been studied. Needed to
   grant access to locked quests, including the G-rank deviant gate of
   [03](03-deviants.md).
+- **UNRESOLVED — the NPC offer condition** for villager requests (talk scripts).
+- **UNRESOLVED — the other 1168 event flags** and the three 24-byte maps after them.
 - **UNRESOLVED — `questData+0x11` values 1–4** versus 5–8.
 
 ## A caution on bulk edits

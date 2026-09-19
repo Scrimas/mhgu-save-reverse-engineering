@@ -45,6 +45,7 @@ Machine-readable: [`data/monster-index.csv`](data/monster-index.csv), [`data/que
 | Deviant permit counts | `0x18F4D8` | 18 × u8 |
 | Quests cleared | `base + 0x2C77` | 1509 bits, index = position in `quest_group`, see [`quest-index.csv`](data/quest-index.csv) |
 | Quests seen (NEW cleared) | `base + 0x2D77` | same indexing, `+0x100` bytes |
+| Villager request flags | `base + 0x2C56D` | 1536-bit event flag map; per-request accepted/completed bits in [`request-index.csv`](data/request-index.csv). Accepted = quest posted on the board |
 | Deviant levels (cleared) | bit `0x18F989`.3 | quest indices 947–1174 (Special Permit), 228 bits |
 | Deviant levels (seen) | bit `0x18FA89`.3 | same layout, `+0x100` bytes |
 | Quest counter | `0x192AEA` | u16 |

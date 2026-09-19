@@ -1,185 +1,185 @@
-index,kind,stage,npc,village,quest_id,quest_name,prereq_quest,reward_id,reward_count
-0,0,6,0xe,Bherna,208,On the Rebound,,,
-1,0,7,0xe,Bherna,336,Moofah Must-haves,,,
-2,0,10,0xe,Bherna,629,Advanced: The Goliaths,,,
-3,0,7,0x1,Bherna,341,Travelers in Trouble,,,
-4,0,8,0x1,Bherna,406,A Unique Cuppa,,,
-5,0,20,0x1,Bherna,10651,Woe Malfestio,,,
-6,0,7,0x14,Bherna,310,Fishy Favor,,,
-7,0,8,0x14,Bherna,420,Hunt-a-thon: Daimyo Hermitaur,,,
-8,0,8,0x16,Bherna,407,Hunt-a-thon: Gendrome,,,
-9,0,10,0x16,Bherna,632,Advanced: Nothing is Sacred,,,
-10,0,21,0x16,Bherna,10739,Primal Forest Defense,,,
-11,0,18,0x1b,Bherna,10421,So Notable: Great Maccao,,,
-12,0,19,0x1b,Bherna,10506,So Notable: Kecha Wacha,,,
-13,0,21,0x1b,Bherna,10706,So Notable: Seregios,,,
-14,0,20,0x17,Bherna,10604,Watch Your Steppe,,,
-15,0,21,0x17,Bherna,10723,Putting the Gore in Magala,,,
-16,0,19,0x1a,Bherna,10529,Twin Velocidrome,,,
-17,0,6,0x24,Kokoto,220,Slay the Velociprey!,,,
-18,0,6,0x24,Kokoto,219,Hunt Down the Velocidrome!,,,
-19,0,7,0x24,Kokoto,318,Local Threat,,,
-20,0,7,0x24,Kokoto,319,Into the Wyvern's Den,,0x6fb,2
-21,0,9,0x24,Kokoto,504,The Thunderclaw Wyvern,,0x6fb,5
-22,0,10,0x24,Kokoto,639,Advanced: Wrath of Rath,,,
-23,1,3,0x25,Kokoto,,,,,
-24,0,21,0x34,Kokoto,10726,A Fiery Temper,,,
-25,0,7,0x33,Kokoto,306,Jurassic Treasure: The Frog,,,
-26,0,8,0x33,Kokoto,404,Jurassic Treasure: The Bug,,,
-27,0,10,0x33,Kokoto,623,Advanced: Jurassic Treasure,,,
-28,0,26,0x36,Kokoto,625,Advanced: Invoking Rath,10730,,
-29,0,10,0x38,Kokoto,624,Advanced: Sly Swooper,,,
-30,0,10,0x38,Kokoto,634,Advanced: Invisible Thief,,,
-31,0,18,0x39,Kokoto,10426,Delicious White Livers,,,
-32,0,15,0x1c,Kokoto,10115,Ingredient Hunter,,,
-33,2,4,0x1f,Kokoto,,,,,
-34,0,20,0x1f,Kokoto,10650,The Coal Still Burns,,,
-35,0,20,0x67,Yukumo,10649,Triple Toady Terror,,,
-36,0,9,0x20,Kokoto,514,Hunt-a-thon: Gypceros,,,
-37,0,17,0x20,Kokoto,10305,Fossilized Memories,,,
-38,0,19,0x20,Kokoto,10530,The New Tenant,,,
-39,0,16,0x21,Kokoto,10220,Ahoy! Royal Ludroth!,,0x6d9,1
-40,0,10,0x21,Kokoto,607,The Perilous Pair,,0x6da,1
-41,1,3,0x21,Kokoto,,,,,
-42,0,21,0x21,Kokoto,10732,Into the Maelstrom,,,
-43,0,6,0x3a,Pokke,225,Slay the Giaprey!,,,
-44,0,6,0x3a,Pokke,224,The Mountain Roughrider,,,
-45,0,7,0x3a,Pokke,323,The Shadow in the Mountains,,,
-46,0,7,0x3a,Pokke,324,No Go on the Popo,,0x6fd,2
-47,0,9,0x3a,Pokke,508,The Unwavering Colossus,,0x6fd,5
-48,0,10,0x3a,Pokke,640,Advanced: The Golden Pair,,,
-49,1,3,0x3b,Pokke,,,,,
-50,0,20,0x4c,Pokke,10623,Bl-Bl-Blangongas!,,,
-51,0,7,0x48,Pokke,314,Cancer of the Dunes,,,
-52,0,8,0x48,Pokke,412,Hunt-a-thon: Velocidrome,,,
-53,0,10,0x48,Pokke,615,Drawing the Waterline,,,
-54,0,20,0x49,Pokke,10664,The Magma's Rage,,,
-55,0,21,0x49,Pokke,10724,"Tigrex, Tigrex, Burning Bright",,,
-56,0,10,0x49,Pokke,626,Advanced: Seismic Scares,,,
-57,0,19,0x4b,Pokke,10524,Nargacuga Throwdown,,,
-58,0,17,0x4d,Pokke,10317,Fro Shizzle,,,
-59,0,15,0x1d,Pokke,10124,The Ingredient of Legend,,,
-60,0,10,0x4e,Pokke,608,The Hero's Journey,,,
-61,1,3,0x4e,Pokke,,,,0x120,10
-62,0,10,0x4e,Pokke,635,Advanced: Teostra's Return,,,
-63,0,18,0x22,Pokke,10432,Clash of Rivals,,,
-64,0,20,0x22,Pokke,10665,Minion Audition Imposition,,,
-65,0,21,0x22,Pokke,10743,Show Me Your Shaka-Strength,,,
-66,0,6,0x4f,Yukumo,230,Bye Bye Jaggia,,,
-67,0,6,0x4f,Yukumo,229,Arzuros the Azure Beast,,,
-68,0,7,0x4f,Yukumo,328,Royal Spit Take,,,
-69,0,7,0x4f,Yukumo,329,A Forest Fracas,,0x6ff,2
-70,0,9,0x4f,Yukumo,510,The Entrancing Water Dancer,,0x6ff,5
-71,0,10,0x4f,Yukumo,641,Advanced: Out of the Fry Pan,,,
-72,0,9,0x50,Yukumo,507,Hunt-a-thon: Khezu,,,
-73,0,21,0x5c,Yukumo,10711,The Yukumo Gal Special,,,
-74,1,3,0x6,Yukumo,,,,,
-75,0,16,0x6,Yukumo,10213,Finishing the Job,,,
-76,0,21,0x6,Yukumo,10712,Repaying the Favor,,,
-77,0,21,0x5a,Yukumo,10735,The Wolf and the Footbath,,,
-78,0,21,0x5a,Yukumo,10737,Steam and Smoke,,,
-79,0,21,0x5a,Yukumo,10742,Searching for Secret Baths,,,
-80,0,7,0x5e,Yukumo,331,Royal Honey Hunt,,,
-81,0,8,0x5e,Yukumo,416,Royal Pains,,,
-82,0,9,0x5e,Yukumo,509,Lagiacrus Fuss,,,
-83,1,3,0x5f,Yukumo,,,,,
-84,0,8,0x5f,Yukumo,418,Island Menace,,,
-85,0,17,0x5f,Yukumo,10313,Lagiacrushed,,,
-86,0,17,0x5f,Yukumo,10315,Isle About that Bass,,,
-87,1,3,0x60,Yukumo,,,,,
-88,0,7,0x61,Yukumo,335,The Fungus Among Us,,,
-89,0,19,0x61,Yukumo,10532,Awful Guest,,,
-90,0,19,0x63,Yukumo,10519,Liver and Let Die,,,
-91,0,10,0x63,Yukumo,622,Advanced: Fungus Fetchin',,,
-92,1,3,0x65,Yukumo,,,,,
-93,0,10,0x66,Yukumo,609,The Bellowing Zinogre,,,
-94,0,6,0x68,Yukumo,233,Sunsnug Sprout Courier,,,
-95,0,7,0x68,Yukumo,338,Sunsnug Isle Rescue!,,,
-96,0,7,0x69,Yukumo,333,The Crabbiest Catch,,,
-97,1,3,0x15,Yukumo,,,,,
-98,0,10,0x15,Yukumo,633,Advanced: Snowtal Recall,,,
-99,0,16,0x6b,Yukumo,10214,Fresh is Best,,,
-100,1,3,0x6c,Yukumo,,,,,
-101,0,20,0x6d,Yukumo,10653,Nibeling on Apples,,,
-102,0,20,0x6e,Yukumo,10656,The Plesioth Adventure,,,
-103,0,8,0x6f,Yukumo,417,Peddling Practice,,,
-104,0,9,0x70,Yukumo,512,Island Heat,,,
-105,0,7,0x71,Yukumo,327,For Whom the Egg Yolks,,,
-106,0,10,0x35,Kokoto,628,Advanced: Seltas Queen,,0x70d,5
-107,0,10,0x4a,Pokke,630,Advanced: Barrage of Blue,,,
-108,0,10,0x4a,Pokke,631,Advanced: Seeing Red,,,
-109,0,10,0x62,Yukumo,627,Advanced: Twinkle Toes,,,
-110,0,21,0x4a,Yukumo,10744,The Marshlands Nightmare,,,
-111,0,21,0x6a,Yukumo,10741,The Descending Fog,,,
-112,0,21,0x64,Yukumo,10755,Triumphant Rage,,,
-113,0,21,0x35,Kokoto,10740,The End of the Trials,,0x70d,5
-114,0,19,0x5d,Yukumo,10540,Desert Brawlers,,,
-115,0,20,0x53,Yukumo,10631,Coal Hearted,,,
-116,0,21,0x4,Bherna,10709,The Hapless Bodyguard,,,
-117,2,4,0x24,Kokoto,,,,0x6fb,5
-118,0,21,0x4,Bherna,10736,The Thieving Gypceros,,,
-119,0,5,0x7d,Bherna,107,Another Pack Attack,,0x10f,10
-120,1,3,0x9a,Bherna,,,,,
-121,0,13,0x9b,Bherna,924,Flappy Pest,,,
-122,0,25,0xa5,Bherna,11469,The Ol' Razzle Dazzle,,,
-123,0,12,0xad,Bherna,833,The Furtilizer That Time Furgot,,,
-124,0,22,0xab,Bherna,11110,Pleasantly Sozzled,,,
-125,0,13,0xa9,Bherna,936,Sky Tribe: Rice to the Occasion,,,
-126,0,23,0xa9,Bherna,11210,Sky Tribe: Savior of the Skyway,,,
-127,0,13,0xac,Bherna,913,Earn Your Gear,,,
-128,0,23,0xac,Bherna,11213,Earn Your Strength,,,
-129,0,12,0x7d,Bherna,813,The Perils of Commerce,,,
-130,0,22,0x7d,Bherna,11124,After That Bird!,,,
-131,0,24,0xb6,Bherna,11329,Sweets for My Sweets,,,
-132,0,14,0xae,Bherna,1051,Advanced: Jurassic Pair,,,
-133,0,23,0x18,Bherna,11239,Commission: Basarios,,,
-134,0,23,0x18,Bherna,11244,Commission: Hyper Kecha Wacha,,,
-135,0,23,0x32,Kokoto,11207,Through Thick and Fin,,,
-136,2,4,0xb6,Bherna,,,,0x6e4,2
-137,0,24,0x7f,Bherna,11303,Uragaan Grief,,,
-138,0,24,0x1,Bherna,11352,PR Disaster,,,
-139,0,24,0x16,Bherna,11349,Hunt-a-Thon: Gravios,,,
-140,0,23,0x1b,Bherna,11242,So Notable: Hyper Hermitaur,,,
-141,0,23,0x17,Bherna,11216,Face-off in the Jungle,,,
-142,0,25,0x17,Bherna,11482,Primal Screams,,,
-143,0,23,0x1a,Bherna,11211,Share the Load (and the Reward),,,
-144,0,14,0xaf,Kokoto,1040,Advanced: Ranging Rathalos,,0x6fc,3
-145,0,13,0x34,Kokoto,933,Interruption: Eggstra Delivery,,,
-146,1,3,0x25,Kokoto,,,,,
-147,0,23,0x34,Kokoto,11238,Interruption: Conga Line,,,
-148,0,23,0x33,Kokoto,11206,Treasure Pinnacle: Rice,,,
-149,0,13,0x36,Kokoto,914,Fearful Symmetry,,,
-150,0,23,0x36,Kokoto,11214,Feeling Generally Crabby,,,
-151,0,22,0x38,Kokoto,11129,The Bird Who Wood Be King,,,
-152,0,25,0xa7,Bherna,11445,Seregios Exposé,,,
-153,0,13,0x1c,Kokoto,935,Snowball Skirmish,,,
-154,0,23,0x1c,Kokoto,11233,Please Plesioth Me!,,,
-155,0,12,0x1f,Kokoto,818,"It's Not Uragaan's, It's Mine!",,,
-156,0,14,0x20,Kokoto,1031,Deviljho Dispossession,,,
-157,0,14,0x3a,Pokke,1041,Advanced: Roaring in the Ridge,,0x6fe,3
-158,0,14,0x3b,Pokke,1052,Advanced: Quarrel Quelling,,,
-159,0,25,0x49,Pokke,11424,Polar Peril,,,
-160,0,23,0x4d,Pokke,11249,Afro Soul Is a Way of Life,,,
-161,0,22,0x1d,Pokke,11113,Daimyo Hermitaur Flambé,,,
-162,0,24,0x4e,Pokke,11366,Material Old Girl,,,
-163,0,25,0xa8,Bherna,11471,Fiery Four-way Fracas,,,
-164,0,23,0x22,Pokke,11241,Minion's Devotion,,,
-165,0,24,0x22,Pokke,11365,Arena Bakalaka-Battle! Woo!,,,
-166,0,14,0x4f,Yukumo,1042,Advanced: Moonlight Zinogre,,0x700,3
-167,0,22,0x5c,Yukumo,11116,Sweetheart's Pick: Lofty Ludroth,,,
-168,0,23,0x50,Yukumo,11215,A Coil to Arms,,,
-169,0,24,0x6,Yukumo,11355,Howl at the Moon,,,
-170,0,23,0x5a,Yukumo,11208,Chilled to the Marrow,,,
-171,0,13,0x5e,Yukumo,925,Pheromone Moans,,,
-172,0,25,0x5f,Yukumo,11478,Zinogre-enthusiasm,,,
-173,0,22,0x60,Yukumo,11104,Riverside Rumble,,,
-174,0,24,0x61,Yukumo,11353,I Hope It's Not Barioth Flavored,,,
-175,1,3,0x63,Yukumo,,,,,
-176,0,25,0x69,Yukumo,11449,Even Brachydios Need A Holiday,,,
-177,0,11,0x6b,Yukumo,736,Season's Eatings,,,
-178,0,23,0x6d,Yukumo,11224,The Legend of King Apple,,,
-179,0,25,0x35,Kokoto,11470,Quest of Friendship,,,
-180,0,25,0x64,Yukumo,11480,Arena Allegiances,,,
-181,0,25,0x4a,Pokke,11479,Arctic Ridge Allegiances,,,
-182,0,25,0x5d,Yukumo,11436,Seeking the Sea King,,,
-183,3,0,0x86,4,,,,,
+index,kind,stage,npc,village,quest_id,quest_name,prereq_quest,reward_id,reward_count,accept_flag,done_flag
+0,0,6,0xe,Bherna,208,On the Rebound,,,,300,301
+1,0,7,0xe,Bherna,336,Moofah Must-haves,,,,302,303
+2,0,10,0xe,Bherna,629,Advanced: The Goliaths,,,,304,305
+3,0,7,0x1,Bherna,341,Travelers in Trouble,,,,306,307
+4,0,8,0x1,Bherna,406,A Unique Cuppa,,,,308,309
+5,0,20,0x1,Bherna,10651,Woe Malfestio,,,,310,311
+6,0,7,0x14,Bherna,310,Fishy Favor,,,,312,313
+7,0,8,0x14,Bherna,420,Hunt-a-thon: Daimyo Hermitaur,,,,314,315
+8,0,8,0x16,Bherna,407,Hunt-a-thon: Gendrome,,,,316,317
+9,0,10,0x16,Bherna,632,Advanced: Nothing is Sacred,,,,318,319
+10,0,21,0x16,Bherna,10739,Primal Forest Defense,,,,320,321
+11,0,18,0x1b,Bherna,10421,So Notable: Great Maccao,,,,322,323
+12,0,19,0x1b,Bherna,10506,So Notable: Kecha Wacha,,,,324,325
+13,0,21,0x1b,Bherna,10706,So Notable: Seregios,,,,326,327
+14,0,20,0x17,Bherna,10604,Watch Your Steppe,,,,328,329
+15,0,21,0x17,Bherna,10723,Putting the Gore in Magala,,,,330,331
+16,0,19,0x1a,Bherna,10529,Twin Velocidrome,,,,332,333
+17,0,6,0x24,Kokoto,220,Slay the Velociprey!,,,,336,337
+18,0,6,0x24,Kokoto,219,Hunt Down the Velocidrome!,,,,338,339
+19,0,7,0x24,Kokoto,318,Local Threat,,,,340,341
+20,0,7,0x24,Kokoto,319,Into the Wyvern's Den,,0x6fb,2,342,343
+21,0,9,0x24,Kokoto,504,The Thunderclaw Wyvern,,0x6fb,5,344,345
+22,0,10,0x24,Kokoto,639,Advanced: Wrath of Rath,,,,346,347
+23,1,3,0x25,Kokoto,,,,,,348,349
+24,0,21,0x34,Kokoto,10726,A Fiery Temper,,,,350,351
+25,0,7,0x33,Kokoto,306,Jurassic Treasure: The Frog,,,,360,361
+26,0,8,0x33,Kokoto,404,Jurassic Treasure: The Bug,,,,362,363
+27,0,10,0x33,Kokoto,623,Advanced: Jurassic Treasure,,,,364,365
+28,0,26,0x36,Kokoto,625,Advanced: Invoking Rath,10730,,,372,373
+29,0,10,0x38,Kokoto,624,Advanced: Sly Swooper,,,,374,375
+30,0,10,0x38,Kokoto,634,Advanced: Invisible Thief,,,,376,377
+31,0,18,0x39,Kokoto,10426,Delicious White Livers,,,,378,379
+32,0,15,0x1c,Kokoto,10115,Ingredient Hunter,,,,380,381
+33,2,4,0x1f,Kokoto,,,,,,382,383
+34,0,20,0x1f,Kokoto,10650,The Coal Still Burns,,,,384,385
+35,0,20,0x67,Yukumo,10649,Triple Toady Terror,,,,386,387
+36,0,9,0x20,Kokoto,514,Hunt-a-thon: Gypceros,,,,388,389
+37,0,17,0x20,Kokoto,10305,Fossilized Memories,,,,390,391
+38,0,19,0x20,Kokoto,10530,The New Tenant,,,,392,393
+39,0,16,0x21,Kokoto,10220,Ahoy! Royal Ludroth!,,0x6d9,1,394,395
+40,0,10,0x21,Kokoto,607,The Perilous Pair,,0x6da,1,396,397
+41,1,3,0x21,Kokoto,,,,,,398,399
+42,0,21,0x21,Kokoto,10732,Into the Maelstrom,,,,400,401
+43,0,6,0x3a,Pokke,225,Slay the Giaprey!,,,,402,403
+44,0,6,0x3a,Pokke,224,The Mountain Roughrider,,,,404,405
+45,0,7,0x3a,Pokke,323,The Shadow in the Mountains,,,,406,407
+46,0,7,0x3a,Pokke,324,No Go on the Popo,,0x6fd,2,408,409
+47,0,9,0x3a,Pokke,508,The Unwavering Colossus,,0x6fd,5,410,411
+48,0,10,0x3a,Pokke,640,Advanced: The Golden Pair,,,,412,413
+49,1,3,0x3b,Pokke,,,,,,414,415
+50,0,20,0x4c,Pokke,10623,Bl-Bl-Blangongas!,,,,416,417
+51,0,7,0x48,Pokke,314,Cancer of the Dunes,,,,418,419
+52,0,8,0x48,Pokke,412,Hunt-a-thon: Velocidrome,,,,420,421
+53,0,10,0x48,Pokke,615,Drawing the Waterline,,,,422,423
+54,0,20,0x49,Pokke,10664,The Magma's Rage,,,,424,425
+55,0,21,0x49,Pokke,10724,"Tigrex, Tigrex, Burning Bright",,,,426,427
+56,0,10,0x49,Pokke,626,Advanced: Seismic Scares,,,,428,429
+57,0,19,0x4b,Pokke,10524,Nargacuga Throwdown,,,,430,431
+58,0,17,0x4d,Pokke,10317,Fro Shizzle,,,,432,433
+59,0,15,0x1d,Pokke,10124,The Ingredient of Legend,,,,434,435
+60,0,10,0x4e,Pokke,608,The Hero's Journey,,,,542,543
+61,1,3,0x4e,Pokke,,,,0x120,10,436,437
+62,0,10,0x4e,Pokke,635,Advanced: Teostra's Return,,,,438,439
+63,0,18,0x22,Pokke,10432,Clash of Rivals,,,,440,441
+64,0,20,0x22,Pokke,10665,Minion Audition Imposition,,,,442,443
+65,0,21,0x22,Pokke,10743,Show Me Your Shaka-Strength,,,,444,445
+66,0,6,0x4f,Yukumo,230,Bye Bye Jaggia,,,,446,447
+67,0,6,0x4f,Yukumo,229,Arzuros the Azure Beast,,,,448,449
+68,0,7,0x4f,Yukumo,328,Royal Spit Take,,,,450,451
+69,0,7,0x4f,Yukumo,329,A Forest Fracas,,0x6ff,2,452,453
+70,0,9,0x4f,Yukumo,510,The Entrancing Water Dancer,,0x6ff,5,454,455
+71,0,10,0x4f,Yukumo,641,Advanced: Out of the Fry Pan,,,,456,457
+72,0,9,0x50,Yukumo,507,Hunt-a-thon: Khezu,,,,458,459
+73,0,21,0x5c,Yukumo,10711,The Yukumo Gal Special,,,,460,461
+74,1,3,0x6,Yukumo,,,,,,462,463
+75,0,16,0x6,Yukumo,10213,Finishing the Job,,,,464,465
+76,0,21,0x6,Yukumo,10712,Repaying the Favor,,,,466,467
+77,0,21,0x5a,Yukumo,10735,The Wolf and the Footbath,,,,468,469
+78,0,21,0x5a,Yukumo,10737,Steam and Smoke,,,,470,471
+79,0,21,0x5a,Yukumo,10742,Searching for Secret Baths,,,,472,473
+80,0,7,0x5e,Yukumo,331,Royal Honey Hunt,,,,474,475
+81,0,8,0x5e,Yukumo,416,Royal Pains,,,,476,477
+82,0,9,0x5e,Yukumo,509,Lagiacrus Fuss,,,,478,479
+83,1,3,0x5f,Yukumo,,,,,,480,481
+84,0,8,0x5f,Yukumo,418,Island Menace,,,,482,483
+85,0,17,0x5f,Yukumo,10313,Lagiacrushed,,,,484,485
+86,0,17,0x5f,Yukumo,10315,Isle About that Bass,,,,486,487
+87,1,3,0x60,Yukumo,,,,,,488,489
+88,0,7,0x61,Yukumo,335,The Fungus Among Us,,,,490,491
+89,0,19,0x61,Yukumo,10532,Awful Guest,,,,492,493
+90,0,19,0x63,Yukumo,10519,Liver and Let Die,,,,494,495
+91,0,10,0x63,Yukumo,622,Advanced: Fungus Fetchin',,,,496,497
+92,1,3,0x65,Yukumo,,,,,,498,499
+93,0,10,0x66,Yukumo,609,The Bellowing Zinogre,,,,500,501
+94,0,6,0x68,Yukumo,233,Sunsnug Sprout Courier,,,,502,503
+95,0,7,0x68,Yukumo,338,Sunsnug Isle Rescue!,,,,504,505
+96,0,7,0x69,Yukumo,333,The Crabbiest Catch,,,,506,507
+97,1,3,0x15,Yukumo,,,,,,508,509
+98,0,10,0x15,Yukumo,633,Advanced: Snowtal Recall,,,,510,511
+99,0,16,0x6b,Yukumo,10214,Fresh is Best,,,,512,513
+100,1,3,0x6c,Yukumo,,,,,,514,515
+101,0,20,0x6d,Yukumo,10653,Nibeling on Apples,,,,516,517
+102,0,20,0x6e,Yukumo,10656,The Plesioth Adventure,,,,518,519
+103,0,8,0x6f,Yukumo,417,Peddling Practice,,,,520,521
+104,0,9,0x70,Yukumo,512,Island Heat,,,,522,523
+105,0,7,0x71,Yukumo,327,For Whom the Egg Yolks,,,,524,525
+106,0,10,0x35,Kokoto,628,Advanced: Seltas Queen,,0x70d,5,526,527
+107,0,10,0x4a,Pokke,630,Advanced: Barrage of Blue,,,,530,531
+108,0,10,0x4a,Pokke,631,Advanced: Seeing Red,,,,532,533
+109,0,10,0x62,Yukumo,627,Advanced: Twinkle Toes,,,,534,535
+110,0,21,0x4a,Yukumo,10744,The Marshlands Nightmare,,,,528,529
+111,0,21,0x6a,Yukumo,10741,The Descending Fog,,,,536,537
+112,0,21,0x64,Yukumo,10755,Triumphant Rage,,,,538,539
+113,0,21,0x35,Kokoto,10740,The End of the Trials,,0x70d,5,540,541
+114,0,19,0x5d,Yukumo,10540,Desert Brawlers,,,,544,545
+115,0,20,0x53,Yukumo,10631,Coal Hearted,,,,546,547
+116,0,21,0x4,Bherna,10709,The Hapless Bodyguard,,,,548,549
+117,2,4,0x24,Kokoto,,,,0x6fb,5,550,551
+118,0,21,0x4,Bherna,10736,The Thieving Gypceros,,,,552,553
+119,0,5,0x7d,Bherna,107,Another Pack Attack,,0x10f,10,554,555
+120,1,3,0x9a,Bherna,,,,,,1270,1271
+121,0,13,0x9b,Bherna,924,Flappy Pest,,,,1272,1273
+122,0,25,0xa5,Bherna,11469,The Ol' Razzle Dazzle,,,,1274,1275
+123,0,12,0xad,Bherna,833,The Furtilizer That Time Furgot,,,,1276,1277
+124,0,22,0xab,Bherna,11110,Pleasantly Sozzled,,,,1278,1279
+125,0,13,0xa9,Bherna,936,Sky Tribe: Rice to the Occasion,,,,1280,1281
+126,0,23,0xa9,Bherna,11210,Sky Tribe: Savior of the Skyway,,,,1282,1283
+127,0,13,0xac,Bherna,913,Earn Your Gear,,,,1284,1285
+128,0,23,0xac,Bherna,11213,Earn Your Strength,,,,1286,1287
+129,0,12,0x7d,Bherna,813,The Perils of Commerce,,,,1288,1289
+130,0,22,0x7d,Bherna,11124,After That Bird!,,,,1290,1291
+131,0,24,0xb6,Bherna,11329,Sweets for My Sweets,,,,1292,1293
+132,0,14,0xae,Bherna,1051,Advanced: Jurassic Pair,,,,1294,1295
+133,0,23,0x18,Bherna,11239,Commission: Basarios,,,,1296,1297
+134,0,23,0x18,Bherna,11244,Commission: Hyper Kecha Wacha,,,,1298,1299
+135,0,23,0x32,Kokoto,11207,Through Thick and Fin,,,,1300,1301
+136,2,4,0xb6,Bherna,,,,0x6e4,2,1302,1303
+137,0,24,0x7f,Bherna,11303,Uragaan Grief,,,,1304,1305
+138,0,24,0x1,Bherna,11352,PR Disaster,,,,1306,1307
+139,0,24,0x16,Bherna,11349,Hunt-a-Thon: Gravios,,,,1308,1309
+140,0,23,0x1b,Bherna,11242,So Notable: Hyper Hermitaur,,,,1310,1311
+141,0,23,0x17,Bherna,11216,Face-off in the Jungle,,,,1312,1313
+142,0,25,0x17,Bherna,11482,Primal Screams,,,,1314,1315
+143,0,23,0x1a,Bherna,11211,Share the Load (and the Reward),,,,1316,1317
+144,0,14,0xaf,Kokoto,1040,Advanced: Ranging Rathalos,,0x6fc,3,1318,1319
+145,0,13,0x34,Kokoto,933,Interruption: Eggstra Delivery,,,,1320,1321
+146,1,3,0x25,Kokoto,,,,,,1322,1323
+147,0,23,0x34,Kokoto,11238,Interruption: Conga Line,,,,1324,1325
+148,0,23,0x33,Kokoto,11206,Treasure Pinnacle: Rice,,,,1326,1327
+149,0,13,0x36,Kokoto,914,Fearful Symmetry,,,,1328,1329
+150,0,23,0x36,Kokoto,11214,Feeling Generally Crabby,,,,1330,1331
+151,0,22,0x38,Kokoto,11129,The Bird Who Wood Be King,,,,1332,1333
+152,0,25,0xa7,Bherna,11445,Seregios Exposé,,,,1334,1335
+153,0,13,0x1c,Kokoto,935,Snowball Skirmish,,,,1336,1337
+154,0,23,0x1c,Kokoto,11233,Please Plesioth Me!,,,,1342,1343
+155,0,12,0x1f,Kokoto,818,"It's Not Uragaan's, It's Mine!",,,,1338,1339
+156,0,14,0x20,Kokoto,1031,Deviljho Dispossession,,,,1340,1341
+157,0,14,0x3a,Pokke,1041,Advanced: Roaring in the Ridge,,0x6fe,3,1344,1345
+158,0,14,0x3b,Pokke,1052,Advanced: Quarrel Quelling,,,,1346,1347
+159,0,25,0x49,Pokke,11424,Polar Peril,,,,1348,1349
+160,0,23,0x4d,Pokke,11249,Afro Soul Is a Way of Life,,,,1350,1351
+161,0,22,0x1d,Pokke,11113,Daimyo Hermitaur Flambé,,,,1352,1353
+162,0,24,0x4e,Pokke,11366,Material Old Girl,,,,1354,1355
+163,0,25,0xa8,Bherna,11471,Fiery Four-way Fracas,,,,1356,1357
+164,0,23,0x22,Pokke,11241,Minion's Devotion,,,,1358,1359
+165,0,24,0x22,Pokke,11365,Arena Bakalaka-Battle! Woo!,,,,1360,1361
+166,0,14,0x4f,Yukumo,1042,Advanced: Moonlight Zinogre,,0x700,3,1362,1363
+167,0,22,0x5c,Yukumo,11116,Sweetheart's Pick: Lofty Ludroth,,,,1364,1365
+168,0,23,0x50,Yukumo,11215,A Coil to Arms,,,,1366,1367
+169,0,24,0x6,Yukumo,11355,Howl at the Moon,,,,1368,1369
+170,0,23,0x5a,Yukumo,11208,Chilled to the Marrow,,,,1370,1371
+171,0,13,0x5e,Yukumo,925,Pheromone Moans,,,,1372,1373
+172,0,25,0x5f,Yukumo,11478,Zinogre-enthusiasm,,,,1374,1375
+173,0,22,0x60,Yukumo,11104,Riverside Rumble,,,,1376,1377
+174,0,24,0x61,Yukumo,11353,I Hope It's Not Barioth Flavored,,,,1378,1379
+175,1,3,0x63,Yukumo,,,,,,1380,1381
+176,0,25,0x69,Yukumo,11449,Even Brachydios Need A Holiday,,,,1382,1383
+177,0,11,0x6b,Yukumo,736,Season's Eatings,,,,1384,1385
+178,0,23,0x6d,Yukumo,11224,The Legend of King Apple,,,,1386,1387
+179,0,25,0x35,Kokoto,11470,Quest of Friendship,,,,1388,1389
+180,0,25,0x64,Yukumo,11480,Arena Allegiances,,,,1390,1391
+181,0,25,0x4a,Pokke,11479,Arctic Ridge Allegiances,,,,1392,1393
+182,0,25,0x5d,Yukumo,11436,Seeking the Sea King,,,,1394,1395
+183,3,0,0x86,4,,,,,,0,0
