@@ -112,5 +112,19 @@
                    "decorations":   "0x3E u16[7][3] (DERIVED)",
                    "pigment":       "0x6A RGBA[5], order chest,arms,waist,legs,head (DERIVED)",
                    "default_flags": "0x83 u8[5], 1 = default colour, 0 = custom" } }
+  },
+  "progression": {
+    "_offsets": "relative to character base; LSB-first bitfields; set with OR",
+    "hunter_arts":  { "rel": "0x2C13", "slot1_abs": "0x18F8AF", "size": 24, "confidence": "CONFIRMED",
+                      "valid_ids": "1-70, 83-190 (178 arts)",
+                      "all_mask_u32le": ["0xFFFFFFFE","0xFFFFFFFF","0xFFF8007F","0xFFFFFFFF","0xFFFFFFFF","0x7FFFFFFF"],
+                      "id_table": "data/hunter-arts.csv (order DERIVED)" },
+    "art_slots":    { "rel": "0x2C", "type": "u16[3]", "confidence": "DERIVED", "note": "save-screen summary" },
+    "canteen_ingredients": { "rel": "0x2F8F", "slot1_abs": "0x18FC2B", "size": 6, "bits": 45, "confidence": "CONFIRMED",
+                             "note": "setting ingredients does not add dishes" },
+    "canteen_dishes":      { "rel": "0x2C67D", "slot1_abs": "0x1B9319", "size": 13, "bits": 99, "confidence": "CONFIRMED",
+                             "note": "includes the 2 starter meals" },
+    "canteen_dishes_copy": { "rel": "0x2C68D", "size": 13, "confidence": "UNRESOLVED",
+                             "note": "subset of dishes, probably seen/new marker; safe to leave untouched" }
   }
 }

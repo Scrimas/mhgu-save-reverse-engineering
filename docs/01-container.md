@@ -89,4 +89,4 @@ applies to it.
 - **UNRESOLVED — the bulk of the file.** The identified structures account for a few
   kilobytes. The remaining ~5 MB includes item boxes, Palico data, and much else
   that was never touched. The equipment box and saved sets are now covered in
-  [07](07-equipment.md).
+  [07](07-equipment.md), Hunter Arts and Canteen unlocks in [08](08-progression.md).

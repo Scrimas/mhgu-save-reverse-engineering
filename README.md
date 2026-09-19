@@ -32,8 +32,9 @@ they are portable.
 | [05 — Quests](docs/05-quests.md) | Cleared-quest bitmap, quest history log, counters |
 | [06 — Methodology](docs/06-methodology.md) | How this was derived, and how to extend it |
 | [07 — Equipment](docs/07-equipment.md) | Character slots, equipment box, talismans, transmog, dye, My Sets |
+| [08 — Hunter Arts and Canteen](docs/08-progression.md) | Hunter Art unlocks, Canteen ingredients and dishes |
 
-Machine-readable: [`data/monster-index.csv`](data/monster-index.csv)
+Machine-readable: [`data/monster-index.csv`](data/monster-index.csv), [`data/hunter-arts.csv`](data/hunter-arts.csv), [`data/offsets.json`](data/offsets.json)
 
 ## Quick reference
 
@@ -54,6 +55,9 @@ Machine-readable: [`data/monster-index.csv`](data/monster-index.csv)
 | Character slot pointers | `0x34` | 3 × u32, relative to `0x24` |
 | Equipment box | `base + 0x62EE` | 2000 × 36 bytes; transmog at `+0x04` |
 | My Sets (dye lives here) | `base + 0x208C8` | stride `0x88`; pigment 5 × RGBA at `+0x6A` |
+| Hunter Arts unlocked | `base + 0x2C13` | 24-byte bitfield, IDs 1–70 and 83–190 |
+| Canteen dishes | `base + 0x2C67D` | 13-byte bitfield, 99 dishes |
+| Canteen ingredients | `base + 0x2F8F` | 6-byte bitfield, 45 ingredients |
 
 ## Confidence levels
 

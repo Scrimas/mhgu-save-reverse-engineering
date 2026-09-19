@@ -95,6 +95,15 @@ def main(path):
         dyes = " ".join(buf[r+0x6A+4*k:r+0x6E+4*k].hex() + ("" if buf[r+0x83+k] else "*") for k in range(5))
         print(f"  set {n+1:2d} {name:16s} box {idx}  pigment {dyes}   (* = custom)")
 
+    print("\n--- hunter arts / canteen (docs/08) ---")
+    arts = int.from_bytes(buf[base+0x2C13:base+0x2C13+24], "little")
+    valid = [i for i in range(1, 191) if not 71 <= i <= 82]
+    print(f"  hunter arts unlocked: {sum(arts >> i & 1 for i in valid)}/{len(valid)}"
+          f"  (stray bits outside valid IDs: {bin(arts & ~sum(1 << i for i in valid)).count('1')})")
+    ing = int.from_bytes(buf[base+0x2F8F:base+0x2F8F+6], "little") & ((1 << 45) - 1)
+    dish = int.from_bytes(buf[base+0x2C67D:base+0x2C67D+13], "little") & ((1 << 99) - 1)
+    print(f"  canteen ingredients: {bin(ing).count('1')}/45   dishes: {bin(dish).count('1')}/99")
+
     lo, n = QUESTBITS
     print(f"\n--- quests ---")
     print(f"  cleared bitmap 0x{lo:X}: {sum(bin(b).count('1') for b in buf[lo:lo+n])} / {n*8} bits set")
