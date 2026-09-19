@@ -1,30 +1,47 @@
 # 02 — Monster records
 
-Two parallel arrays, both indexed by the same internal **monster index**.
+Three parallel arrays of 137 entries, all indexed by the same internal **monster
+index**, valid range **1–137**.
 
-| Structure | Offset | Element | Applies to |
-|---|---|---|---|
-| Hunt tally | `0x192B40` | u16 | all monsters |
-| Size record | `0x192D62` | (u16 min%, u16 max%), stride 4 | large monsters only |
+| Structure | Base | First entry | Element | Applies to |
+|---|---|---|---|---|
+| Hunt tally | `0x192B40` | `0x192B42` | u16 | all monsters |
+| Capture count | `0x192C52` | `0x192C54` | u16 | all monsters |
+| Size record | `0x192D62` | `0x192D66` | (u16 min%, u16 max%), stride 4 | large monsters only |
 
 ```
-tally[i]   = u16 at 0x192B40 + 2*i
+tally[i]    = u16 at 0x192B40 + 2*i        i = 1..137
+capture[i]  = u16 at 0x192C52 + 2*i
 size_min[i] = u16 at 0x192D62 + 4*i
 size_max[i] = u16 at 0x192D62 + 4*i + 2
 ```
 
-## Index space
+The base addresses point one element *before* each array: **index 0 is not a slot.**
+`0x192B40` belongs to whatever precedes the tallies, and `0x192D62`–`0x192D65` are
+`capture[136]` and `capture[137]`, not a size record. Likewise "index 138" of the
+tally array is `capture[1]`. The arrays abut with no gaps: `0x192B42 + 274 = 0x192C54`,
+`0x192C54 + 274 = 0x192D66`.
 
-**CONFIRMED** by cross-referencing which indices carry size records against which
-carry only tallies:
+**DERIVED** from the Switch editor
+([MHXXSwitchSaveEditor](https://github.com/Dawnshifter/MHXXSwitchSaveEditor)),
+whose `Constants.cs` sizes the arrays at 274 / 274 / 548 bytes and reads them
+0-based from the first entry, so **editor index = index − 1**. Both of this document's
+controlled diffs (indices 48 and 121) agree with that alignment.
+
+## Index space
 
 | Range | Contents | Size records? |
 |---|---|---|
-| 0–71 | Large monsters | yes |
+| 1–71 | Large monsters | yes, except a few with no size variation |
 | 72–104 | Small monsters | **no** |
-| 105–112 | Always zero — padding or unused slots | — |
-| 113–138 | Additional large monsters, incl. GU-exclusive deviants | yes |
-| 139+ | Not part of these arrays | — |
+| 105 | Moofah (editor-derived) | no |
+| 106–112 | Unused; the editor labels them *Unknown* | — |
+| 113–135 | Additional large monsters, incl. GU-exclusive deviants | yes, with exceptions |
+| 136–137 | Great Thunderbug, Conga (editor-derived) | no |
+
+The small-vs-large split is **CONFIRMED** by cross-referencing which indices carry
+size records against which carry only tallies. Names for 105 and 113–137 are
+editor-derived.
 
 The small-monster block at 72–104 is the structural detail that defeats naive
 alignment attempts. Small monsters have hunt counts but **no** size record, so any
@@ -37,7 +54,9 @@ monster.
 
 ## Hunt tallies — `0x192B40`
 
-u16, one per monster, counting monsters slain or captured.
+u16, one per monster, counting monsters **slain**. Captures are counted separately
+(next section); the in-game *Hunted (Capts)* line shows `tally + capture` as the
+first number.
 
 **CONFIRMED — deviant hunts do not roll up into the base monster.** Killing two
 Rustrazor Ceanataur incremented index 121 (Rustrazor) from 1 to 3 while leaving
@@ -65,7 +84,40 @@ non-zero size record are both needed for large monsters; small monsters need onl
 the tally.
 
 Writing min/max within roughly 90–115% marks a monster as hunted without fabricating
-gold or silver crown records.
+gold or silver crown records. **Write indices 1–137 only.** Writing "index 0" puts
+the pair into `capture[136..137]` — the analysed save carried exactly this artefact,
+Great Thunderbug and Conga reading 90 and 115 captures against 23 and 28 hunts.
+
+## Capture counts — `0x192C52`
+
+u16, one per monster: the `M` in the Monster List's *Hunted (Capts)* `N(M)`.
+
+**CONFIRMED** — located via the editor's `MonsterCaptures` offset, then matched
+against the in-game Monster List, where the displayed `N` is **tally + capture**:
+
+| # | Monster | Tally | Capture | Displayed | |
+|---|---|---|---|---|---|
+| 1 | Rathian | 10 | 2 | `12(2)` | ✓ |
+| 63 | Seregios | 11 | 4 | `15(4)` | ✓ |
+| 122 | Congalala | 3 | 0 | `3(0)` | ✓ |
+| 131 | Soulseer Mizutsune | 2 | 1 | `3(1)` | ✓ |
+
+Other non-zero captures in the analysed save: Nargacuga (32), Lagombi (50),
+Glavenus (65), Great Maccao (71), and 115, 116, 121, 129–132. The alternative
+alignment (repo index = editor index) fails at once: it assigns index 0, tally 0,
+two captures.
+
+A controlled capture diff confirms that a capture touches **only** the capture array.
+Capturing one Nargacuga (index 32):
+
+| Array | Offset | Change |
+|---|---|---|
+| capture[32] | `0x192C92` | 1 → 2 |
+| tally[32] | `0x192B80` | unchanged |
+| size[32] | `0x192DE2` | unchanged (specimen within the recorded range) |
+
+The only other monster-array change in that diff was tally[78] (Felyne) 23 → 25,
+from Felynes killed on the same quest.
 
 ## Monster index table
 
@@ -77,14 +129,18 @@ Confidence:
 - **[C]** CONFIRMED — controlled write or hunt diff, two independent lines
 - **[V]** DERIVED, count-validated — marker readout, and the stored value matches an
   independently reported hunt count
+- **[E]** DERIVED from the editor's `MonsterHuntNames` list alone (editor index + 1)
 - unmarked — DERIVED from the marker readout alone
 
-### Large monsters, 0–71
+Over 1–104 the editor list agrees with every marker-derived entry, and its names
+fill exactly the gaps the marker pass left.
+
+### Large monsters, 1–71
 
 | # | Monster | | # | Monster |
 |---|---|---|---|---|
-| 0 | *unmapped* | | 36 | *unmapped* |
-| 1 | *unmapped* | | 37 | Uragaan |
+| — | — | | 36 | Savage Deviljho **[E]** |
+| 1 | Rathian **[E]** | | 37 | Uragaan |
 | 2 | Gold Rathian | | 38 | Crystalbeard Uragaan |
 | 3 | Dreadqueen Rathian **[V]** | | 39 | Lagiacrus |
 | 4 | Rathalos | | 40 | Royal Ludroth **[V]** |
@@ -97,7 +153,7 @@ Confidence:
 | 11 | Kirin | | 47 | Amatsu |
 | 12 | Velocidrome **[V]** | | 48 | **Arzuros [C]** |
 | 13 | Gendrome **[V]** | | 49 | Redhelm Arzuros |
-| 14 | Iodrome **[V]** | | 50 | *unmapped* |
+| 14 | Iodrome **[V]** | | 50 | Lagombi **[E]** |
 | 15 | Cephadrome **[V]** | | 51 | Snowbaron Lagombi **[V]** |
 | 16 | Yian Garuga | | 52 | Volvidon **[V]** |
 | 17 | Deadeye Yian Garuga | | 53 | Brachydios |
@@ -105,20 +161,20 @@ Confidence:
 | 19 | Stonefist Hermitaur | | 55 | Tetsucabra **[V]** |
 | 20 | Shogun Ceanataur | | 56 | Drilltusk Tetsucabra |
 | 21 | Blangonga | | 57 | Zamtrios |
-| 22 | *unmapped* | | 58 | Najarala |
-| 23 | *unmapped* | | 59 | Seltas Queen |
+| 22 | Rajang **[E]** | | 58 | Najarala |
+| 23 | Furious Rajang **[E]** | | 59 | Seltas Queen |
 | 24 | Kushala Daora | | 60 | Gore Magala |
 | 25 | Chameleos | | 61 | Shagaru Magala |
 | 26 | Teostra | | 62 | Seltas **[V]** |
-| 27 | Bulldrome **[V]** | | 63 | *unmapped* |
-| 28 | Tigrex | | 64 | *unmapped* |
-| 29 | Grimclaw Tigrex | | 65 | *unmapped* |
+| 27 | Bulldrome **[V]** | | 63 | Seregios **[E]** |
+| 28 | Tigrex | | 64 | Malfestio **[E]** |
+| 29 | Grimclaw Tigrex | | 65 | Glavenus **[E]** |
 | 30 | Akantor | | 66 | Hellblade Glavenus **[V]** |
 | 31 | Lavasioth | | 67 | Astalos |
-| 32 | *unmapped* | | 68 | Mizutsune **[V]** |
+| 32 | Nargacuga **[E]** | | 68 | Mizutsune **[V]** |
 | 33 | Silverwind Nargacuga **[V]** | | 69 | Gammoth |
 | 34 | Ukanlos | | 70 | Nakarkos |
-| 35 | *unmapped* | | 71 | *unmapped* |
+| 35 | Deviljho **[E]** | | 71 | Great Maccao **[E]** |
 
 ### Small monsters, 72–104
 
@@ -136,16 +192,43 @@ Confidence:
 | 81 | Genprey | | 92 | Thenoplos | | 103 | Maccao |
 | 82 | Ioprey | | 93 | Bnahabra | | 104 | Larinoth |
 
-### GU block, 113–138
+### Moofah and unused slots, 105–112
 
 | # | Monster |
 |---|---|
-| 121 | **Rustrazor Ceanataur [C]** |
-| 122 | Soulseer Mizutsune **[V]** |
-| others | **UNRESOLVED** |
+| 105 | Moofah **[E]** |
+| 106–112 | unused — the editor labels them *Unknown* |
+
+### GU block, 113–137
+
+| # | Monster | | # | Monster |
+|---|---|---|---|---|
+| 113 | Basarios **[E]** | | 126 | Raging Brachydios **[E]** |
+| 114 | Gravios **[E]** | | 127 | Nerscylla **[E]** |
+| 115 | Diablos **[E]** | | 128 | Chaotic Gore Magala **[E]** |
+| 116 | Bloodbath Diablos **[E]** | | 129 | Nightcloak Malfestio **[E]** |
+| 117 | Lao-Shan Lung **[E]** | | 130 | Boltreaver Astalos **[E]** |
+| 118 | Fatalis **[E]** | | 131 | **Soulseer Mizutsune [C]** |
+| 119 | Crimson Fatalis **[E]** | | 132 | Elderfrost Gammoth **[E]** |
+| 120 | White Fatalis **[E]** | | 133 | Valstrax **[E]** |
+| 121 | **Rustrazor Ceanataur [C]** | | 134 | *unknown* (editor: `Unknown[133]`) |
+| 122 | **Congalala [C]** | | 135 | Ahtal-Ka **[E]** |
+| 123 | Giadrome **[E]** | | 136 | Great Thunderbug **[E]** (small) |
+| 124 | Barioth **[E]** | | 137 | Conga **[E]** (small) |
+| 125 | Barroth **[E]** | | | |
 
 Index 121 is confirmed twice over — the tally diff and the size-record diff from the
-same controlled hunt both point at it.
+same controlled hunt both point at it; the editor agrees (its *Shredclaw Ceanataur*
+is Rustrazor's Japanese-derived name). Editor names above are translated to their
+western GU names.
+
+**Resolved conflict at 122 / 131.** The marker readout put Soulseer Mizutsune at
+122; the editor puts Congalala there and Soulseer (*Divinesight Mizutsune*) at 131.
+The Monster List settles it for the editor: Congalala `3(0)` = index 122 (tally 3,
+capture 0) and Soulseer `3(1)` = index 131 (tally 2, capture 1). The marker entry
+was a transcription slip whose "count validation" matched by coincidence (both show
+3). The [V] tag is only as good as the counts it was checked against: those were
+displayed counts, which equal the stored tally only when captures are zero.
 
 ## Reliability of the table
 
@@ -158,10 +241,10 @@ from 15 screens, and seven entries came back duplicated. Five were adjacent rows
 the same screen sharing one value — the signature of a transcription slip, not a
 structural feature. Where the stored value could be checked against a known hunt
 count the ambiguity resolved cleanly, which is what the **[V]** tag records; those
-are the entries listed above. Their partners are consequently unplaced, which is why
-several very common monsters — **Rathian, Nargacuga, Lagombi, Glavenus, Seregios,
-Great Maccao, Malfestio** — are absent from the table despite certainly existing
-below index 105.
+are the entries listed above. Their partners were consequently unplaced, which is
+why several very common monsters — **Rathian, Nargacuga, Lagombi, Glavenus,
+Seregios, Great Maccao, Malfestio** — were missing from the marker table. The
+editor list later filled every one of those gaps (the **[E]** entries).
 
 **Anyone extending this work should redo the marker pass and transcribe it
 mechanically** — screenshot OCR, or reading fewer entries per pass. The technique is
@@ -169,12 +252,9 @@ sound; only the hand transcription was lossy.
 
 ## Open questions
 
-- **UNRESOLVED — indices 105–112.** Consistently zero. Either padding, or eight
-  monsters never hunted in the analysed save. A marker pass covering this range
-  would settle it immediately.
-- **UNRESOLVED — most of 113–138.** Only two entries placed. A second marker pass
-  using a distinct value range (e.g. `1000 + i`) over 105–199 would map the rest.
-- **UNRESOLVED — ~12 indices below 105**, listed above as *unmapped*.
-- **UNRESOLVED — captures vs kills.** The Guild Card renders counts as `N(M)`, where
-  `M` appears to be captures. The tally array holds only one number per monster, so
-  the capture count lives in a structure not yet located.
+- **UNRESOLVED — index 134.** The editor has no name for it either.
+- **DERIVED — [E] names.** Taken from the editor's list, not read back from the game.
+  A marker pass over 105–137 would confirm them.
+- **RESOLVED — captures vs kills.** The `M` of `N(M)` lives in the capture array at
+  `0x192C52`, directly after the tallies; `N` = tally + capture, and a capture
+  increments only the capture array.

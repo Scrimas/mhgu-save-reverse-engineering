@@ -14,6 +14,7 @@ PERMITS   = 0x18F4D8
 CLEARED   = 0x18F989 * 8 + 3
 UNLOCKED  = CLEARED + 0x100 * 8
 TALLIES   = 0x192B40
+CAPTURES  = 0x192C52
 SIZES     = 0x192D62
 WEAPONS   = {"village": 0x254713, "hub": 0x254731, "arena": 0x25474F}
 QUESTBITS = (0x18F900, 128)
@@ -62,22 +63,29 @@ def main(path):
     print(f"  most used: {WEAPON_ORDER[main_w]} ({tot[main_w]})")
 
     print("\n--- monsters (named entries with a non-zero tally) ---")
-    idx = {}
+    idx, nosize = {}, set()
     csvp = pathlib.Path(__file__).parent.parent / "data" / "monster-index.csv"
     if csvp.exists():
         for r in csv.DictReader(csvp.open()):
             if r["monster"]:
                 idx[int(r["index"])] = r["monster"]
+            if r["has_size_record"] == "no":
+                nosize.add(int(r["index"]))
     shown = 0
     for i in sorted(idx):
         t = u16(buf, TALLIES + 2*i)
         if not t:
             continue
+        c = u16(buf, CAPTURES + 2*i)
         mn, mx = u16(buf, SIZES + 4*i), u16(buf, SIZES + 4*i + 2)
-        size = "-" if 72 <= i <= 104 else f"{mn}%-{mx}%"
-        print(f"  [{i:3d}] {idx[i]:24s} {t:4d} hunts   size {size}")
+        size = "-" if i in nosize else f"{mn}%-{mx}%"
+        print(f"  [{i:3d}] {idx[i]:24s} {t:4d} kills {c:4d} captures (shown {t+c}({c}))   size {size}")
         shown += 1
     print(f"  ({shown} of {len(idx)} named indices have hunts)")
+    for i in sorted(nosize):
+        c = u16(buf, CAPTURES + 2*i)
+        if c and not 1 <= i <= 71 and not 113 <= i <= 135:
+            print(f"  WARNING: [{i:3d}] {c} captures on a small monster (bad write? size index 0 aliases captures 136-137)")
 
     print("\n--- character slots / equipment (docs/07) ---")
     base = 0x24 + int.from_bytes(buf[0x34:0x38], "little")
@@ -103,6 +111,7 @@ def main(path):
     ing = int.from_bytes(buf[base+0x2F8F:base+0x2F8F+6], "little") & ((1 << 45) - 1)
     dish = int.from_bytes(buf[base+0x2C67D:base+0x2C67D+13], "little") & ((1 << 99) - 1)
     print(f"  canteen ingredients: {bin(ing).count('1')}/45   dishes: {bin(dish).count('1')}/99")
+
 
     lo, n = QUESTBITS
     print(f"\n--- quests ---")

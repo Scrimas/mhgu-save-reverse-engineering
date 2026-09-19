@@ -28,16 +28,24 @@
     "gating_note": "G-rank deviant levels additionally require hunting the base monster at G-rank; that flag is NOT in these bitmaps and is UNRESOLVED"
   },
   "monsters": {
+    "valid_indices": "1-137",
+    "indexing_note": "offset = base + stride*index; index 0 is NOT a slot (base points one element before the array). MHXXSwitchSaveEditor uses 0-based arrays starting one element later: editor index = index - 1",
     "hunt_tallies": { "offset": 1649472, "hex": "0x192B40", "type": "u16", "stride": 2,
-                      "count": 139, "confidence": "CONFIRMED" },
+                      "count": 137, "first_byte": "0x192B42", "confidence": "CONFIRMED",
+                      "note": "kills only; captures are stored separately" },
+    "capture_counts": { "offset": 1649746, "hex": "0x192C52", "type": "u16", "stride": 2,
+                        "count": 137, "first_byte": "0x192C54", "confidence": "CONFIRMED",
+                        "note": "editor SIZEOF_MONSTERCAPTURES = 274; Monster List shows N(M) with N = tally + capture, M = capture (4 monsters checked); capture diff (Nargacuga) touched capture[32] only, tally unchanged" },
     "size_records": { "offset": 1650018, "hex": "0x192D62", "type": "u16 pair (min%, max%)",
-                      "stride": 4, "confidence": "CONFIRMED",
-                      "note": "large monsters only; (0,0) = never hunted" },
+                      "stride": 4, "count": 137, "first_byte": "0x192D66", "confidence": "CONFIRMED",
+                      "note": "large monsters only; (0,0) = never hunted; 0x192D62-0x192D65 are captures[136..137], NOT a size record" },
     "index_blocks": {
-      "0-71":    "large monsters (have size records)",
+      "1-71":    "large monsters (have size records)",
       "72-104":  "small monsters (NO size records)",
-      "105-112": "always zero; UNRESOLVED",
-      "113-138": "additional large monsters incl. GU-exclusive deviants"
+      "105":     "Moofah (editor-derived)",
+      "106-112": "unused / unknown (editor labels Unknown)",
+      "113-135": "additional large monsters incl. GU-exclusive deviants",
+      "136-137": "Great Thunderbug, Conga (editor-derived; no size records)"
     },
     "deviant_rollup": false,
     "deviant_rollup_note": "CONFIRMED: deviant hunts do not increment the base monster tally; family total = base + deviant",

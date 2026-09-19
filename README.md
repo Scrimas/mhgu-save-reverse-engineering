@@ -46,8 +46,9 @@ Machine-readable: [`data/monster-index.csv`](data/monster-index.csv), [`data/hun
 | Deviant levels (cleared) | bit `0x18F989`.3 | mixed-width bitfield, 228 bits |
 | Deviant levels (unlocked) | bit `0x18FA89`.3 | same layout, `+0x100` bytes |
 | Quest counter | `0x192AEA` | u16 |
-| Monster hunt tallies | `0x192B40` | u16 × ~139, indexed by monster ID |
-| Monster size records | `0x192D62` | (u16 min%, u16 max%) × N, stride 4, same index |
+| Monster hunt tallies | `0x192B40` | u16, index 1–137 (`0x192B40 + 2i`) |
+| Monster capture counts | `0x192C52` | u16, index 1–137 (`0x192C52 + 2i`) |
+| Monster size records | `0x192D62` | (u16 min%, u16 max%), stride 4, index 1–137 |
 | Weapon usage — Village | `0x254713` | 15 × u16 |
 | Weapon usage — Hub | `0x254731` | 15 × u16 |
 | Weapon usage — Arena | `0x25474F` | 15 × u16 |
@@ -82,9 +83,9 @@ from observed bytes, and it is incomplete.
   **An editor should resolve the base through the pointer, not hard-code it.**
 - **Region portability.** Only the EU/western build was examined. Japanese builds
   may differ.
-- **Monster indices 105–112** are consistently zero and were never identified as
-  either real monster slots or padding.
-- **Roughly a dozen monster indices** below 105 remain unmapped — see
+- **Monster indices 106–112** carry no known monster (the Switch editor labels them
+  *Unknown*), and index 134 is unnamed. Names for 105 and 113–137 are taken from the
+  editor, not yet read back in-game — see
   [02 — Monster records](docs/02-monster-records.md).
 
 ## Licence
