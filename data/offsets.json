@@ -113,8 +113,10 @@
                      "confidence": "DERIVED",
                      "note": "remainder of each 0xA0 record UNRESOLVED" },
     "counters": {
-      "quest_counter_a": { "offset": 1649386, "hex": "0x192AEA", "type": "u16", "confidence": "DERIVED" },
-      "quest_counter_b": { "offset": 2443118, "hex": "0x25476E", "type": "u16", "confidence": "DERIVED" }
+      "quest_counter_a": { "offset": 1649386, "hex": "0x192AEA", "type": "u16", "confidence": "DERIVED",
+                           "note": "+1 per completed quest; unchanged over a Harvest Tour (quest 201)" },
+      "guild_card_play_time": { "offset": 2443117, "hex": "0x25476D", "type": "u32", "confidence": "DERIVED",
+                                "note": "seconds; copy of base+0x20, refreshed when a quest ends. Earlier revisions read its middle bytes as a u16 quest counter at 0x25476E" }
     },
     "known_quest_ids": {
       "0xA1C4": "Rustrazor Ceanataur G2 (41412)",

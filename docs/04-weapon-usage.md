@@ -72,7 +72,7 @@ largest.
 
 - **UNRESOLVED — venue array count.** Three venues are confirmed. Whether a fourth
   array follows `0x25474F` (Special Permit quests, for instance) was not checked.
-  A u16 counter at `0x25476E`, immediately after the Arena array, increments once per
-  quest and is more likely a quest total than a fourth venue.
+  The four bytes after the Arena array (`0x25476D`) are the Guild Card copy of the
+  play time, see [05 — Quests](05-quests.md#counters), not a fourth venue.
 - **UNRESOLVED — Prowler.** Index 14 is included by position and was zero throughout,
   so its meaning is inferred from the on-screen bar rather than observed changing.

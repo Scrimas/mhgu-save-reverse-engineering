@@ -77,7 +77,23 @@ base+0x3157: 00e0ffe76d7f90d1dffa6ff5631e803f04 000000
 base+0x316B: 0000000004000000000008000000000000 000000
 ```
 
-Whether the Guild Card copy is rebuilt from this map, and when, was not tested.
+The first thirteen awards, **DERIVED** from the code:
+
+| Award | Condition |
+|---|---|
+| 0–5 | pairs and triples of the Village and Hub level sets 13–25 (0 = sets 13 and 14, 1 = 15 and 16, …) |
+| 6 | awards 0–5 all earned (the check reads its own map: `& 0x7f == 0x3f`) |
+| 7, 8 | `0x3f3624` / `0x3f3824` with 66: a count over the 87 monster list entries, one per crown size by the look of it (**UNRESOLVED**) |
+| 9 | `0x3f1b1c`, not read |
+| 10, 11, 12 | sets 45, 46, 47: every Arena quest cleared, all with rank A, all with rank S |
+
+The check runs after every quest and needs no "last clear": on the first quest after
+the [bulk completion write](05-quests.md#what-all-quests-completed-takes), a Harvest
+Tour, this map and its notice copy gained 0–6, 10, 59, 74, 89, 103 and 109–114 at
+once. 11 and 12 stayed clear with the rank sets, 7–9 do not depend on quests.
+
+Whether the Guild Card copy is rebuilt from this map, and when, was not tested; it
+was already full when these awards arrived.
 
 ## Open questions
 

@@ -232,8 +232,9 @@ reason is this save's history: all 228 Special Permit quests are cleared in ever
 snapshot while only a third of the Village and Hub quests are, and the
 [history log](#quest-history-log--0x254771) shows four EX quests played back to back
 in descending deviant order on one day. That fits deviant levels marked cleared by
-another editor (no last clear seen, bit stays clear) and EX quests then played for
-real (sets 80–97 set). Only the owner of the save can confirm it.
+an edit (no last clear seen, bit stays clear) and EX quests then played for
+real (sets 80–97 set). The owner of the save confirmed it: the levels were unlocked
+by the first byte edits of this project, before the quest bitmaps were understood.
 
 ## Where a quest is posted — `questData + 0x11`
 
@@ -622,16 +623,21 @@ with the deviant numbered from 1.
 
 | Offset | Type | Behaviour |
 |---|---|---|
-| `0x192AEA` | u16 | Increments by 1 per completed quest |
-| `0x25476E` | u16 | Increments by 1 per completed quest |
+| `0x192AEA` | u16 | Increments by 1 per completed quest, with one exception seen: a Harvest Tour (quest 201) left it unchanged |
+| `0x25476D` | u32 | Guild Card copy of the play time in seconds |
 
-Both were observed advancing in lockstep across two independent quest completions.
-They hold different values, so they count different things — plausibly total quests
-versus quests counted toward the Guild Card. Neither was pinned to a specific
-on-screen figure.
+`0x192AEA` advanced by one over each of five quests between the snapshots (382 → 387)
+and stayed at 387 over the Harvest Tour, which did get a
+[history record](#quest-history-log--0x254771) and a weapon usage count. What it
+counts exactly is **UNRESOLVED**.
 
-`0x25476E` sits immediately after the Arena weapon-usage array, so it may belong to
-the Guild Card statistics block rather than the quest system.
+Earlier revisions listed a second u16 counter at `0x25476E`. That was a misreading:
+the bytes are the middle of the u32 at `0x25476D`, which follows the play time at
+`base + 0x20` (a second copy sits at `base + 0x2248B`) and is refreshed when a quest
+ends, so its second byte happened to step by one between the first captures.
+**DERIVED** from 22 snapshots: the value equals the play time in every snapshot taken
+right after a quest (175402 against 175408, 172975 against 172978) and lags behind it
+otherwise.
 
 ## Open questions
 
@@ -722,15 +728,6 @@ notices did not change. The game-side award map gained award 39 (with its notice
 bit); the quest set awards 0–12 were not granted by talking alone. Seven reports did
 not fire:
 
-The quest lists were then read off in the game, level by level (Village ★1–★10, Hub
-★1–G4, hunter and Prowler quests counted apart): all 21 counts equal the number of
-rows the unlock rules and the [rotation](#rotating-quests--base--0x504b) predict, and every quest
-shows as completed. The three event lists gave 103 hunter and 22 Prowler quests,
-the 125 downloaded ones. The other 23 event rows (`Hunter Low-rank 2`, `@`,
-`Quest Template`, …) are slots no released quest uses; they carry the note
-`unused event slot` in `quest-index.csv` and the tool skips them now. The bulk write
-above still set their cleared and seen bits; nothing in the game shows them.
-
 - Six are Hunter Art lessons (requests 126, 128, 133, 141, 143, 150). Their report
   block has a third condition, talk types 46–53, 141, 142: a lesson of this teacher
   is due. The check (`0x3f0c3c`) skips every art whose bit is already set in the
@@ -742,4 +739,34 @@ above still set their cleared and seen bits; nothing in the game shows them.
   of delivery request 49 (Pokke Gal), which is still open on this save. The tool set
   the accepted flag 416 regardless; whether the NPC is present at all without 415
   was not checked.
+
+The quest lists were then read off in the game, level by level (Village ★1–★10, Hub
+★1–G4, hunter and Prowler quests counted apart): all 21 counts equal the number of
+rows the unlock rules and the [rotation](#rotating-quests--base--0x504b) predict, and every quest
+shows as completed. The three event lists gave 103 hunter and 22 Prowler quests,
+the 125 downloaded ones. The other 23 event rows (`Hunter Low-rank 2`, `@`,
+`Quest Template`, …) are slots no released quest uses; they carry the note
+`unused event slot` in `quest-index.csv` and the tool skips them now. The bulk write
+above still set their cleared and seen bits; nothing in the game shows them. The Arena, Training and Special Permit lists
+show every quest as completed too, the 16 Arena quests without a record time included.
+The Request Log lists the six lesson requests as pending.
+
+**After the next quest** (snapshot `complete-2-after-quest`; Harvest Tour 201, Village):
+the game-side [award map](09-awards.md#game-side-map--base--0x3157) gained 18 awards
+with their notice bits: 0–6 and 10, the quest set awards, and 59, 74, 89, 103,
+109–114. Of the first thirteen only 7 and 8 (a count over the monster list,
+`0x3f3624` / `0x3f3824`), 9 (`0x3f1b1c`, not read) and 11 and 12 (the Arena rank sets
+46 and 47, left clear by the tool) are missing. So the set bits written by the tool
+are enough: the award check runs after any quest, not only after the last clear of a
+set. In the game the only visible result was new Guild Card titles; the Guild Card
+award field was already full on this save. The cleared, seen, failed and set maps and
+the pending notices did not change, the per-NPC hold maps were wiped as usual, and
+ten event flags in 1537–1592, which no talk record uses, were cleared.
+
+The [rotation field](#rotating-quests--base--0x504b) did **not** change over this
+quest, the first such case in the snapshots. In the quest flow step `0x38b904` the
+re-roll `0x54b1c4` sits in a block that is skipped when `0x3a340c` is true (bit 7 of
+byte `+0x10c` of the loaded quest object, a runtime field that is not part of the
+quest file), and an abandoned quest (end state 6) takes `0x54b0d4` instead.
+Which of the two applied here is **UNRESOLVED**.
 
