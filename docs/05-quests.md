@@ -694,8 +694,8 @@ moves, and that a bitmap edit leaves behind:
 [`tools/complete_quests.py`](../tools/complete_quests.py) `<save> …` plans the edit and
 prints it; with `--write` it changes the given files in place. It writes
 
-1. the cleared and seen bit of every real row (placeholder rows and the second
-   occurrence of 1049 / 1050 are skipped; `--no-events` leaves the event quests);
+1. the cleared and seen bit of every real row (placeholder rows, unused event slots
+   and the second occurrence of 1049 / 1050 are skipped; `--no-events` leaves the event quests);
 2. for every villager request with a quest that is not accepted yet, the accepted flag
    and whatever else its offer block sets or clears (column `also` of
    [`request-offer.csv`](../data/request-offer.csv): the chiefs' second flag, the
@@ -734,7 +734,10 @@ not fire:
   [Hunter Arts map](08-progression.md) (`0x524040`), and on this save all 178 arts
   were unlocked by an earlier edit, so no lesson is ever due. On such a save an edit
   has to write the completed flag itself (1283, 1287, 1297, 1313, 1317, 1331; the
-  last block also clears 1398).
+  last block also clears 1398, the teacher's "request running" marker that its idle
+  lines test). `complete_quests.py --lessons` does that for every lesson request that
+  is accepted and not completed. Written to this save after the Request Log showed
+  the six as pending (5 bytes per slot); the check in the game is still open.
 - Request 50 (Jumbo Sweetheart, Pokke): its offer needs flag 415, the completed flag
   of delivery request 49 (Pokke Gal), which is still open on this save. The tool set
   the accepted flag 416 regardless; whether the NPC is present at all without 415
@@ -747,7 +750,8 @@ shows as completed. The three event lists gave 103 hunter and 22 Prowler quests,
 the 125 downloaded ones. The other 23 event rows (`Hunter Low-rank 2`, `@`,
 `Quest Template`, …) are slots no released quest uses; they carry the note
 `unused event slot` in `quest-index.csv` and the tool skips them now. The bulk write
-above still set their cleared and seen bits; nothing in the game shows them. The Arena, Training and Special Permit lists
+above still set their cleared and seen bits; nothing in the game showed them, and a
+later write cleared the 46 bits again (snapshot before: `complete-3-pre-lesson-flags`). The Arena, Training and Special Permit lists
 show every quest as completed too, the 16 Arena quests without a record time included.
 The Request Log lists the six lesson requests as pending.
 

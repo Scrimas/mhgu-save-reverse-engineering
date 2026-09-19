@@ -10,7 +10,10 @@ quests completed takes"):
   2. for every villager request with a quest that is not accepted yet: its accepted
      flag and the other flags its offer block sets or clears (column `also` of
      ../data/request-offer.csv). The completed flag is NOT written: the NPC's report
-     line stays available and hands over the reward in the game;
+     line stays available and hands over the reward in the game. With --lessons the
+     six Hunter Art lesson requests are the exception: their report line only comes
+     up while the teacher has an art left to teach, so on a save with every art
+     unlocked it never does, and the completed flag has to be written;
   3. the quest set bits at base+0x3187 of every set whose members are then all
      cleared. The Arena rank sets 46, 47, 53, 78, 79 need Arena records and are left.
 
@@ -19,7 +22,7 @@ bitmap, Arena records, quest counters, the history log, awards, the pending set
 notices at base+0x3197, and the story flags that talk lines set once their quests are
 cleared (listed at the end of the run).
 
-Usage:  complete_quests.py [--write] [--no-events] [--no-requests] system [system ...]
+Usage:  complete_quests.py [--write] [--no-events] [--no-requests] [--lessons] system [system ...]
         With --write every given file is changed in place. Close the emulator and
         take a copy first; give both save slots (0/system and 1/system).
 """
@@ -35,10 +38,13 @@ FLAGS     = 0x2C56D
 QUESTSETS = 0x3187
 RANK_SETS = {46, 47, 53, 78, 79}
 EVENT     = {"Event Hub", "Event Arena"}
+# Hunter Art lesson requests 126, 128, 133, 141, 143, 150: completed flag (accepted = flag - 1)
+# and the flags the report block clears
+LESSONS   = {1283: (), 1287: (), 1297: (), 1313: (), 1317: (), 1331: (1398,)}
 
 DATA = pathlib.Path(__file__).resolve().parent.parent / "data"
 
-def plan(buf, events=True, requests=True):
+def plan(buf, events=True, requests=True, lessons=False):
     """Return ({absolute offset: new byte}, report lines)."""
     new = {}
     def get(off):
@@ -79,6 +85,13 @@ def plan(buf, events=True, requests=True):
             put(FLAGS, int(r["accept_flag"]))
             for f in map(int, r["also"].split()): put(FLAGS, abs(f), f > 0)
         out.append(f"requests to mark accepted: {len(todo)}")
+        if lessons:
+            n = 0
+            for d, clear in LESSONS.items():
+                if not bit(FLAGS, d - 1) or bit(FLAGS, d): continue
+                n += 1; put(FLAGS, d)
+                for f in clear: put(FLAGS, f, 0)
+            out.append(f"lesson requests to mark completed: {n}")
         reqs = {r["index"]: r for r in csv.DictReader(open(DATA / "request-index.csv"))}
         waiting = [r for r in reqs.values() if r["quest_id"] and not bit(FLAGS, int(r["done_flag"]))]
         out.append(f"request reports left for the game: {len(waiting)}")
@@ -115,12 +128,12 @@ def main():
     args = sys.argv[1:]
     opts = {a for a in args if a.startswith("--")}
     paths = [a for a in args if not a.startswith("--")]
-    if not paths or opts - {"--write", "--no-events", "--no-requests"}:
+    if not paths or opts - {"--write", "--no-events", "--no-requests", "--lessons"}:
         sys.exit(__doc__)
     for p in paths:
         buf = bytearray(pathlib.Path(p).read_bytes())
         if len(buf) != 5159100: sys.exit(f"{p}: not an MHGU Switch save (size {len(buf)})")
-        new, out = plan(buf, "--no-events" not in opts, "--no-requests" not in opts)
+        new, out = plan(buf, "--no-events" not in opts, "--no-requests" not in opts, "--lessons" in opts)
         print(p); print("\n".join("  " + l for l in out))
         print(f"  bytes to change: {len(new)}")
         if "--write" in opts:
