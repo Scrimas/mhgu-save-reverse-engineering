@@ -201,8 +201,9 @@ bit A / B / C of the NPC into mask `0x100` / `0x200` / `0x8`, and the selector s
 blocks whose kind has its mask bit set. A request report sets the NPC's map A bit
 (action 2). `0x38b904`, a step of the quest flow (called from `0x3866a4`; it also
 re-rolls the rotating quests through `0x54b0d4`), passes map A and the length 72 to a
-memclr-style import, which wipes all three maps. **DERIVED**: an NPC that just took a
-report offers its next request only after the next quest. All maps are empty in every
+memclr-style import, which wipes all three maps. So an NPC that just took a
+report offers its next request only after the next quest (**CONFIRMED**, see the
+controlled write below). All maps are empty in every
 snapshot taken right after a quest (`req-1`, `req-2`). This explains the observation
 "reported 10220, got the costume, Captain offered nothing": bit 33 was set by that
 report and is still set in the save.
@@ -214,7 +215,9 @@ bit 36 of map B (Kokoto Chief; his offer is a kind 9 block) was set in the same 
 Bherna Chief announced his new ★6 quests (flag 685), the Pokke and Yukumo chiefs
 offered 640 and 641 (flags 210 / 412 and 260 / 456), and the Kokoto Chief had no
 speech bubble and offered nothing: flags 160 / 346 stayed clear. No quest was played,
-and bit 36 was still set in the save afterwards.
+and bit 36 was still set in the save afterwards. After the next cleared quest (1038)
+all three maps were empty, including the Captain's bit 33 of map A, which confirms the
+wipe in the quest flow.
 
 For an editor the maps only matter as a nuisance: a set bit delays an offer until the
 next quest. Setting the accepted flag directly bypasses the conversation entirely.
@@ -257,7 +260,7 @@ Found through the conditions and actions above. The character block copies
 | Contribution points, low rank | `base + 0x281B` | u32 × 4: Bherna, Kokoto, Pokke, Yukumo. The adder `0x523a80` caps each at 20000 | DERIVED (code + plausible values) |
 | Contribution points, G rank | `base + 0x282B` | u32 × 4, same order. 280 / 240 / 125 / 110 in the analysed save | DERIVED |
 | Progress word | `base + 0x2F77` | u32. Bit 20 = HR limit released, bit 31 = quest 10646 was listed (latch of condition 64), bits 8–12 and 29 read by conditions 93–97 and 85. `0x8A7FFFFF` in the analysed save | bits 20 and 31 from code |
-| 128-bit map | `base + 0x3187` | 16 bytes (`+0xc70`), copies for notices at `+0xc80` / `+0xc90`. `0x3f1950` sets the bit whose index is the ID that `0x3ba060` returns for each of a quest's eight target slots. Bit 48 (condition 121; byte `base + 0x318D` bit 0) was clear in the analysed save and none of the four requests it gates had been offered; setting it made the chiefs offer them. A hint for the meaning: before the write the set bits were 0, 13, 74–77 and 80–97, and rows 74–97 of [`monster-index.csv`](../data/monster-index.csv) are the small monsters (13 is Gendrome, 48 Arzuros), so the index may be a monster ID | bit 48 CONFIRMED by write, meaning UNRESOLVED |
+| 128-bit map | `base + 0x3187` | 16 bytes (`+0xc70`), copies for notices at `+0xc80` / `+0xc90`. `0x3f1950` sets the bit whose index is the ID that `0x3ba060` returns for each of a quest's eight target slots. Bit 48 (condition 121; byte `base + 0x318D` bit 0) was clear in the analysed save and none of the four requests it gates had been offered; setting it made the chiefs offer them. A hint for the meaning: before the write the set bits were 0, 13, 74–77 and 80–97, and rows 74–97 of [`monster-index.csv`](../data/monster-index.csv) are the small monsters (13 is Gendrome, 48 Arzuros), so the index may be a monster ID. Against that: clearing 1038 *Bag a Brachydios* (row 53) set no bit | bit 48 CONFIRMED by write, meaning UNRESOLVED |
 | Hunter's Notes, large monsters | `base + 0x5027` | 123 bits, a second copy for the NEW mark at `+0x5037` | from code |
 | Hunter's Notes, second list | `base + 0x5047` | 30 bits, just before the [rotating quests](05-quests.md#rotating-quests--base--0x504b) | from code |
 | Random word | `base + 0x2C675` | u32, see conditions 106–108 | from code |
@@ -288,5 +291,3 @@ sets them: 237, 239 (shop stock upgrades), 677, 1502 (a weapon at its last level
 - **UNRESOLVED — the file offset of the activity state bytes.**
 - **UNRESOLVED — request 117** (kind 2): no talk line sets its flag 550.
 - Conditions marked "not read further" above. None of them gates a request.
-- **Not observed — the wipe of the per-NPC maps** by the next quest (`0x38b904`). That
-  a set bit holds the NPC back is confirmed by write.

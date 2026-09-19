@@ -334,7 +334,7 @@ request offer blocks test it (`village_star` in
 talk data also sets the star-level flags from these two numbers, see
 [10](10-npc-talk.md#star-level-flags).
 
-**What raises them — from code.** `0x50cbd0` walks `quest_group`. For every urgent
+**What raises them — CONFIRMED (code + controlled write).** `0x50cbd0` walks `quest_group`. For every urgent
 group it counts the members and how many of them are cleared. If a group has members,
 all of them are cleared, and the stored level is lower than the group's level, the
 level is set to the group's level. It never lowers a level, and a level can be
@@ -348,10 +348,11 @@ setup sequence at `0x6aa5d0` that an ordinary load does not go through.
 
 Controlled write: the Hub level was lowered from 13 to 12 (`0x1B9178`
 `0x0D → 0x0C`, both slots) with every urgent still cleared. After loading the
-character, walking through four villages and saving, the file still held 12. So the
-number is a plain stored field that loading does not recompute; by the code it is
-corrected the next time any quest is cleared (not observed yet). For an editor:
-write the level together with the urgents' cleared bits. The star-level *flags* still
+character, walking through four villages and saving, the file still held 12. After
+one cleared quest (1038, not an urgent) it held 13 again. **CONFIRMED**: loading does
+not recompute the level, clearing any quest does. For an editor: write the level
+together with the urgents' cleared bits, or just the cleared bits and let the next
+quest clear raise the level. The star-level *flags* still
 need the two conversations of [10](10-npc-talk.md#star-level-flags), or a direct
 edit.
 
@@ -545,8 +546,6 @@ the Guild Card statistics block rather than the quest system.
 - **UNRESOLVED — quest history record layout** beyond ID and name. The documented
   u16 ID cannot hold event IDs (≥ 1 000 000). Either the field is wider, or event
   quests log differently.
-- **Not observed — the star level recompute after a quest clear.** A lowered Hub
-  level survived a load and a save; the code raises it again in the quest result path.
 - **Not checked — whether a board filters on `questData+0x11` values 1–4.**
 
 ## A caution on bulk edits
