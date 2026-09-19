@@ -156,6 +156,7 @@ NPC still waits for. Read-only.
 | `npc_bit`, `npc_name` | The NPC's bit in the per-NPC maps, which is also its index in `NpcName_<lang>.gmd` and the NPC byte `+0x06` of the request record |
 | `talk_kind`, `talk_line` | Block kind (4 / 8, once 9) and its first line |
 | `accept_flag` | Flag the block sets |
+| `also` | Other event flags the block sets (`N`) or clears (`-N`) with action 1, its end line included: the second flag of a chief's request (150 … 160, 200 … 210, 250 … 260; 160 is what lists 639), the Captain's idle-talk flag 796. [`tools/complete_quests.py`](../tools/complete_quests.py) applies them together with the accepted flag |
 | `offer` | Conditions besides "accepted flag not set yet", joined by ` AND `; `x\|y` means either. `village_star:N`, `hub_star:N` (≥), `village_eq` / `hub_eq`, `flag:N`, `notflag:N`, `cleared:Q`, `village_keys:N`, `group_done:N`, `hr:N`, `npc_idle:NPC`, `footbath`, `listed:Q` (64, 122), `hr_unlocked` (65), `points:Village:N` (67–70), `questset:N` (bit N of the [quest set map](05-quests.md#quest-sets--base--0x3187) at `base + 0x3187`), `pending:N` (activity state byte), `requests_done:FROM-TO:N` (113, 114), `condT:a:b` for the rest. Only what the selector really tests is listed: reading stops at the first empty slot |
 
 The Argosy Captain (NPC 52), whose *The Perilous Pair* (607) started this:

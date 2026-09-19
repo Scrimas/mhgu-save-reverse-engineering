@@ -181,7 +181,7 @@ quest.
 | 41, 42, 43, 44 | low-rank Village quests whose [board byte](#where-a-quest-is-posted--questdata--0x11) is 4 or 8 (Bherna), 1 or 5 (Kokoto), 2 or 6 (Pokke), 3 or 7 (Yukumo): 11 / 19 / 18 / 26 quests, mostly villager requests |
 | 48 | Village ★1–★6 without the *Advanced* quests and without the second quest of a twin pair: 153 quests |
 | 99 | Village ★7–★10 without the *Advanced* quests: 142 quests |
-| 45, 46, 47, 53 | the 10 low-rank Arena quests (7 hunter, 3 Prowler): all cleared / all with rank A or better / all with rank S / 53 not separated |
+| 45, 46, 47, 53 | the 10 low-rank Arena quests (7 hunter, 3 Prowler): all cleared / all with rank A or better / all with rank S / all with rank B or better |
 | 98, 78, 79 | all 17 Arena quests: all cleared / all rank A or better / all rank S |
 | 49–52 | no member found |
 
@@ -191,9 +191,15 @@ follows from its ID digits, the expansion byte of `quest_group`, a static table
 (`0x162cdc5`) and, for sets 41–44, byte `0x11` of its `questData`. A set whose only
 uncleared quest is the quest being played is written into eight slots
 (`+0x1f3` of the quest manager). After the clear, `0x3f1950` sets the bits of those
-slots here and in two companion maps (`+0xc80`, `+0xc90`). Only the second is saved,
-at `base + 0x3197`. For the rank
-sets it also reads the rank of the Arena record (`+0x1244 >> 29`: 0 = S, 1 = A, 2 = B).
+slots here and, for a bit that was clear before, in two companion maps (`+0xc80`,
+`+0xc90`). Only the second is saved, at `base + 0x3197`: it is the list of **set
+notices still to show**. The quest result flow (`0x38fab0` onwards) queues one notice
+per set bit through `0x1636a8` and clears the bit: sets 0–5 and 54–57 (Village levels),
+6–12 (Hub), 62–65 (G), the deviant sets from 26 and the Prowler sets 38, 39, 40, 70,
+71. A set without a notice keeps its bit for good, which is why bit 13 is still set
+there in the analysed save. An edit can leave this map alone. For the rank sets the
+setter also reads the rank of the Arena record (`+0x1244 >> 29`: 0 = S, 1 = A, 2 = B):
+46 and 78 want A or better, 47 and 79 S, 53 B or better.
 
 So the bit is written **only at the moment the game sees the last clear**. A set that
 is completed by editing cleared bits keeps its bit clear until the bit is written too.
@@ -219,11 +225,15 @@ all cleared (0, 13, 74–77, 80–97), and every set with an uncleared member ha
 clear: 81 of the 96 sets with members agree in both directions. Bit 48 was set by hand for the
 [controlled write](10-npc-talk.md#per-npc-bits--base--0x2c62d) with 75 of its 153
 quests still open, and the chiefs offered their requests. The other 14 sets (26–37,
-72, 73) are complete but their bit is clear. **UNRESOLVED**: those deviant quests may
-have been marked cleared by something other than a normal clear in this save's
-history; the code gives no second condition. Emulating `0x3b85d8` with 40115 as the
-last open quest of set 26 does put 26 into the slots, so a normal last clear would
-have set the bit.
+72, 73) are complete but their bit is clear. **UNRESOLVED**: the code gives no second
+condition, and emulating `0x3b85d8` with 40115 as the last open quest of set 26 does
+put 26 into the slots, so a normal last clear would have set the bit. The likely
+reason is this save's history: all 228 Special Permit quests are cleared in every
+snapshot while only a third of the Village and Hub quests are, and the
+[history log](#quest-history-log--0x254771) shows four EX quests played back to back
+in descending deviant order on one day. That fits deviant levels marked cleared by
+another editor (no last clear seen, bit stays clear) and EX quests then played for
+real (sets 80–97 set). Only the owner of the save can confirm it.
 
 ## Where a quest is posted — `questData + 0x11`
 
@@ -582,9 +592,9 @@ The Guild Card's list of the 10 most recently completed quests, newest first.
 | unknown | `+0x04` | u16, 7 in all ten records |
 | Quest ID | `+0x06` | u16 |
 | Quest name | `+0x08` | UTF-16LE, 16 characters, cut with `…` |
-| unknown | `+0x28` | three bytes that repeat between records of the same period (`18 23 24`, `03 18 23`), then u32 counters |
+| unknown | `+0x28` | three bytes that repeat between records of the same period (`18 23 24`, `03 18 23`), then six u32. In the four EX deviant records the first u32 is `0x0402`, `0x0412`, `0x042d`, `0x0425`, which looks like a monster ID with a deviant marker |
 | Hunter and Palico names | from `+0x44` | UTF-16LE |
-| unknown | `+0x9C` | u8 (13 or 10 in the analysed save), u8 15, `ff ff` |
+| Weapon types | `+0x9C` | u8 × 4, one per party slot, in the order of [04 — Weapon usage](04-weapon-usage.md): 13 = Charge Blade in eight records, 10 = Dual Blades in two, which matches the usage counters; 15 = a Palico, `ff` = empty slot. **DERIVED** from the values |
 
 Record stride is `0xA0` bytes; ten records end exactly where the
 [award field](09-awards.md) begins (`0x254DB1`). **DERIVED** from the values: the
@@ -625,12 +635,19 @@ the Guild Card statistics block rather than the quest system.
 
 ## Open questions
 
-- **UNRESOLVED — the 20 bytes before the bitmap** (`base + 0x2C63`, 12 + 8 bytes,
-  fields `+0xd78` / `+0xd84` of the quest object). The 3 × 24 bytes before them
-  (`base + 0x2C13`) are the Hunter Arts bitmap of [08](08-progression.md) and two
-  copies that drive notices. The same serializer walk also lands on the Canteen
-  ingredients of 08 (`base + 0x2F8F`), which cross-checks the field map.
-- **UNRESOLVED — quest history record**: the fields marked unknown, and how an event
+- **The 20 bytes before the bitmap are not quest state** (`base + 0x2C63`, fields
+  `+0xd78` / `+0xd84` of the save object). Both are Palico maps, **DERIVED** from code:
+  `+0xd78` is a 96-bit map (test `0x5245f8`) that `0x25ec74` fills from the 84 owned
+  Palicoes, 12 slots each, when the Palico's level reaches the entry's requirement
+  (byte `+0xa`); `+0xd84` is a 57-bit map (test `0x52462c`) filled by `0x262560`
+  (entries without a requirement) and `0x2625cc` (entries whose requirement is a
+  cleared quest, `0x3a3930`). 96 and 57 fit the Palico skills and support moves, that
+  is, what the player's Palicoes have learned and can pass on; which map is which was
+  not checked. The 3 × 24 bytes before them (`base + 0x2C13`) are the Hunter Arts
+  bitmap of [08](08-progression.md) and two copies that drive notices. The same
+  serializer walk also lands on the Canteen ingredients of 08 (`base + 0x2F8F`), which
+  cross-checks the field map.
+- **UNRESOLVED — quest history record**: the bytes at `+0x28`, and how an event
   quest is logged. The u16 ID cannot hold event IDs (≥ 1 000 000), and no record of
   the analysed save is an event quest.
 - **Not checked — whether a board filters on `questData+0x11` values 1–4.** The
@@ -647,6 +664,8 @@ flags, which a bitmap edit does not touch. The numeric star levels at
 cleared, not on load, see [star levels](#star-levels--base--0x2c4da).
 Set the bits for real quests from the CSV. Rank progression then still needs either
 the key quests cleared in play or those fields edited as well.
+[`tools/complete_quests.py`](../tools/complete_quests.py) does the bulk edit with
+these exclusions, see below.
 
 ### What "all quests completed" takes
 
@@ -663,5 +682,34 @@ moves, and that a bitmap edit leaves behind:
 | Request flags | `accept_flag` / `done_flag` of [`request-index.csv`](../data/request-index.csv) | a cleared request without its done flag leaves the NPC waiting for a report whose reward was never queued |
 | Quest set bits | [`base + 0x3187`](#quest-sets--base--0x3187) | the chiefs' last requests, the last Village ★10 quests and the completion awards stay closed: the game writes a set bit only when it sees the last clear |
 | Rotating quests | `base + 0x504B` | none for completion; only decides what is listed |
-| Rewards, Hunter's Notes, the two counters, the history log, Guild Card awards | various | keep their old values; nothing depends on them for listing quests |
+| Pending set notices | `base + 0x3197` | none: only "you cleared every ★N quest" notices on the result screen |
+| Rewards, Hunter's Notes, the two counters, the history log, Arena records, Guild Card awards | various | keep their old values; nothing depends on them for listing quests. Without Arena records the rank sets 46, 47, 53, 78, 79 stay open |
+
+[`tools/complete_quests.py`](../tools/complete_quests.py) `<save> …` plans the edit and
+prints it; with `--write` it changes the given files in place. It writes
+
+1. the cleared and seen bit of every real row (placeholder rows and the second
+   occurrence of 1049 / 1050 are skipped; `--no-events` leaves the event quests);
+2. for every villager request with a quest that is not accepted yet, the accepted flag
+   and whatever else its offer block sets or clears (column `also` of
+   [`request-offer.csv`](../data/request-offer.csv): the chiefs' second flag, the
+   Captain's idle-talk flag 796). The **completed flag is left clear** on purpose: the
+   NPC's report block ("completed flag clear, quest cleared") then plays in the game
+   and hands over the reward;
+3. the bit of every quest set that is complete afterwards, except the rank sets.
+
+It does not touch HR or the star levels (it reports them if they are below the
+maximum), and it lists the story flags that still hide a quest. Those are set by talk
+blocks whose conditions the edit has just made true, so a conversation sets them.
+
+**Bulk write, 2026-09-19 — written, in-game check pending.** On the analysed save
+(HR 999, Village ★10, Hub ★13) the tool changed 294 bytes in both slots: 980 cleared
+bits (Village 239, Hub 444, Arena 16, Training 113, Event 168), their seen bits, 63
+requests marked accepted (33 flag bytes, flag 796 cleared), 66 set bits (everything
+except 46, 47, 53, 78, 79 and the memberless 49–52). Afterwards
+`quest_unlock.py` reports 18 quests not listed, all behind seven flags that a
+conversation sets: 1054 → 1055 → 1056 → 1057, 1072, 1073 (Wyventurer and the quest
+counter Gals, Village ★10), 686 (Bherna Chief) and the completed flags 333 and 439 of
+two requests. 94 request reports are waiting. Snapshot before the write:
+`complete-0-pre-full-completion`.
 
