@@ -33,6 +33,7 @@ they are portable.
 | [06 — Methodology](docs/06-methodology.md) | How this was derived, and how to extend it |
 | [07 — Equipment](docs/07-equipment.md) | Character slots, equipment box, talismans, transmog, dye, My Sets |
 | [08 — Hunter Arts and Canteen](docs/08-progression.md) | Hunter Art unlocks, Canteen ingredients and dishes |
+| [09 — Awards](docs/09-awards.md) | Guild Card award bitfield |
 
 Machine-readable: [`data/monster-index.csv`](data/monster-index.csv), [`data/hunter-arts.csv`](data/hunter-arts.csv), [`data/offsets.json`](data/offsets.json)
 
@@ -59,6 +60,7 @@ Machine-readable: [`data/monster-index.csv`](data/monster-index.csv), [`data/hun
 | Hunter Arts unlocked | `base + 0x2C13` | 24-byte bitfield, IDs 1–70 and 83–190 |
 | Canteen dishes | `base + 0x2C67D` | 13-byte bitfield, 99 dishes |
 | Canteen ingredients | `base + 0x2F8F` | 6-byte bitfield, 45 ingredients |
+| Awards earned | `base + 0xC8115` | 132-bit bitfield, one run per location grid |
 
 ## Confidence levels
 

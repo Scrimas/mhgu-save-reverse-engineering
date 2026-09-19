@@ -112,6 +112,12 @@ def main(path):
     dish = int.from_bytes(buf[base+0x2C67D:base+0x2C67D+13], "little") & ((1 << 99) - 1)
     print(f"  canteen ingredients: {bin(ing).count('1')}/45   dishes: {bin(dish).count('1')}/99")
 
+    print("\n--- awards (docs/09) ---")
+    aw = int.from_bytes(buf[base+0xC8115:base+0xC8115+17], "little")
+    for name, lo, n in [("Wycademy", 0, 30), ("Bherna 1-25", 30, 25), ("Kokoto", 55, 15), ("Pokke", 70, 15),
+                        ("Yukumo", 85, 15), ("bits 100-101", 100, 2), ("Soaratorium", 102, 30)]:
+        print(f"  {name:12s} {sum(aw >> (lo+k) & 1 for k in range(n)):2d}/{n}")
+    print(f"  total {bin(aw & ((1 << 132) - 1)).count('1')}/132   (stray bits >= 132: {bin(aw >> 132).count('1')})")
 
     lo, n = QUESTBITS
     print(f"\n--- quests ---")
