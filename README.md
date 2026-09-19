@@ -35,7 +35,7 @@ they are portable.
 | [08 — Hunter Arts and Canteen](docs/08-progression.md) | Hunter Art unlocks, Canteen ingredients and dishes |
 | [09 — Awards](docs/09-awards.md) | Guild Card award bitfield |
 
-Machine-readable: [`data/monster-index.csv`](data/monster-index.csv), [`data/quest-index.csv`](data/quest-index.csv), [`data/hunter-arts.csv`](data/hunter-arts.csv), [`data/offsets.json`](data/offsets.json)
+Machine-readable: [`data/monster-index.csv`](data/monster-index.csv), [`data/quest-index.csv`](data/quest-index.csv), [`data/request-index.csv`](data/request-index.csv), [`data/hunter-arts.csv`](data/hunter-arts.csv), [`data/offsets.json`](data/offsets.json)
 
 ## Quick reference
 

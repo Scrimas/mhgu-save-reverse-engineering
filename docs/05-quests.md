@@ -106,7 +106,7 @@ flagged in the CSV and should be left alone.
 
 ### Third bitmap
 
-13 bits are set in the analysed save: 10318, 11422, 11457, 11468, 40401, 41411,
+Not board visibility: none of these are hidden quests. 13 bits are set in the analysed save: 10318, 11422, 11457, 11468, 40401, 41411,
 41511, 41611, 41614, 41616, 1010150, 1011001, 1011030. This is a mix of regular,
 permit and event quests, all of them seen, and some not cleared. **UNRESOLVED**
 
@@ -126,9 +126,75 @@ permit and event quests, all of them seen, and some not cleared. **UNRESOLVED**
   its seen bit, index 392, 0 → 1. Opening a list without highlighting anything
   changes nothing.
 
-**Board visibility is not stored in these bitmaps.** It comes from somewhere else:
-key-quest progress, villager requests (607 carries the same `questData` flags as the
-Hunt-a-thon and *Fungus Fetch* requests), or other state. **UNRESOLVED**
+**Board visibility is not stored in these bitmaps.** For 607 the reason is that it
+is a villager request. See [Villager requests](#villager-requests--tableactivitydataatd).
+
+## Where a quest is posted — `questData + 0x11`
+
+Byte `0x11` of each quest's `questData` resource names the board that lists it
+(field name from the [MHXX rQuestData notes](https://github.com/svanheulen/mhff/wiki/MHXX-rQuestData-Format)):
+
+| Value | Board |
+|---|---|
+| 1–4 | One village only (7 quests each at most; meaning of 1–4 vs 5–8 unresolved) |
+| 5 / 6 / 7 / 8 | Kokoto / Pokke / Yukumo / Bherna |
+| 9 | Prowler |
+| 10 | Every board |
+| 11 | Special Permit |
+
+The 5–8 mapping comes from the quest names (Jurassic Frontier quests at 5, Popo and
+Giaprey at 6, *The Yukumo Gal Special* at 7, Moofah quests at 8). It agrees with the
+village field of the request table below.
+
+Almost every quest with a value of 1–8 is a villager request. It appears only after
+the request has been accepted, and only on that village's board.
+
+## Villager requests — `table/activityData.atd`
+
+A standalone table in the romfs. Header: u32 `0x40A00000`, u32 count 184. It is followed by
+184 records of 55 bytes. The full table is in [`data/request-index.csv`](../data/request-index.csv).
+
+| Offset | Type | Meaning |
+|---|---|---|
+| `+0x00` | u32 | Record index |
+| `+0x04` | u8 | Kind: 0 = quest, 1 = delivery, 2 = unknown, 3 = end marker |
+| `+0x05` | u8 | Stage: 5–10 match Village ★1–★6, 11–14 Village ★7–★10, 15–21 Hub ★1–★7, 22–25 G1–G4, 26 late G4. Inferred from the stars of the quests. |
+| `+0x06` | u8 | NPC. Records with the same NPC form one character's request list. |
+| `+0x07` | u8 | Village: 0 Bherna, 1 Kokoto, 2 Pokke, 3 Yukumo |
+| `+0x16` | u32 | Quest ID, for kind 0 |
+| `+0x1A` | u32 | Prerequisite quest. Set on one record only: 625 needs 10730. |
+| `+0x25` | u16 + u8 | Reward ID and count. Item IDs for tickets (Kokoto Ticket ×2 …); the Argosy Captain's 10220 reward, `0x6D9`, arrived in-game as a Poogie costume. |
+| `+0x33` | u16 ×2 | Text IDs (title, description), consecutive |
+
+Record 40 is *The Perilous Pair*: Argosy Captain (NPC `0x21`), Kokoto, stage 10.
+
+**CONFIRMED — the posted-in village is not why 607 is hidden.** It was checked on the ★6 board in
+Bherna and in Kokoto, and it was absent from both.
+
+### What did not unlock 607
+
+Controlled play-throughs, with a snapshot and diff after each step:
+
+1. **Clearing *The Fated Four* (621)** changed the cleared bit and a few flags:
+   `+0x2C60` bit 2, and `+0x315B` / `+0x316F` bit 2. No NPC offered a request.
+2. **Clearing *Ahoy! Royal Ludroth!* (10220)**, the Captain's other accepted request,
+   changed only its cleared bit (index 385).
+3. **Reporting to the Captain.** He gave the reward (Poogie costume). Flags set:
+   `+0x3161` / `+0x3175` bit 3 and `+0x2FA0` / `+0x2FA8` bit 6. He did **not** offer 607.
+
+`+0x3158` and `+0x316C` hold two parallel 160-bit maps: every event set the same bit
+in both. They are not indexed by request record (Fated Four has none). They
+look like dialogue or event flags. **UNRESOLVED**
+
+The save already cleared five other stage-10 requests (*Advanced: Sly Swooper* …),
+so the stage gate was met before step 1. The per-NPC chain order is also not the
+gate: 607's stage is lower than 10220's. **UNRESOLVED — what makes an NPC offer a
+request, and where "accepted" is stored.**
+
+For request quests, the seen bit tracks acceptance closely. Each NPC shows a run of
+cleared requests, at most a couple accepted-but-uncleared ones (seen, not cleared),
+then untouched ones (neither bit). No array or bitmap in the save matches this
+state in record order.
 
 ### Editing
 
@@ -188,9 +254,13 @@ the Guild Card statistics block rather than the quest system.
 - **UNRESOLVED — quest history record layout** beyond ID and name. The documented
   u16 ID cannot hold event IDs (≥ 1 000 000). Either the field is wider, or event
   quests log differently.
-- **UNRESOLVED — board visibility.** Which state decides whether a quest is
-  offered at all. Needed to grant access to locked quests, including the G-rank
-  deviant gate of [03](03-deviants.md).
+- **UNRESOLVED — board visibility.** For villager requests, it depends on the
+  request being accepted. Neither the offer condition nor the accepted state has
+  been located (see [Villager requests](#villager-requests--tableactivitydataatd)).
+  For quests posted on every board, the unlock rule has not been studied. Needed to
+  grant access to locked quests, including the G-rank deviant gate of
+  [03](03-deviants.md).
+- **UNRESOLVED — `questData+0x11` values 1–4** versus 5–8.
 
 ## A caution on bulk edits
 
