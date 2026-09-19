@@ -702,7 +702,7 @@ It does not touch HR or the star levels (it reports them if they are below the
 maximum), and it lists the story flags that still hide a quest. Those are set by talk
 blocks whose conditions the edit has just made true, so a conversation sets them.
 
-**Bulk write, 2026-09-19 — written, in-game check pending.** On the analysed save
+**Bulk write, 2026-09-19 — written; save-side result checked, quest lists pending.** On the analysed save
 (HR 999, Village ★10, Hub ★13) the tool changed 294 bytes in both slots: 980 cleared
 bits (Village 239, Hub 444, Arena 16, Training 113, Event 168), their seen bits, 63
 requests marked accepted (33 flag bytes, flag 796 cleared), 66 set bits (everything
@@ -712,4 +712,25 @@ conversation sets: 1054 → 1055 → 1056 → 1057, 1072, 1073 (Wyventurer and t
 counter Gals, Village ★10), 686 (Bherna Chief) and the completed flags 333 and 439 of
 two requests. 94 request reports are waiting. Snapshot before the write:
 `complete-0-pre-full-completion`.
+
+**After one round of conversations** (snapshot `complete-1-after-talks`, saved with
+the game still open, no quest played): all seven flags above are set, so
+`quest_unlock.py` reports 0 quests locked; 87 of the 94 reports went through (their
+completed flags are set), which confirms that an accepted flag written by an edit is
+enough for the report block. The cleared, seen, failed and set maps and the pending
+notices did not change. The game-side award map gained award 39 (with its notice
+bit); the quest set awards 0–12 were not granted by talking alone. Seven reports did
+not fire:
+
+- Six are Hunter Art lessons (requests 126, 128, 133, 141, 143, 150). Their report
+  block has a third condition, talk types 46–53, 141, 142: a lesson of this teacher
+  is due. The check (`0x3f0c3c`) skips every art whose bit is already set in the
+  [Hunter Arts map](08-progression.md) (`0x524040`), and on this save all 178 arts
+  were unlocked by an earlier edit, so no lesson is ever due. On such a save an edit
+  has to write the completed flag itself (1283, 1287, 1297, 1313, 1317, 1331; the
+  last block also clears 1398).
+- Request 50 (Jumbo Sweetheart, Pokke): its offer needs flag 415, the completed flag
+  of delivery request 49 (Pokke Gal), which is still open on this save. The tool set
+  the accepted flag 416 regardless; whether the NPC is present at all without 415
+  was not checked.
 

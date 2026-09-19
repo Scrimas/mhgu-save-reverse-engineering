@@ -80,7 +80,7 @@ anything else adds nothing. That is how an s16 reaches 41811 or 111304.
 | 36–39 | a state word (`+0x2cc`) is 0 / 1 / 2 / 3 (Courier only) | not read further |
 | 41 / 42 | 41: delivery request *b* (1–13, the kind 1 requests) has been delivered (`0x524db8`), on report lines. 42: result of `0x3b1b90` equals *b* (Hub Gal tutorial lines) | 41 from dialogue, 42 not read further |
 | 44 / 45 | a Hunter's Notes entry can be unlocked: large monsters (`0x554da4`, 123 entries) / the second list (`0x55515c`, 30 entries) | from code + text |
-| 46–53, 141, 142 | a Hunter Art lesson of this teacher is due (`0x3f0ff0` … `0x3f1294` with 1 = ask) | from code + text |
+| 46–53, 141, 142 | a Hunter Art lesson of this teacher is due (`0x3f0ff0` … `0x3f1294` with 1 = ask): one of the teacher's arts is not yet in the [Hunter Arts map](08-progression.md) (`0x524040`) and its requirement holds. With every art unlocked by an edit the lesson is never due, and a request report that carries this condition never fires | from code + text; the blocked reports CONFIRMED on the save |
 | 54 | a Wycademy points threshold is due (`0x197598`) | not read further |
 | 55–62, 102–105, 139, 151–156 | a byte of the [activity state](#other-save-state-the-talk-data-reads) is not 0: a reward is waiting. 102–105 / 151–154 are the village tickets of Bherna, Kokoto, Pokke, Yukumo in low and G rank, 139 the Soaratorium ticket | from code + text |
 | 64 | quest 10646 is listed. Runs the [unlock script](05-quests.md#board-visibility--scriptcheck_quest_unlocked) for 10646 (`0x3f12c4`) and latches the result in bit 31 of the progress word | from code |
