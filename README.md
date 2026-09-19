@@ -36,7 +36,7 @@ they are portable.
 | [09 — Awards](docs/09-awards.md) | Guild Card award bitfield |
 | [10 — NPC talk data](docs/10-npc-talk.md) | Talk tables: request offers, star-level flags, per-NPC bits |
 
-Machine-readable: [`data/monster-index.csv`](data/monster-index.csv), [`data/quest-index.csv`](data/quest-index.csv), [`data/request-index.csv`](data/request-index.csv), [`data/quest-unlock.csv`](data/quest-unlock.csv), [`data/request-offer.csv`](data/request-offer.csv), [`data/rotating-quests.csv`](data/rotating-quests.csv), [`data/hunter-arts.csv`](data/hunter-arts.csv), [`data/offsets.json`](data/offsets.json)
+Machine-readable: [`data/monster-index.csv`](data/monster-index.csv), [`data/quest-index.csv`](data/quest-index.csv), [`data/request-index.csv`](data/request-index.csv), [`data/quest-unlock.csv`](data/quest-unlock.csv), [`data/request-offer.csv`](data/request-offer.csv), [`data/rotating-quests.csv`](data/rotating-quests.csv), [`data/npc-index.csv`](data/npc-index.csv), [`data/hunter-arts.csv`](data/hunter-arts.csv), [`data/offsets.json`](data/offsets.json)
 
 ## Quick reference
 
@@ -46,12 +46,15 @@ Machine-readable: [`data/monster-index.csv`](data/monster-index.csv), [`data/que
 | Deviant permit counts | `0x18F4D8` | 18 × u8 |
 | Quests cleared | `base + 0x2C77` | 1509 bits, index = position in `quest_group`, see [`quest-index.csv`](data/quest-index.csv) |
 | Quests seen (NEW cleared) | `base + 0x2D77` | same indexing, `+0x100` bytes |
+| Quests failed | `base + 0x2E77` | same indexing, `+0x200` bytes; a failed quest counts as "met the monster" for the Hunter's Notes (DERIVED) |
 | Villager request flags | `base + 0x2C56D` | 1536-bit event flag map; per-request accepted/completed bits in [`request-index.csv`](data/request-index.csv). Accepted = quest posted on the board |
 | Quest unlock rules | script, not a save field | the board runs `script\check_quest_unlocked` per quest; it reads event flags, cleared bits, HR and the Hub star level. Rules in [`quest-unlock.csv`](data/quest-unlock.csv), evaluator [`tools/quest_unlock.py`](tools/quest_unlock.py) |
 | Request offer conditions | talk data, not a save field | per-NPC tables `table/npc/script/npc_NNN_td.ntd`; conditions in [`request-offer.csv`](data/request-offer.csv), evaluator [`tools/request_offer.py`](tools/request_offer.py) |
 | Rotating quests | `base + 0x504B` | u64, bit = row of [`rotating-quests.csv`](data/rotating-quests.csv); 51 quests are listed only while their bit is set; re-rolled after each completed quest |
-| Per-NPC talk hold bits | `base + 0x2C62D` | 3 × 24 bytes after the event flags, bit = NPC name index. Set = NPC skips request offers / kind 9 talk / announcements until the next quest (DERIVED), see [10](docs/10-npc-talk.md) |
-| Village / Hub star level | `base + 0x2C4DA` / `+0x2C4DC` | u16 each, 1–10 / 1–13 |
+| Per-NPC talk hold bits | `base + 0x2C62D` | 3 × 24 bytes after the event flags, bit = row of [`npc-index.csv`](data/npc-index.csv). Set = NPC skips request offers / kind 9 talk / announcements until the next quest (DERIVED), see [10](docs/10-npc-talk.md) |
+| Village / Hub star level | `base + 0x2C4DA` / `+0x2C4DC` | u16 each, 1–10 / 0–13. The game raises them itself when all urgents of a level are cleared (`quest_group` groups 24–46), see [05](docs/05-quests.md#star-levels--base--0x2c4da) |
+| Village contribution points | `base + 0x281B` / `+0x282B` | 4 × u32 low rank, 4 × u32 G rank: Bherna, Kokoto, Pokke, Yukumo (DERIVED) |
+| Progress word | `base + 0x2F77` | u32; bit 20 = HR limit released, bit 31 = quest 10646 was listed (from code) |
 | Deviant levels (cleared) | bit `0x18F989`.3 | quest indices 947–1174 (Special Permit), 228 bits |
 | Deviant levels (seen) | bit `0x18FA89`.3 | same layout, `+0x100` bytes |
 | Quest counter | `0x192AEA` | u16 |

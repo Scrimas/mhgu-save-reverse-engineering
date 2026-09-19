@@ -3,6 +3,7 @@
 
 The conditions in ../data/request-offer.csv come from the NPC talk data
 (see ../docs/10-npc-talk.md). Conditions this tool cannot evaluate are printed as "?".
+In the CSV, "a|b" means either condition holds.
 
 Usage:  request_offer.py [path/to/system]
 """
@@ -15,42 +16,82 @@ VIL_STAR  = 0x2C4DA         # u16
 HUB_STAR  = 0x2C4DC         # u16
 FLAGS     = 0x2C56D         # event flag bitmap
 NPC_HOLD  = 0x2C62D         # per-NPC bits, map A: no request offers until the next quest
+PROGRESS  = 0x2F77          # u32: bit 20 = HR limit released, bit 31 = quest 10646 was listed
+FEATURES  = 0x3187          # 128-bit map, meaning unresolved; bit 22 gates the chiefs' last requests
+POINTS    = 0x281B          # u32[4] village points Bherna/Kokoto/Pokke/Yukumo, G-rank set 16 bytes later
+VILLAGES  = ["Bherna", "Kokoto", "Pokke", "Yukumo"]
 
 DATA = pathlib.Path(__file__).resolve().parent.parent / "data"
 
 def main():
     path = sys.argv[1] if len(sys.argv) > 1 else "system"
     buf = pathlib.Path(path).read_bytes()
-    index = {}
+    index, groups = {}, {}
     for row in csv.DictReader(open(DATA / "quest-index.csv")):
         index.setdefault(int(row["quest_id"]), int(row["index"]))
+        if int(row["group"]):                     # key quest sets; quests sharing an alt value count once
+            groups.setdefault(int(row["group"]), {}).setdefault(int(row["alt"]) or -int(row["index"]), []).append(int(row["index"]))
 
     def bit(off, i):
         return (buf[BASE + off + (i >> 3)] >> (i & 7)) & 1
     u16 = lambda off: int.from_bytes(buf[BASE + off:BASE + off + 2], "little")
+    u32 = lambda off: int.from_bytes(buf[BASE + off:BASE + off + 4], "little")
     hr, vil, hub = u16(HR), u16(VIL_STAR), u16(HUB_STAR)
 
-    def missing(c):
+    done = {int(r["index"]): int(r["done_flag"]) for r in csv.DictReader(open(DATA / "request-index.csv")) if r["done_flag"]}
+
+    offers = list(csv.DictReader(open(DATA / "request-offer.csv")))
+    npc_bit = {r["npc_id"]: int(r["bit"]) for r in csv.DictReader(open(DATA / "npc-index.csv"))}
+
+    def missing(c, row):
         """None if the condition holds, a description if not, '?...' if unknown."""
         kind, _, arg = c.partition(":")
         if kind == "flag":         return None if bit(FLAGS, int(arg)) else f"event flag {arg}"
         if kind == "notflag":      return None if not bit(FLAGS, int(arg)) else f"event flag {arg} must be clear"
         if kind == "cleared" and arg.isdigit() and int(arg) in index:
             return None if bit(CLEARED, index[int(arg)]) else f"clear {arg}"
+        if kind == "notcleared" and arg.isdigit() and int(arg) in index:
+            return None if not bit(CLEARED, index[int(arg)]) else f"{arg} must not be cleared"
+        if kind == "village_eq":   return None if vil == int(arg) else f"Village star level exactly {arg}"
+        if kind == "hub_eq":       return None if hub == int(arg) else f"Hub star level exactly {arg}"
+        if kind == "village_max":  return None if vil <= int(arg) else f"Village star level at most {arg}"
+        if kind == "hub_max":      return None if hub <= int(arg) else f"Hub star level at most {arg}"
+        if kind == "hr_unlocked":  return None if bit(PROGRESS, 20) else "HR limit released"
+        if kind == "listed" and arg == "10646" and bit(PROGRESS, 31): return None
+        if kind == "listed":       return f"?quest {arg} listed on the board (see quest_unlock.py)"
+        if kind in ("village_keys", "group_done"):
+            g = int(arg) + (10 if kind == "group_done" else 0)
+            ok = all(any(bit(CLEARED, i) for i in alt) for alt in groups.get(g, {}).values())
+            return None if ok else f"all key quests of quest_group group {g}"
+        if kind == "feature":      return None if bit(FEATURES, int(arg)) else f"bit {arg} of the map at base+0x3187 (meaning unknown)"
+        if kind == "requests_done":
+            rng, need = arg.split(":"); lo, hi = map(int, rng.split("-"))
+            have = sum(bit(FLAGS, done[i]) for i in range(lo, hi + 1) if i in done)
+            return None if have >= int(need) else f"{need} of requests {rng} completed (now {have})"
+        if kind == "npc_idle":
+            if arg not in npc_bit: return "?" + c
+            held = any(bit(NPC_HOLD + 24 * m, npc_bit[arg]) for m in range(3))
+            return None if not held else "NPC on hold until the next quest"
+        if kind in ("footbath", "not_footbath"):
+            return None                         # where the player stands while talking, not save state
+        if kind == "points":
+            name, need = arg.split(":"); v = VILLAGES.index(name)
+            have = min(20000, u32(POINTS + 4 * v) + u32(POINTS + 16 + 4 * v))
+            return None if have >= int(need) else f"{name} points {have}/{need}"
         if kind == "village_star": return None if vil >= int(arg) else f"Village star level {arg}"
         if kind == "hub_star":     return None if hub >= int(arg) else f"Hub star level {arg}"
         if kind == "hr":           return None if hr >= int(arg) else f"HR {arg}"
         return "?" + c
 
     print(f"HR {hr}, Village star level {vil}, Hub star level {hub}")
-    for row in csv.DictReader(open(DATA / "request-offer.csv")):
+    for row in offers:
         if bit(FLAGS, int(row["accept_flag"])):
             continue
-        alts = row["offer"].split(" OR ") if " OR " in row["offer"] else None
-        conds = alts or [c for c in row["offer"].split(" AND ") if c]
-        miss = [m for m in map(missing, conds) if m]
-        if alts and len(miss) < len(alts):          # any alternative holds
-            miss = []
+        miss = []
+        for group in (c for c in row["offer"].split(" AND ") if c):
+            ms = [missing(c, row) for c in group.split("|")]      # a|b: either holds
+            if all(ms):
+                miss.append(" or ".join(ms))
         hold = row["npc_bit"] and bit(NPC_HOLD, int(row["npc_bit"]))
         need = "; ".join(miss) if miss else "ready"
         print(f"{row['index']:>4}  {row['quest_id']:>6}  {row['quest_name'] or '(delivery)':<34} "

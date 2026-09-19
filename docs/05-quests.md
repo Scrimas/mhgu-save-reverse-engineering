@@ -2,8 +2,9 @@
 
 Every quest in the game (Village, Hub, G-rank, Arena, Training, Special Permit,
 Prowler and the built-in event quests) is tracked by **one list index**, shared by
-three parallel bitmaps (cleared, seen, and one unresolved). The full index table is
-[`data/quest-index.csv`](../data/quest-index.csv).
+three parallel bitmaps (cleared, seen, failed). The full index table is
+[`data/quest-index.csv`](../data/quest-index.csv); its `group`, `alt` and `expansion`
+columns are bytes `+4` … `+6` of the `quest_group` entry described below.
 
 ## Quest bitmaps — `base + 0x2C77`
 
@@ -39,11 +40,15 @@ The resource layout:
 0x08  entry[count], 7 bytes each, packed:
         +0  u32  quest ID (entry 0 = 0, the placeholder)
         +4  u8   group: 0 = regular, 1-10 = key quests of Village ★1-★10,
-                 11-17 = key quests of Hub ★1-★7, 19-22 = G★1-G★4, 25-46 = urgents,
+                 11-17 = key quests of Hub ★1-★7, 19-22 = G★1-G★4,
+                 24-33 = urgents that raise the Village star level to 1-10,
+                 34-46 = urgents that raise the Hub star level to 1-13,
                  47-86 = twin quests in pairs (47/48, 49/50, ...), 127 event Hub,
                  128 event Arena, 129 Prowler
         +5  u8   alternative set inside a key group (quests sharing a value count once)
-        +6  u8   0/1, meaning UNRESOLVED
+        +6  u8   1 = quest added by the XX / Generations Ultimate expansion, 0 = from
+                 the first game. DERIVED: 1 on every G-rank and Village ★7-★10 quest,
+                 0 on every Village ★1-★6 and Hub ★1-★3 quest
 ```
 
 The executable's clear check (`0x523DA4` in the v1.4 NSO, ARM32) takes a bitmap
@@ -56,7 +61,8 @@ The group byte is read by the key-quest counters `0x3b1964` / `0x3b1a18` (Villag
 groups 1–10) and `0x3b1d70` (Hub, groups 11–23), which count total and cleared
 quests of one group. For groups 47–86 the cleared setter (`0x523f30` via `0x526a38`)
 also sets the partner quest of the pair (group ± 1), e.g. 308 ↔ 309. The urgent
-range is **DERIVED** from its members only.
+groups are read by the star level update, see
+[star levels](#star-levels--base--0x2c4da).
 
 The list is identical in the base game and the v1.4 update.
 
@@ -112,11 +118,22 @@ which matches `SS` for every regular quest and also gives the rank of event ques
 315–316. The search stops at the first match, so 315–316 are never read. They are
 flagged in the CSV and should be left alone.
 
-### Third bitmap
+### Third bitmap — failed quests
 
-Not board visibility: none of these are hidden quests. 13 bits are set in the analysed save: 10318, 11422, 11457, 11468, 40401, 41411,
-41511, 41611, 41614, 41616, 1010150, 1011001, 1011030. This is a mix of regular,
-permit and event quests, all of them seen, and some not cleared. **UNRESOLVED**
+**DERIVED.** The only setter (`0x526b98`) is called from the quest result code
+(`0x388d60`) on the branch where the quest did *not* succeed, and only if the quest
+ended in end state 5 (`0x3a5ed0` case 4 tests byte `+0x50` of the quest object). The
+success branch sets the cleared bit instead. No code clears the bit again.
+
+The only reader (`0x526c84`) is the Hunter's Notes unlock `0x55515c`: a monster's
+entry opens if its quest is cleared **or** has this bit, so a failed attempt still
+counts as having met the monster.
+
+13 bits are set in the analysed save: 10318, 11422, 11457, 11468, 40401, 41411,
+41511, 41611, 41614, 41616, 1010150, 1011001, 1011030. That fits: all are hard
+quests (Old Fatalis, Boltreaver EX …), and 11422 is failed but never cleared. Which
+of the failure kinds state 5 is (three faints, time up, abandon) was not separated.
+It is not board visibility: none of these quests is hidden.
 
 ### Controlled writes
 
@@ -144,7 +161,7 @@ Byte `0x11` of each quest's `questData` resource names the board that lists it
 
 | Value | Board |
 |---|---|
-| 1–4 | One village only (7 quests each at most; meaning of 1–4 vs 5–8 unresolved) |
+| 1 / 2 / 3 / 4 | Home village Kokoto / Pokke / Yukumo / Bherna of a quest that is *not* a villager request. **DERIVED** from the members: 1 holds the Verdant Hills tours and *Alas, Astalos Again*, 2 Arctic Ridge and Gammoth, 3 Misty Peaks and Mizutsune, 4 Glavenus. Same village order as 5–8. Whether a board filters on it was not checked |
 | 5 / 6 / 7 / 8 | Kokoto / Pokke / Yukumo / Bherna |
 | 9 | Prowler |
 | 10 | Every board |
@@ -317,6 +334,53 @@ request offer blocks test it (`village_star` in
 talk data also sets the star-level flags from these two numbers, see
 [10](10-npc-talk.md#star-level-flags).
 
+**What raises them — from code.** `0x50cbd0` walks `quest_group`. For every urgent
+group it counts the members and how many of them are cleared. If a group has members,
+all of them are cleared, and the stored level is lower than the group's level, the
+level is set to the group's level. It never lowers a level, and a level can be
+skipped. Two exceptions: while the Village level is 5 only 601 counts in group 29,
+and while it is 9 only 1005 counts in group 33, so the final bosses in those groups
+do not hold the level back.
+
+The function runs right after the cleared bit is set in the quest result code
+(`0x388e54`), when the village scene is set up (`0x6aa5d0`) and from talk condition 64
+(`0x3f12fc`). So for an editor: setting the cleared bit of an urgent raises the level
+by itself the next time the village loads, and lowering the number alone does not
+last while the urgents stay cleared (**DERIVED**, not write-tested). The star-level
+*flags* still need the two conversations of [10](10-npc-talk.md#star-level-flags), or
+a direct edit.
+
+| Level | Group | Urgents (the quest list shows an urgent under the level it unlocks) |
+|---|---|---|
+| Village 1 | 24 | — (no member, never applies) |
+| Village 2 | 25 | 206 *Vaulting Outlaw* (Village 2) |
+| Village 3 | 26 | 303 *Tusked Tantrum* (Village 3) |
+| Village 4 | 27 | 402 *The Nocturnal Enchanter* (Village 4) |
+| Village 5 | 28 | 501 *The Dark Age* (Village 5) |
+| Village 6 | 29 | 601 *The Scorching Blade* (Village 6), 620 *Stop the Wheel* (Village 6) |
+| Village 7 | 30 | 713 *Research Team's First Rodeo* (Village 7) |
+| Village 8 | 31 | 806 *Primal Forest Arachnids* (Village 8) |
+| Village 9 | 32 | 906 *Wish upon a...Gravios?* (Village 9) |
+| Village 10 | 33 | 1005 *Beware the Comet of Disaster* (Village 10), 1026 *Grave Peril* (Village 10), 1017 *King of Hellfire* (Village 10), 1018 *The Seat of a God* (Village 10), 1019 *Stormlord* (Village 10), 1039 *Blazing Black of a Dark God* (Village 10) |
+| Hub 1 | 34 | — (no member, never applies) |
+| Hub 2 | 35 | 10216 *The New Tenant* (Hub 2) |
+| Hub 3 | 36 | 10307 *A Shocking Scoundrel* (Hub 3) |
+| Hub 4 | 37 | 10335 *Two-headed Carcass* (Hub 3) |
+| Hub 5 | 38 | 10531 *A Plesioth in the Misty Peaks* (Hub 5) |
+| Hub 6 | 39 | 10606 *A Bewitching Dance* (Hub 6), 10608 *The Unshakable Mountain God* (Hub 6) |
+| Hub 7 | 40 | 10710 *Seer of Swords* (Hub 7) |
+| Hub 8 | 41 | 10722 *Hellfire Star* (Hub 7) |
+| Hub 9 | 42 | 10768 *Legendary Skills?* (Hub 7) |
+| Hub 10 | 43 | 11204 *Dirty Deals* (Hub G2) |
+| Hub 11 | 44 | 11319 *Giant Dragon Invasion* (Hub G3) |
+| Hub 12 | 45 | 11401 *Sky Render* (Hub G4) |
+| Hub 13 | 46 | 11432 *Castle on the Run* (Hub G4) |
+
+Hub level 0 means the Hub is not joined yet: the constructor writes Village 1, Hub 0,
+and the Guild Manager's first conversation sets Hub 1 (talk action 1 type 10,
+`0x247bf0`). In the analysed save every group is fully cleared, which gives 10 / 13,
+the stored values.
+
 ## Villager requests — `table/activityData.atd`
 
 A standalone table in the romfs. Header: u32 `0x40A00000`, u32 count 184. It is followed by
@@ -346,7 +410,7 @@ Bherna and in Kokoto, and it was absent from both.
 |---|---|---|---|---|
 | Event flag bitmap | `base + 0x2C56D` | `0x1B9209` | 192 bytes, 1536 bits, LSB-first | CONFIRMED |
 | Per-NPC bits A / B / C | `base + 0x2C62D` | `0x1B92C9` | 3 × 24 bytes, one bit per NPC: on hold for request offers / kind 9 talk / story announcements. See [10](10-npc-talk.md#per-npc-bits--base--0x2c62d) | DERIVED |
-| Two u32 | `base + 0x2C675` | `0x1B9311` | 8 bytes, change on every save (RNG-like) | UNRESOLVED |
+| Two u32 | `base + 0x2C675` | `0x1B9311` | 8 bytes, change on every save. The first (`+0x608` of the object) is a random number: talk conditions 106–108 compare it modulo 10000 with a threshold, which makes a line appear with a fixed chance | from code |
 
 The block is one object of the game (flags at `+0x500`, serializer `0x240ce4`). Each
 request record names two bits in the first map:
@@ -395,8 +459,9 @@ The Captain offers 607 when the Village star level is ≥ 6 and flag 395 is set,
 is 10220 **reported** to him. The report also puts him on hold (per-NPC map A) until
 the next quest, so in that session he had nothing to offer. No code sets the accepted
 flag from the request record: the talk action does (`0x247a00`), and conditions go
-through the evaluator `0x2451c8`. `record + 0x31` (u16, mostly 0, 500 on some) is
-unexplained.
+through the evaluator `0x2451c8`. `record + 0x31` (u16) is the Wycademy points the
+report pays: it equals the parameter of talk action 2 type 4 in the report block on
+all five records where it is not 0 (500 four times, 200 once). **DERIVED**
 
 ### Editing
 
@@ -465,8 +530,8 @@ the Guild Card statistics block rather than the quest system.
 
 ## Open questions
 
-- **UNRESOLVED — the third bitmap** (`base + 0x2E77`).
-- **UNRESOLVED — flag byte +6** of `quest_group` entries.
+- **Not separated — which failure** sets the [third bitmap](#third-bitmap--failed-quests)
+  (end state 5).
 - **UNRESOLVED — the 20 bytes before the bitmap** (`base + 0x2C63`, 12 + 8 bytes,
   fields `+0xd78` / `+0xd84` of the quest object). The 3 × 24 bytes before them
   (`base + 0x2C13`) are the Hunter Arts bitmap of [08](08-progression.md) and two
@@ -475,17 +540,17 @@ the Guild Card statistics block rather than the quest system.
 - **UNRESOLVED — quest history record layout** beyond ID and name. The documented
   u16 ID cannot hold event IDs (≥ 1 000 000). Either the field is wider, or event
   quests log differently.
-- **UNRESOLVED — what raises the numeric star level.** The star-level *flags* are
-  set by talk data once the level is reached, see
-  [10](10-npc-talk.md#star-level-flags).
-- **UNRESOLVED — the event flags that no unlock rule, request or talk line uses.**
-- **UNRESOLVED — `questData+0x11` values 1–4** versus 5–8.
+- **Not yet tested — a write to the star levels.** Code says the game recomputes them
+  from the urgents' cleared bits and only ever raises them.
+- **Not checked — whether a board filters on `questData+0x11` values 1–4.**
 
 ## A caution on bulk edits
 
 Setting every bit is still a bad idea. Index 0, the duplicate slots 315–316, the
 `DUMMY` event entries, and the space past index 1508 are not real quests. Key
-quests and urgents also drive state stored elsewhere: HR, the star levels at
-`base + 0x2C4DA` and the star-level event flags, which a bitmap edit does not touch.
+quests and urgents also drive state stored elsewhere: HR and the star-level event
+flags, which a bitmap edit does not touch. The numeric star levels at
+`base + 0x2C4DA` follow the urgents' cleared bits by themselves, see
+[star levels](#star-levels--base--0x2c4da).
 Set the bits for real quests from the CSV. Rank progression then still needs either
 the key quests cleared in play or those fields edited as well.

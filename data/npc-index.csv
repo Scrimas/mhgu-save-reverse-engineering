@@ -1,0 +1,189 @@
+bit,npc_id,name,talk_file
+0,1,Bherna Chief,yes
+1,2,Bherna Gal,yes
+2,3,Bherna Market,yes
+3,4,Bherna Armory,yes
+4,5,Manvil Smithy,yes
+5,6,Purr-prietress,yes
+6,7,Palico Armory,yes
+7,8,Courier,yes
+8,9,Flight Cattendant,yes
+9,10,Chamberlyne,yes
+10,11,Moofy,yes
+11,12,Poogie,yes
+12,14,Chief Researcher,yes
+13,15,Master of Style,yes
+14,20,Reliable Villager,yes
+15,21,Paranoid Villager,yes
+16,22,Researcher,yes
+17,23,Traveling Merchant,yes
+18,24,Village Moofah,yes
+19,25,Village Moofah,yes
+20,26,Cheeko Sands Chief,yes
+21,40,Jumbo Chief,yes
+22,41,Caravaneer,yes
+23,42,Ace Commander,yes
+24,43,Ace Lancer,yes
+25,44,Ace Gunner,yes
+26,45,Ace Cadet,yes
+27,46,Guildmarm,yes
+28,47,Street Cook,yes
+29,48,Itinerant Cook,yes
+30,49,The Man,yes
+31,50,Lil Miss Forge,yes
+32,51,Wycoon,yes
+33,52,Argosy Captain,yes
+34,53,Cha-Cha,yes
+35,54,Kayamba,yes
+36,101,Kokoto Chief,yes
+37,102,Kokoto Gal,yes
+38,103,Kokoto Market,yes
+39,104,Kokoto Armory,yes
+40,105,Kokoto Smithy,yes
+41,106,Meat Meowster,yes
+42,107,Palico Armory,yes
+43,113,Grandmeow,yes
+44,114,Maximeld XIV,yes
+45,120,Innocent Villager,yes
+46,121,Chatty Villager,yes
+47,122,Gossipy Villager,yes
+48,123,Shopping Villager,yes
+49,124,Peddler Man,yes
+50,125,Resting Hunter,yes
+51,126,Treshi,yes
+52,127,Minegarde Sweetheart,yes
+53,128,Val Habar Master,yes
+54,129,Red Hell Hunter,yes
+55,130,Black Hell Hunter,yes
+56,131,Dundorma Guardsman,yes
+57,132,Cathar Elder,yes
+58,201,Pokke Chief,yes
+59,202,Pokke Gal,yes
+60,203,Pokke Market,yes
+61,204,Pokke Armory,yes
+62,205,Pokke Smithy,yes
+63,206,Sushi Meowster,yes
+64,207,Palico Armory,yes
+65,213,Grandmeow,yes
+66,214,Cave Cattendant,yes
+67,220,Kind Villager,yes
+68,221,Worrywart Villager,yes
+69,222,Savvy Felyne,yes
+70,223,Wise Wyverian,yes
+71,224,Stubborn Hunter,yes
+72,225,Trenya,yes
+73,226,Felcote,yes
+74,227,Pokke Manager,yes
+75,228,Pokke Sweetheart,yes
+76,229,Jumbo Sweetheart,yes
+77,230,Funky Felyne,yes
+78,231,Armory Granny,yes
+79,301,Yukumo Chief,yes
+80,302,Yukumo Gal,yes
+81,303,Yukumo Market,yes
+82,304,Yukumo Armory,yes
+83,305,Yukumo Smithy,yes
+84,306,Brew Meowster,yes
+85,307,Palico Armory,yes
+86,313,Grandmyama,yes
+87,320,Gatekeeper Guy,yes
+88,321,Calm Hunter,yes
+89,322,Relaxed Villager,yes
+90,323,Bath Cattendant,yes
+91,324,Yukumo Manager,yes
+92,325,Yukumo Sweetheart,yes
+93,326,Wyverian Artisan,yes
+94,327,Head Moga Farmer,yes
+95,328,Moga Chief's Son,yes
+96,329,Fishmongress,yes
+97,330,Moga Sweetheart,yes
+98,331,Tanzia Port Boss,yes
+99,332,Tanzia Sweetheart,yes
+100,333,Loc Lac Chief,yes
+101,334,Captain Tool,yes
+102,335,Uppity Instructor,yes
+103,336,Harth Chief,yes
+104,337,Headwhiskress,yes
+105,420,Moga Chief,yes
+106,421,Minegarde Hermit,yes
+107,422,Village Grocer,yes
+108,423,The Combinator,yes
+109,424,Master Tool,yes
+110,425,Master Shipwright,yes
+111,426,Spittle-ful Girl,yes
+112,427,Tubular Tabby,yes
+113,428,Loc Lac Guide,yes
+114,502,Wycademy Gal,yes
+115,503,Guild Store Clerk,yes
+116,520,Guild Manager,yes
+117,521,@,no
+118,522,Arena Instructor,yes
+119,523,@,no
+120,524,Gourmew Chef,yes
+121,525,Wycademy Hunter,yes
+122,526,Rookie Hunter,yes
+123,554,Armory & Smithy,yes
+124,557,Palico Armory,yes
+125,613,Meowstress,yes
+126,620,Ranch Paw,yes
+127,621,d'Artanyan,yes
+128,622,Palico Dojo Staff,yes
+129,623,"Neko (Means ""Cat"")",yes
+130,624,@,no
+131,625,@,no
+132,626,Village Moofah,yes
+133,627,Village Moofah,yes
+134,991,-,yes
+135,992,-,no
+136,993,-,no
+137,994,-,no
+138,995,-,no
+139,996,-,no
+140,997,-,no
+141,998,-,no
+142,999,-,no
+143,215,Cave Cattendant,yes
+144,16,-,yes
+145,17,-,yes
+146,18,-,yes
+147,19,-,yes
+148,112,-,no
+149,212,-,no
+150,312,-,no
+151,981,Hunters for Hire,yes
+152,982,Hunters for Hire,no
+153,983,Hunters for Hire,no
+154,701,Wyventurer,yes
+155,702,Soaratorium Gal,yes
+156,703,Soaratorium Market,yes
+157,705,Soaratorium Smithy,yes
+158,706,Dairy Meowster,yes
+159,707,Palico Armory,yes
+160,708,Ms. Meow-It-All,yes
+161,710,Lil Miss Forge,yes
+162,711,Funky Felyne,yes
+163,712,Soaratorium Crew,yes
+164,713,Palico Scout,yes
+165,714,Tanzia Arena Gal,yes
+166,715,@,yes
+167,716,Elder Hall Minister,yes
+168,717,Legendary Artisan,yes
+169,718,Redspear Hunter,yes
+170,719,Blackspear Hunter,yes
+171,720,Furtive Felyne,yes
+172,721,Tanzia Gong Girl,yes
+173,722,Moga Farm Felyne,yes
+174,724,Bherna Chief,yes
+175,725,Kokoto Chief,yes
+176,726,Pokke Chief,yes
+177,727,Yukumo Chief,yes
+178,801,Pub Manager,yes
+179,802,Questender,yes
+180,803,Arena Master,yes
+181,804,Pub Market,yes
+182,805,Mewstress,yes
+183,806,Horns Armory & Smithy,yes
+184,807,Horns Palico Armory,yes
+185,810,Hoarding Hunter,yes
+186,811,Hoarding Hunter,yes
+187,812,Layabout Prowler,yes
