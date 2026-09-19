@@ -5,7 +5,8 @@ What a real clear leaves behind is written too (see ../docs/05-quests.md, "What 
 quests completed takes"):
 
   1. cleared + seen bit of every real row of ../data/quest-index.csv
-     (placeholder rows and the second occurrence of a repeated ID are skipped);
+     (placeholder rows, unused event slots and the second occurrence of a repeated
+     ID are skipped);
   2. for every villager request with a quest that is not accepted yet: its accepted
      flag and the other flags its offer block sets or clears (column `also` of
      ../data/request-offer.csv). The completed flag is NOT written: the NPC's report
@@ -55,7 +56,7 @@ def plan(buf, events=True, requests=True):
     first, real = {}, []
     for r in rows:
         q = int(r["quest_id"])
-        if r["notes"] == "placeholder entry" or q in first: continue
+        if r["notes"] in ("placeholder entry", "unused event slot") or q in first: continue
         first[q] = int(r["index"])
         if events or r["category"] not in EVENT: real.append(r)
 

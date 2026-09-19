@@ -1304,15 +1304,15 @@ index,byte,bit,quest_id,category,prowler,rank,name,group,alt,expansion,sets,note
 1303,162,7,120005,Arena,yes,,Grudge Match: Tetsucabra,0,0,1,78 79 98,
 1304,163,0,120006,Arena,yes,,Grudge Match: Congalala,0,0,1,78 79 98,
 1305,163,1,1010005,Event Hub,no,3,DUMMY,127,0,1,,placeholder entry
-1306,163,2,1010006,Event Hub,no,1,Hunter Low-rank 2,127,0,1,,
-1307,163,3,1010007,Event Hub,no,1,Hunter Low-rank 3,127,0,1,,
+1306,163,2,1010006,Event Hub,no,1,Hunter Low-rank 2,127,0,1,,unused event slot
+1307,163,3,1010007,Event Hub,no,1,Hunter Low-rank 3,127,0,1,,unused event slot
 1308,163,4,1010001,Event Hub,no,3,DUMMY,127,0,0,,placeholder entry
 1309,163,5,1010002,Event Hub,no,3,DUMMY,127,0,0,,placeholder entry
 1310,163,6,1010003,Event Hub,no,3,DUMMY,127,0,0,,placeholder entry
 1311,163,7,1010004,Event Hub,no,3,A Season for Lava,127,0,0,,
 1312,164,0,1110007,Event Hub,yes,2,Nakayoshi: Silver Crystal,127,0,1,,
-1313,164,1,1110008,Event Hub,yes,2,Prowler Low-rank 2,127,0,1,,
-1314,164,2,1110009,Event Hub,yes,2,Prowler Low-rank 3,127,0,1,,
+1313,164,1,1110008,Event Hub,yes,2,Prowler Low-rank 2,127,0,1,,unused event slot
+1314,164,2,1110009,Event Hub,yes,2,Prowler Low-rank 3,127,0,1,,unused event slot
 1315,164,3,1110001,Event Hub,yes,2,CoroCoro: Lost in the Swamp,127,0,0,,
 1316,164,4,1110002,Event Hub,yes,3,The King of Lynians!,127,0,0,,
 1317,164,5,1110003,Event Hub,yes,3,Jump: Crimson Strongmen,127,0,0,,
@@ -1326,8 +1326,8 @@ index,byte,bit,quest_id,category,prowler,rank,name,group,alt,expansion,sets,note
 1325,165,5,1010170,Event Hub,no,7,Strider: Frozen Mission,127,0,1,,
 1326,165,6,1010174,Event Hub,no,6,Okami: Most Wanted,127,0,1,,
 1327,165,7,1010175,Event Hub,no,7,Ghosts 'n Goblins: Seeing Red,127,0,1,,
-1328,166,0,1010176,Event Hub,no,1,Hunter High-rank 9,127,0,1,,
-1329,166,1,1010177,Event Hub,no,1,Hunter High-rank 10,127,0,1,,
+1328,166,0,1010176,Event Hub,no,1,Hunter High-rank 9,127,0,1,,unused event slot
+1329,166,1,1010177,Event Hub,no,1,Hunter High-rank 10,127,0,1,,unused event slot
 1330,166,2,1010101,Event Hub,no,7,Crows: The Black Crows,127,0,0,,
 1331,166,3,1010102,Event Hub,no,5,Yowamushi Pedal: Princess,127,0,0,,
 1332,166,4,1010103,Event Hub,no,7,Baki: Biggest vs. Strongest,127,0,0,,
@@ -1391,8 +1391,8 @@ index,byte,bit,quest_id,category,prowler,rank,name,group,alt,expansion,sets,note
 1390,173,6,1010167,Event Hub,no,7,The Hammer and the Pike,127,0,0,,
 1391,173,7,1110112,Event Hub,yes,5,Case Closed: Monster Files,127,0,1,,
 1392,174,0,1110113,Event Hub,yes,4,DUMMY,127,0,1,,placeholder entry
-1393,174,1,1110114,Event Hub,yes,4,Prowler High-rank 3,127,0,1,,
-1394,174,2,1110115,Event Hub,yes,4,Prowler High-rank 4,127,0,1,,
+1393,174,1,1110114,Event Hub,yes,4,Prowler High-rank 3,127,0,1,,unused event slot
+1394,174,2,1110115,Event Hub,yes,4,Prowler High-rank 4,127,0,1,,unused event slot
 1395,174,3,1110101,Event Hub,yes,4,CoroCoro: Big Bad Bugs,127,0,0,,
 1396,174,4,1110102,Event Hub,yes,4,A Hero's Return,127,0,0,,
 1397,174,5,1110103,Event Hub,yes,4,Mario: The White Donkey Kong?,127,0,0,,
@@ -1444,11 +1444,11 @@ index,byte,bit,quest_id,category,prowler,rank,name,group,alt,expansion,sets,note
 1443,180,3,1011042,Event Hub,no,G4,Defy the Prophecy,127,0,1,,
 1444,180,4,1011043,Event Hub,no,G4,Monster Hunter Channel I,127,0,1,,
 1445,180,5,1011044,Event Hub,no,G4,Monster Hunter Channel II,127,0,1,,
-1446,180,6,1011045,Event Hub,no,1,@,127,0,1,,
-1447,180,7,1011046,Event Hub,no,1,@,127,0,1,,
-1448,181,0,1011047,Event Hub,no,1,@,127,0,1,,
-1449,181,1,1011048,Event Hub,no,1,@,127,0,1,,
-1450,181,2,1011049,Event Hub,no,1,@,127,0,1,,
+1446,180,6,1011045,Event Hub,no,1,@,127,0,1,,unused event slot
+1447,180,7,1011046,Event Hub,no,1,@,127,0,1,,unused event slot
+1448,181,0,1011047,Event Hub,no,1,@,127,0,1,,unused event slot
+1449,181,1,1011048,Event Hub,no,1,@,127,0,1,,unused event slot
+1450,181,2,1011049,Event Hub,no,1,@,127,0,1,,unused event slot
 1451,181,3,1111003,Event Hub,yes,G2,CoroCoro: Fart of Darkness,127,0,1,,
 1452,181,4,1111001,Event Hub,yes,G3,Baki: Deadly Claws,127,0,1,,
 1453,181,5,1111002,Event Hub,yes,G1,WORST: Skull Motif,127,0,1,,
@@ -1456,14 +1456,14 @@ index,byte,bit,quest_id,category,prowler,rank,name,group,alt,expansion,sets,note
 1455,181,7,1111006,Event Hub,yes,G2,The Legend of Zelda: Wisdom,127,0,1,,
 1456,182,0,1111004,Event Hub,yes,G1,Turnabout Takedown,127,0,1,,
 1457,182,1,1111005,Event Hub,yes,G3,Capcom: Prowler's Spirit,127,0,1,,
-1458,182,2,1111008,Event Hub,yes,G1,@,127,0,1,,
-1459,182,3,1111009,Event Hub,yes,G1,@,127,0,1,,
-1460,182,4,1111010,Event Hub,yes,G1,@,127,0,1,,
-1461,182,5,1111011,Event Hub,yes,G1,@,127,0,1,,
-1462,182,6,1111012,Event Hub,yes,G1,@,127,0,1,,
-1463,182,7,1111013,Event Hub,yes,G1,@,127,0,1,,
-1464,183,0,1111014,Event Hub,yes,G1,Prowler G-rank Quest 7,127,0,1,,
-1465,183,1,1111015,Event Hub,yes,G1,Prowler G-rank Quest 8,127,0,1,,
+1458,182,2,1111008,Event Hub,yes,G1,@,127,0,1,,unused event slot
+1459,182,3,1111009,Event Hub,yes,G1,@,127,0,1,,unused event slot
+1460,182,4,1111010,Event Hub,yes,G1,@,127,0,1,,unused event slot
+1461,182,5,1111011,Event Hub,yes,G1,@,127,0,1,,unused event slot
+1462,182,6,1111012,Event Hub,yes,G1,@,127,0,1,,unused event slot
+1463,182,7,1111013,Event Hub,yes,G1,@,127,0,1,,unused event slot
+1464,183,0,1111014,Event Hub,yes,G1,Prowler G-rank Quest 7,127,0,1,,unused event slot
+1465,183,1,1111015,Event Hub,yes,G1,Prowler G-rank Quest 8,127,0,1,,unused event slot
 1466,183,2,1020015,Event Arena,no,,XX Trials: Dreadqueen,128,0,1,,
 1467,183,3,1020016,Event Arena,no,,XX Trials: Thunderlord,128,0,1,,
 1468,183,4,1020017,Event Arena,no,,XX Trials: Silverwind,128,0,1,,
@@ -1479,7 +1479,7 @@ index,byte,bit,quest_id,category,prowler,rank,name,group,alt,expansion,sets,note
 1478,184,6,1020027,Event Arena,no,,XX Trials: Deadeye,128,0,1,,
 1479,184,7,1020028,Event Arena,no,,XX Trials: Snowbaron,128,0,1,,
 1480,185,0,1020029,Event Arena,no,,XX Trials: Hunt-a-thon III,128,0,1,,
-1481,185,1,1020030,Event Arena,no,,@,128,0,1,,
+1481,185,1,1020030,Event Arena,no,,@,128,0,1,,unused event slot
 1482,185,2,1020001,Event Arena,no,,Event: Slay a Mizutsune,128,0,0,,
 1483,185,3,1020002,Event Arena,no,,Event: Slay a Glavenus,128,0,0,,
 1484,185,4,1020003,Event Arena,no,,Event: Slay a Gammoth,128,0,0,,
@@ -1500,7 +1500,7 @@ index,byte,bit,quest_id,category,prowler,rank,name,group,alt,expansion,sets,note
 1499,187,3,1120010,Event Arena,yes,,XX Trials: Zinogre,128,0,1,,
 1500,187,4,1120011,Event Arena,yes,,XX Trials: Brachydios,128,0,1,,
 1501,187,5,1120012,Event Arena,yes,,XX Trials: Hunt-a-thon IV,128,0,1,,
-1502,187,6,1120013,Event Arena,yes,,Quest Template,128,0,1,,
+1502,187,6,1120013,Event Arena,yes,,Quest Template,128,0,1,,unused event slot
 1503,187,7,1120001,Event Arena,yes,,Event: Slay a Volvidon,128,0,0,,
 1504,188,0,1120002,Event Arena,yes,,Event: Slay a Royal Ludroth,128,0,0,,
 1505,188,1,1120003,Event Arena,yes,,Event: Slay a Lagombi,128,0,0,,

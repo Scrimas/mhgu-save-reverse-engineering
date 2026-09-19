@@ -702,7 +702,7 @@ It does not touch HR or the star levels (it reports them if they are below the
 maximum), and it lists the story flags that still hide a quest. Those are set by talk
 blocks whose conditions the edit has just made true, so a conversation sets them.
 
-**Bulk write, 2026-09-19 — written; save-side result checked, quest lists pending.** On the analysed save
+**Bulk write, 2026-09-19 — written and checked in the game.** On the analysed save
 (HR 999, Village ★10, Hub ★13) the tool changed 294 bytes in both slots: 980 cleared
 bits (Village 239, Hub 444, Arena 16, Training 113, Event 168), their seen bits, 63
 requests marked accepted (33 flag bytes, flag 796 cleared), 66 set bits (everything
@@ -721,6 +721,15 @@ enough for the report block. The cleared, seen, failed and set maps and the pend
 notices did not change. The game-side award map gained award 39 (with its notice
 bit); the quest set awards 0–12 were not granted by talking alone. Seven reports did
 not fire:
+
+The quest lists were then read off in the game, level by level (Village ★1–★10, Hub
+★1–G4, hunter and Prowler quests counted apart): all 21 counts equal the number of
+rows the unlock rules and the [rotation](#rotating-quests--base--0x504b) predict, and every quest
+shows as completed. The three event lists gave 103 hunter and 22 Prowler quests,
+the 125 downloaded ones. The other 23 event rows (`Hunter Low-rank 2`, `@`,
+`Quest Template`, …) are slots no released quest uses; they carry the note
+`unused event slot` in `quest-index.csv` and the tool skips them now. The bulk write
+above still set their cleared and seen bits; nothing in the game shows them.
 
 - Six are Hunter Art lessons (requests 126, 128, 133, 141, 143, 150). Their report
   block has a third condition, talk types 46–53, 141, 142: a lesson of this teacher
